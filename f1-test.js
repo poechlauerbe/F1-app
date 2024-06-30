@@ -21,6 +21,17 @@ function driver(num)
 	}
 }
 
+function position()
+{
+	fetch('https://api.openf1.org/v1/position?session_key=latest')
+  	.then(response => response.json())
+  	.then(jsonContent => console.log(jsonContent));
+
+}
+
 
 // 0 for all drivers, number of the driver to get driver data
-driver(44);
+// driver(44);
+
+
+position();
