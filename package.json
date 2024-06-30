@@ -1,0 +1,16 @@
+{
+  "name": "f1-api-test",
+  "version": "1.0.0",
+  "description": "Used API: [OpenF1](https://openf1.org/)",
+  "main": "f1-test.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2",
+    "node-fetch": "^3.3.2"
+  }
+}
