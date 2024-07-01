@@ -30,14 +30,18 @@ Done:
 - added images of the drivers
 - race control messages
 	- in reversed order - top = newest
+	- added button to turn on/off the blue flag messages
 - teamradio messages as audio files
 - adapt time format
 
-ideas:
--update navbar in each html
+ideas/toDos:
+- live results
+- add qualifying/training mode
+- update navbar in each html
 - positions of the drivers
 - timer to test "real" live
 - add css
 - map with cars driving
 - add testing
-- add github actionsn
+- add github actions
+- add results of races
