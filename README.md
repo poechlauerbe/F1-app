@@ -38,6 +38,7 @@ To be tested:
 - live results
 
 ideas/toDos:
+- add time infos
 - add qualifying/training mode
 - add names to teamradio
 - teamcolors
