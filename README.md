@@ -8,4 +8,8 @@ Playing arround with the OpenF1 API to get useful information out of it.
 [x] simple JavaScript file with simple calls
 [x] starting with express site
 [x] added images of the drivers
+[ ] working on positions of the drivers
+
+ideas:
+[ ] timer to test "real" live
 
