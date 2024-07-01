@@ -5,10 +5,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const raceControlDiv = document.getElementById('raceControl');
             data.reverse().forEach(raceControl => {
                 const raceControlElement = document.createElement('p');
+                const date = new Date(raceControl['date']);
+                const options = {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                };
+                const timeString = date.toLocaleTimeString([], options);
 				if (raceControl['driver_number'] == null)
-					raceControlElement.textContent = raceControl['date'] + '	' + raceControl['message'];
+					raceControlElement.textContent = timeString + '	' + raceControl['message'];
 				else
-	                raceControlElement.textContent = `Driver number: ${raceControl['driver_number']}, ${raceControl['message']}`;
+	                raceControlElement.textContent = timeString + ` Driver number: ${raceControl['driver_number']}, ${raceControl['message']}`;
                 raceControlDiv.appendChild(raceControlElement);
             });
         })

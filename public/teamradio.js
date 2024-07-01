@@ -5,7 +5,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const teamradioDiv = document.getElementById('teamradio');
             data.reverse().forEach(teamradio => {
 				const teamradioheadline = document.createElement('p');
-				teamradioheadline.textContent = teamradio['date'] + '	' + teamradio['driver_number'] + '\n';
+				const date = new Date(teamradio['date']);
+
+                // Extract the time part and format it
+                const options = {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                };
+                const timeString = date.toLocaleTimeString([], options);
+				teamradioheadline.textContent = timeString + '	' + teamradio['driver_number'] + '\n';
                 const teamradioElement = document.createElement('audio');
 				teamradioElement.src = teamradio['recording_url'];
 				teamradioElement.controls = true;
