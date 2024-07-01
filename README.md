@@ -49,3 +49,4 @@ ideas/toDos:
 - add testing
 - add github actions
 - add results of races
+- add countdown to next race

@@ -1,0 +1,38 @@
+* {
+	box-sizing: border-box;
+}
+
+body {
+	padding: 20px;
+	font-family: Arial, Helvetica, sans-serif;
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+@media (width <= 799px) {
+	body {
+		margin: 20px;
+	}
+	nav {
+		flex-direction: column;
+	}
+}
+
+nav {
+	display: flex;
+	justify-content: center;
+    align-items: center;
+}
+
+nav a{
+	background-color: white;
+	color: black;
+	padding: 10px;
+	margin: 10px;
+	border: 1px solid black;
+	border-radius: 10px;
+	text-decoration: none;
+	text-align: center;
+	display: flex;
+	flex-wrap: wrap;
+}
