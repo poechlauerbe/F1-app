@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch('/api/drivers')
         .then(response => response.json())
         .then(data => {
-			console.log(data);
             const driversDiv = document.getElementById('drivers');
             data.forEach(driver => {
                 const driverElement = document.createElement('p');

@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch('/api/race_control')
         .then(response => response.json())
         .then(data => {
-			console.log(data);
             const raceControlDiv = document.getElementById('raceControl');
             data.reverse().forEach(raceControl => {
                 const raceControlElement = document.createElement('p');
