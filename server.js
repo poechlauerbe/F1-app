@@ -17,6 +17,17 @@ app.get('/api/drivers', async (req, res) => {
     }
 });
 
+app.get('/api/position', async (req, res) => {
+    try {
+        const response = await fetch('https://api.openf1.org/v1/position?session_key=latest');
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });

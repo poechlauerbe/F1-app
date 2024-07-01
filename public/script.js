@@ -7,7 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
             data.forEach(driver => {
                 const driverElement = document.createElement('p');
                 driverElement.textContent = `Name: ${driver['full_name']}, Number: ${driver['driver_number']}, Team: ${driver['team_name']}, Country: ${driver['country_code']}`;
+                const driverImage = document.createElement('img');
+                driverImage.src = driver['headshot_url'];
                 driversDiv.appendChild(driverElement);
+                driversDiv.appendChild(driverImage);
             });
         })
         .catch(error => {

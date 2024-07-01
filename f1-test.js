@@ -29,7 +29,7 @@ function driver(num)
 
 function position()
 {
-	fetch('https://api.openf1.org/v1/position?session_key=latest')
+	fetch('https://api.openf1.org/v1/position?session_key=latest&driver_number=1')
   	.then(response => response.json())
   	.then(jsonContent => console.log(jsonContent));
 
@@ -37,7 +37,7 @@ function position()
 
 
 // 0 for all drivers, number of the driver to get driver data
-console.log(driver(0));
+// console.log(driver(0));
 
 
-// position();
+position();
