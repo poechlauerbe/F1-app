@@ -4,17 +4,14 @@ Used API: [OpenF1](https://openf1.org/)
 
 Playing arround with the OpenF1 API to get useful information out of it.
 
-[x] Download player information
-
-[x] simple JavaScript file with simple calls
-
-[x] starting with express site
-
-[x] added images of the drivers
-
-[x] race control messages
-
-	[x] in reversed order - top = newest
+Done:
+- Download player information
+- simple JavaScript file with simple calls (see [f1-test.js](./f1-test.js))
+- starting with express site
+- added images of the drivers
+- race control messages
+	- in reversed order - top = newest
+- teamradio messages as audio files
 
 
 ideas:
