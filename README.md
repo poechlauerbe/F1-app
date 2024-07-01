@@ -37,6 +37,8 @@ Done:
 ideas/toDos:
 - live results
 - add qualifying/training mode
+- add names to teamradio
+- teamcolors
 - update navbar in each html
 - positions of the drivers
 - timer to test "real" live
