@@ -34,8 +34,10 @@ Done:
 - teamradio messages as audio files
 - adapt time format
 
-ideas/toDos:
+To be tested:
 - live results
+
+ideas/toDos:
 - add qualifying/training mode
 - add names to teamradio
 - teamcolors
