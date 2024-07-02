@@ -21,14 +21,16 @@ node ./server.js
 ```
 3. Open in browser:
 ```Browser
-http://localhost:3000/index.html
+http://localhost:3000/
 ```
 4. If your mobile phone is in the same network as your computer you can access the site from your mobile phone after opening port 3000 on your computer (don't forget to close it afterwards)
 ```Browser
-http://localhost:3000/index.html
+http://localhost:3000/
 ```
 
-At the moment it is pure HTML & JavaScript & simple CSS - soon to be adapted!
+At the beginning it was pure HTML & JavaScript & simple CSS.
+Already adapted a little - with EJS.
+Working in progress...
 
 ## Done
 - Get information from API
@@ -36,6 +38,7 @@ At the moment it is pure HTML & JavaScript & simple CSS - soon to be adapted!
 - starting with express app
 - added CSS
 - only one navbar to update - written in JavaScript
+- changed to EJS
 
 ### Driver
 - added photos of the drivers
@@ -59,7 +62,6 @@ At the moment it is pure HTML & JavaScript & simple CSS - soon to be adapted!
 - live results in race leaderboard
 
 ## next steps / ongoing
-- change architecture to EJS
 - add time infos in leaderboard
 - define requirements for app (add on to "how to use")
 - check automated updates
