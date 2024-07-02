@@ -2,7 +2,7 @@
 
 Used API: [OpenF1](https://openf1.org/)
 
-Find API on [github](https://github.com/br-g/openf1)
+Find API on [GitHub](https://github.com/br-g/openf1)
 
 Playing arround with the OpenF1 API to get useful information out of it.
 For now there are 4 tabs (Drivers, Leaderboard, Race Control, Teamradio).
@@ -23,7 +23,7 @@ node ./server.js
 ```
 http://localhost:3000/index.html
 ```
-4. If your smartphone is in the same network as your computer you can access the site from your smartphone after opening port 3000 on your computer (don't forget to close it afterwards)
+4. If your mobile phone is in the same network as your computer you can access the site from your mobile phone after opening port 3000 on your computer (don't forget to close it afterwards)
 ```
 http://localhost:3000/index.html
 ```
@@ -34,7 +34,7 @@ At the moment it is pure HTML & JavaScript & simple CSS - soon to be adapted!
 - Get information from API
 - simple JavaScript file with simple calls (see [f1-test.js](./f1-test.js))
 - starting with express app
-- added css
+- added CSS
 
 ### Driver
 - added photos of the drivers
@@ -62,6 +62,7 @@ At the moment it is pure HTML & JavaScript & simple CSS - soon to be adapted!
 - define requirements for app (add on to "how to use")
 - check automated updates
 	- which intervals would be good?
+- add GitHub Actions
 
 ## open points/ideas:
 - adapt "how to use"
@@ -74,7 +75,6 @@ At the moment it is pure HTML & JavaScript & simple CSS - soon to be adapted!
 - timer to test "real" live
 - map with cars driving
 - add testing
-- add github actions
 - add results of old races
 - add countdown to next race
 
