@@ -4,8 +4,8 @@ function loadSite() {
     fetch('/api/race_control')
         .then(response => response.json())
         .then(data => {
-            document.getElementById('raceControl').innerHTML = '';
-            const raceControlDiv = document.getElementById('raceControl');
+            document.getElementById('race-control').innerHTML = '';
+            const raceControlDiv = document.getElementById('race-control');
             data.reverse().forEach(raceControl => {
                 const raceControlElement = document.createElement('p');
                 const date = new Date(raceControl['date']);
