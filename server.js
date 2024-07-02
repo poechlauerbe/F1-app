@@ -15,6 +15,7 @@ const driverRouter = require('./routes/drivers');
 const leaderboardRouter = require('./routes/leaderboard');
 const racecontrolRouter = require('./routes/racecontrol');
 const teamradioRouter = require('./routes/teamradio');
+const singleDriverRouter = require('./routes/singledriver');
 
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
@@ -24,6 +25,7 @@ app.use('/drivers', driverRouter);
 app.use('/leaderboard', leaderboardRouter);
 app.use('/racecontrol', racecontrolRouter);
 app.use('/teamradio', teamradioRouter);
+app.use('/singledriver', singleDriverRouter);
 
 // API endpoint to fetch and return data
 app.get('/api/drivers', async (req, res) => {
@@ -36,7 +38,7 @@ app.get('/api/drivers', async (req, res) => {
         driverDataCache = data;
         res.json(data);
     } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching data (drivers):', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
@@ -47,7 +49,7 @@ app.get('/api/positions', async (req, res) => {
         const data = await response.json();
         res.json(data);
     } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching data (positions):', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
@@ -69,7 +71,7 @@ app.get('/api/teamradio', async (req, res) => {
         const data = await response.json();
         res.json(data);
     } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching data (teamradio):', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
@@ -80,7 +82,7 @@ app.get('/api/intervals', async (req, res) => {
         const data = await response.json();
         res.json(data);
     } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching data (intervals):', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
