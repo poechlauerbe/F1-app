@@ -1,3 +1,6 @@
+// import { drivers, fetchDrivers } from './helper/driver_data.js';
+
+
 function Driver(number, position, photo, name, team, laps, status) {
 	this.number = number;
 	this.position = position;
@@ -26,6 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
+// fetchDrivers();
+// console.log(drivers);
 
 document.addEventListener('DOMContentLoaded', () => {
     fetch('/api/positions')

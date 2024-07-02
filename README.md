@@ -82,9 +82,15 @@ At the moment it is pure HTML & JavaScript & simple CSS - soon to be adapted!
 ### Drivers - open
 - add teamcolors
 - add statistics
+- check for change - later when there is some server running permanently
 
 ### Race control - open
 - add CSS depending on the message
 
 ### Teamradio - open
-- add photo
+- add photo (maybe only for bigger devices)
+- think about update strategy to not reload everything all the time
+
+Buglist:
+- http://localhost:3000/favicon.ico - error - no favicon
+- linter - change config-file for javascript - change tabs/spaces
