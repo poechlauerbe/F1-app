@@ -26,6 +26,7 @@ app.use('/leaderboard', leaderboardRouter);
 app.use('/racecontrol', racecontrolRouter);
 app.use('/teamradio', teamradioRouter);
 app.use('/singledriver', singleDriverRouter);
+app.use('/favicon.ico', express.static('public/favicon.ico'));
 
 // API endpoint to fetch and return data
 app.get('/api/drivers', async (req, res) => {

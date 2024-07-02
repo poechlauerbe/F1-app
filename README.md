@@ -105,5 +105,4 @@ Working in progress...
 - think about update strategy to not reload everything all the time
 
 Buglist:
-- "http://localhost:3000/favicon.ico" - error - 404 not found
 - linter - change config-file for JavaScript - change tabs/spaces
