@@ -1,5 +1,7 @@
-<a href="./">Home</a>
-<a href="./drivers">Drivers</a>
-<a href="./leaderboard">Race Leaderboard</a>
-<a href="./racecontrol">Race Control</a>
-<a href="./teamradio">Team Radio</a>
+<% if (typeof showHomeLink == 'undefined' || showHomeLink) { %>
+    <li><a href="./">Home</a></li>
+<% } %>
+<li><a href="./drivers">Drivers</a></li>
+<li><a href="./leaderboard">Race Leaderboard</a></li>
+<li><a href="./racecontrol">Race Control</a></li>
+<li><a href="./teamradio">Team Radio</a></li>

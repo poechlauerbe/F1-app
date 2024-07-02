@@ -34,6 +34,10 @@ nav {
     align-items: center;
 }
 
+nav li {
+	list-style-type: none;
+}
+
 nav a{
 	background-color: white;
 	color: black;

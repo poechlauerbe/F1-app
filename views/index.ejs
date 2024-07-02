@@ -12,7 +12,14 @@
             <%- include('partials/nav') %>
         </nav>
     </header>
-    <h1><%= message %></h1>
-    <p>This HTML was generated on the server using EJS.</p>
+    <main>
+        <h1 class="text-center">Welcome to the world of formula 1</h1>
+        <p>The idea of this project is to create some application where you can find live data during a race-weekend</p>
+        <p>These are the pages until now:</p>
+        <ul id="pages">
+            <%- include('partials/nav', { showHomeLink: false }) %>
+        </ul>
+        <p>Have fun!</p>
+    </main>
 </body>
 </html>
