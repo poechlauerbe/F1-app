@@ -71,8 +71,7 @@ Working in progress...
 ## open points / ideas
 - adapt "how to use"
 - think about CSS grid of the different pages
-- change update process to not calculate everything in the browser
-- change update process to only process updated values and not recalculate everything (faster)
+- idea layout change to tables
 - add qualifying/training mode
   - get info what session is through session mode
 - add point table (maybe change drivers in to general leaderboard)
@@ -82,6 +81,16 @@ Working in progress...
 - add results of old races
 - add countdown to next race
 - errorhandling with EJS
+
+### Data management / API management - open
+- how to store data from the api?
+- how to update data?
+- which database?
+- how to get sessions keys?
+- how to set up to get data?
+- how to connect data?
+- change update process to not calculate everything in the browser
+- change update process to only process updated values and not recalculate everything (faster)
 
 ### Drivers - open
 - add teamcolors
