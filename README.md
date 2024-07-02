@@ -34,11 +34,11 @@ Working in progress...
 
 ## Done
 - Get information from API
-- simple JavaScript file with simple calls (see [f1-test.js](./f1-test.js))
+- simple JavaScript file with simple calls (see [f1-test.js](./z_old/f1-test.js))
 - starting with express app
 - added CSS
 - only one navbar to update - written in JavaScript
-- changed to EJS
+- switched to EJS approach - now one navbar in HTML
 
 ### Driver
 - added photos of the drivers
@@ -81,6 +81,7 @@ Working in progress...
 - add results of old races
 - add countdown to next race
 - errorhandling with EJS
+- single driver spectator
 
 ### Data management / API management - open
 - how to store data from the api?
