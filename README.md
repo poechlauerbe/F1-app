@@ -57,12 +57,12 @@ Working in progress...
 ### Race Leaderboard
 - get correct positions
 - added driver information and photo
+- add time infos in leaderboard
 
 ## To be tested
 - live results in race leaderboard
 
 ## next steps / ongoing
-- add time infos in leaderboard - check api
 - check automated updates
   - which intervals would be good?
 - add GitHub Actions

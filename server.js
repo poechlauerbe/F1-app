@@ -74,6 +74,17 @@ app.get('/api/teamradio', async (req, res) => {
     }
 });
 
+app.get('/api/intervals', async (req, res) => {
+    try {
+        const response = await fetch('https://api.openf1.org/v1/intervals?session_key=latest');
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 })
