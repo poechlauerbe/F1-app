@@ -5,9 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
 </head>
 <body>
-    <%- include('partials/nav') %>
+    <header>
+        <nav>
+            <%- include('partials/nav') %>
+        </nav>
+    </header>
     <h1><%= message %></h1>
     <p>This HTML was generated on the server using EJS.</p>
 </body>

@@ -14,6 +14,7 @@ const indexRouter = require('./routes/index');
 const driverRouter = require('./routes/drivers');
 const leaderboardRouter = require('./routes/leaderboard');
 const racecontrolRouter = require('./routes/racecontrol');
+const teamradioRouter = require('./routes/teamradio');
 
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
@@ -22,6 +23,7 @@ app.use('/', indexRouter);
 app.use('/drivers', driverRouter);
 app.use('/leaderboard', leaderboardRouter);
 app.use('/racecontrol', racecontrolRouter);
+app.use('/teamradio', teamradioRouter);
 
 // API endpoint to fetch and return data
 // app.get('/api/drivers', async (req, res) => {
