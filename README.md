@@ -5,7 +5,7 @@ Used API: [OpenF1](https://openf1.org/)
 Find API on [GitHub](https://github.com/br-g/openf1)
 
 Playing arround with the OpenF1 API to get useful information out of it.
-For now there are 4 tabs (Drivers, Leaderboard, Race Control, Teamradio).
+For now there are 4 tabs with inforamtion: Drivers, Leaderboard, Race Control, Teamradio.
 
 Next tests possible during the next race weekend starting on Fr 5.7.2024
 
@@ -35,7 +35,7 @@ At the moment it is pure HTML & JavaScript & simple CSS - soon to be adapted!
 - simple JavaScript file with simple calls (see [f1-test.js](./f1-test.js))
 - starting with express app
 - added CSS
-- only one navbar to updat - written in JavaScript
+- only one navbar to update - written in JavaScript
 
 ### Driver
 - added photos of the drivers
@@ -59,6 +59,7 @@ At the moment it is pure HTML & JavaScript & simple CSS - soon to be adapted!
 - live results in race leaderboard
 
 ## next steps / ongoing
+- change architecture to EJS
 - add time infos in leaderboard
 - define requirements for app (add on to "how to use")
 - check automated updates
@@ -78,6 +79,7 @@ At the moment it is pure HTML & JavaScript & simple CSS - soon to be adapted!
 - add testing
 - add results of old races
 - add countdown to next race
+- errorhandling with EJS
 
 ### Drivers - open
 - add teamcolors
