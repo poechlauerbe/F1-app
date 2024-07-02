@@ -62,11 +62,11 @@ Working in progress...
 - live results in race leaderboard
 
 ## next steps / ongoing
-- add time infos in leaderboard
-- define requirements for app (add on to "how to use")
+- add time infos in leaderboard - check api
 - check automated updates
   - which intervals would be good?
 - add GitHub Actions
+- define requirements for app - what has to be installed (add on to "how to use")
 
 ## open points / ideas
 - adapt "how to use"
