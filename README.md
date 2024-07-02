@@ -58,14 +58,14 @@ At the moment it is pure HTML & JavaScript & simple CSS - soon to be adapted!
 ## To be tested
 - live results in race leaderboard
 
-## next steps
+## next steps / ongoing
 - add time infos in leaderboard
 - define requirements for app (add on to "how to use")
 - check automated updates
   - which intervals would be good?
 - add GitHub Actions
 
-## open points/ideas
+## open points / ideas
 - adapt "how to use"
 - think about CSS grid of the different pages
 - change update process to not calculate everything in the browser
@@ -92,5 +92,5 @@ At the moment it is pure HTML & JavaScript & simple CSS - soon to be adapted!
 - think about update strategy to not reload everything all the time
 
 Buglist:
-- http://localhost:3000/favicon.ico - error - no favicon
+- http://localhost:3000/favicon.ico - error - 404 not found
 - linter - change config-file for javascript - change tabs/spaces
