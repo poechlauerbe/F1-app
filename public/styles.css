@@ -13,6 +13,7 @@ body {
 	body {
 		margin: 20px;
 	}
+
 	nav {
 		flex-direction: column;
 	}
@@ -21,7 +22,7 @@ body {
 		text-align: center;
 	}
 
-	.centerSmallBox {
+	.center-small-box {
 		text-align: center;
 	}
 
