@@ -31,6 +31,10 @@ function loadSite() {
 document.getElementById('blueFlag').addEventListener('click', () => {
     blueFlag++;
     document.getElementById('blueFlag').textContent = blueFlag % 2 ? 'Blue Flag ON' : 'Blue Flag OFF';
+    document.getElementById('blueFlag').style.backgroundColor = blueFlag % 2 ? 'blue' : 'white';
+    document.getElementById('blueFlag').style.color = blueFlag % 2 ? 'white' : 'black';
+    document.getElementById('blueFlag').style.borderColor = blueFlag % 2 ? 'blue' : 'black';
+    document.getElementById('blueFlag').style.borderRadius = '5px';
     loadSite();
 });
 

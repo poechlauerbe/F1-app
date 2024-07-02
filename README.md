@@ -35,15 +35,21 @@ At the moment it is pure HTML & JavaScript & simple CSS - soon to be adapted!
 - simple JavaScript file with simple calls (see [f1-test.js](./f1-test.js))
 - starting with express app
 - added css
+
 ### Driver
-- added images of the drivers
+- added photos of the drivers
+
 ### Race control messages
 - in reversed order - top = newest
 - added button to turn on/off the blue flag messages
-- adapt time format
+- adapted time format
+
 ### TeamRadio Messages
 - reversed order - top = newest
 - available audio
+- adapted time format
+- add names to teamradio
+
 ### Race Leaderboard
 - get correct positions
 - added driver information and photo
@@ -52,7 +58,6 @@ At the moment it is pure HTML & JavaScript & simple CSS - soon to be adapted!
 - live results in race leaderboard
 
 ## next steps
-- add names to teamradio
 - add time infos in leaderboard
 - define requirements for app (add on to "how to use")
 - check automated updates
@@ -72,9 +77,12 @@ At the moment it is pure HTML & JavaScript & simple CSS - soon to be adapted!
 - add github actions
 - add results of old races
 - add countdown to next race
+
 ### Drivers
 - add teamcolors
+
 ### Race control messages
 - add CSS depending on the message
+
 ### Teamradio
 - add photo

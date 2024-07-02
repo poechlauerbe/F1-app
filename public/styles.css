@@ -16,6 +16,15 @@ body {
 	nav {
 		flex-direction: column;
 	}
+
+	h1 {
+		text-align: center;
+	}
+
+	.centerSmallBox {
+		text-align: center;
+	}
+
 }
 
 nav {
@@ -35,4 +44,14 @@ nav a{
 	text-align: center;
 	display: flex;
 	flex-wrap: wrap;
+}
+
+button {
+	background-color: white;
+	color: black;
+	padding: 10px;
+	width: 130px;
+	border: 1px solid black;
+	border-radius: 5px;
+	cursor: pointer;
 }
