@@ -35,6 +35,7 @@ At the moment it is pure HTML & JavaScript & simple CSS - soon to be adapted!
 - simple JavaScript file with simple calls (see [f1-test.js](./f1-test.js))
 - starting with express app
 - added CSS
+- only one navbar to updat - written in JavaScript
 
 ### Driver
 - added photos of the drivers
@@ -80,6 +81,7 @@ At the moment it is pure HTML & JavaScript & simple CSS - soon to be adapted!
 
 ### Drivers - open
 - add teamcolors
+- add statistics
 
 ### Race control - open
 - add CSS depending on the message
