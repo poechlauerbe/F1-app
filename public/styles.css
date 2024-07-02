@@ -60,3 +60,7 @@ button {
 .text-center {
 	text-align: center;
 }
+
+#pages {
+	line-height: 2;
+}
