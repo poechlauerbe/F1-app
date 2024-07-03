@@ -1,3 +1,5 @@
+@import url('racecontrol.css');
+
 * {
 	box-sizing: border-box;
 }
@@ -26,6 +28,10 @@ body {
 		text-align: center;
 	}
 
+}
+
+p {
+	white-space: pre-line;
 }
 
 nav {

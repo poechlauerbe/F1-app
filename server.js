@@ -1,12 +1,7 @@
 const express = require('express');
-// const favicon = require('serve-favicon');
-// const path = require('path');
 const app = express();
 const port = 3000;
 let driverDataCache = null;
-
-// Use the serve-favicon middleware
-// app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
 app.set('view engine', 'ejs');
 
@@ -15,20 +10,26 @@ const driverRouter = require('./routes/drivers');
 const leaderboardRouter = require('./routes/leaderboard');
 const racecontrolRouter = require('./routes/racecontrol');
 const teamradioRouter = require('./routes/teamradio');
+const trackinfoRouter = require('./routes/trackinfo');
 const singleDriverRouter = require('./routes/singledriver');
 
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
 
+// Serve the favicon
+app.use('/favicon.ico', express.static('public/favicon.ico'));
+
+// Use the routes defined in the route files
 app.use('/', indexRouter);
 app.use('/drivers', driverRouter);
 app.use('/leaderboard', leaderboardRouter);
 app.use('/racecontrol', racecontrolRouter);
 app.use('/teamradio', teamradioRouter);
+app.use('/trackinfo', trackinfoRouter);
 app.use('/singledriver', singleDriverRouter);
-app.use('/favicon.ico', express.static('public/favicon.ico'));
 
-// API endpoint to fetch and return data
+// API endpoints to fetch and return data;
+
 app.get('/api/drivers', async (req, res) => {
     if (driverDataCache) {
         return res.json(driverDataCache);
@@ -40,6 +41,17 @@ app.get('/api/drivers', async (req, res) => {
         res.json(data);
     } catch (error) {
         console.error('Error fetching data (drivers):', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+app.get('/api/intervals', async (req, res) => {
+    try {
+        const response = await fetch('https://api.openf1.org/v1/intervals?session_key=latest');
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        console.error('Error fetching data (intervals):', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
@@ -66,6 +78,17 @@ app.get('/api/race_control', async (req, res) => {
     }
 });
 
+app.get('/api/sessions', async (req, res) => {
+    try {
+        const response = await fetch('https://api.openf1.org/v1/sessions?session_key=latest');
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        console.error('Error fetching data (sessions):', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 app.get('/api/teamradio', async (req, res) => {
     try {
         const response = await fetch('https://api.openf1.org/v1/team_radio?session_key=latest');
@@ -77,17 +100,18 @@ app.get('/api/teamradio', async (req, res) => {
     }
 });
 
-app.get('/api/intervals', async (req, res) => {
+app.get('/api/weather', async (req, res) => {
     try {
-        const response = await fetch('https://api.openf1.org/v1/intervals?session_key=latest');
+        const response = await fetch('https://api.openf1.org/v1/weather?session_key=latest');
         const data = await response.json();
         res.json(data);
     } catch (error) {
-        console.error('Error fetching data (intervals):', error);
+        console.error('Error fetching data (weather):', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
+
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
-})
+});

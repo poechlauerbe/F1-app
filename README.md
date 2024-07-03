@@ -9,6 +9,8 @@ For now there are 4 tabs with inforamtion: Drivers, Leaderboard, Race Control, T
 
 Next tests possible during the next race weekend starting on Fr 5.7.2024
 
+[Open Points list](OpenPoints.md)
+
 ## How to use
 1. Clone repository:
 ```bash
@@ -59,51 +61,10 @@ Working in progress...
 - added driver information and photo
 - add time infos in leaderboard
 
-## To be tested
-- live results in race leaderboard
+## Nice stuff for formula1 fans - found during research
+- [FastF1](https://github.com/theOehrly/Fast-F1)
+- [F1 Tracks](https://github.com/bacinger/f1-circuits/tree/master)
+- [Postman API](https://documenter.getpostman.com/view/11586746/SztEa7bL#intro)
 
-## next steps / ongoing
-- check automated updates
-  - which intervals would be good?
-- add GitHub Actions
-- define requirements for app - what has to be installed (add on to "how to use")
-
-## open points / ideas
-- adapt "how to use"
-- think about CSS grid of the different pages
-- idea layout change to tables
-- add qualifying/training mode
-  - get info what session is through session mode
-- add point table (maybe change drivers in to general leaderboard)
-- timer to test "real" live
-- map with cars driving
-- add testing
-- add results of old races
-- add countdown to next race
-- errorhandling with EJS
-- single driver spectator
-
-### Data management / API management - open
-- how to store data from the api?
-- how to update data?
-- which database?
-- how to get sessions keys?
-- how to set up to get data?
-- how to connect data?
-- change update process to not calculate everything in the browser
-- change update process to only process updated values and not recalculate everything (faster)
-
-### Drivers - open
-- add teamcolors
-- add statistics
-- check for change - later when there is some server running permanently
-
-### Race control - open
-- add CSS depending on the message
-
-### Teamradio - open
-- add photo (maybe only for bigger devices)
-- think about update strategy to not reload everything all the time
-
-Buglist:
-- linter - change config-file for JavaScript - change tabs/spaces
+### Attention
+This project is not associated in any way with the Formula 1 companies. F1, FORMULA ONE, FORMULA 1, FIA FORMULA ONE WORLD CHAMPIONSHIP, GRAND PRIX and related marks are trade marks of Formula One Licensing B.V.

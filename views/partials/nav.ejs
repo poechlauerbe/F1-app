@@ -1,7 +1,14 @@
 <% if (typeof showHomeLink == 'undefined' || showHomeLink) { %>
-    <li><a href="./">Home</a></li>
+    <header>
+        <nav>
+            <li><a href="./">Home</a></li>
 <% } %>
 <li><a href="./drivers">Drivers</a></li>
+<li><a href="./trackinfo">Track info</a></li>
 <li><a href="./leaderboard">Race Leaderboard</a></li>
 <li><a href="./racecontrol">Race Control</a></li>
 <li><a href="./teamradio">Team Radio</a></li>
+<% if (typeof showHomeLink == 'undefined' || showHomeLink) { %>
+        </nav>
+    </header>
+<% } %>
