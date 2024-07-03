@@ -60,3 +60,9 @@ Working in progress...
 - get correct positions
 - added driver information and photo
 - add time infos in leaderboard
+
+## Nice stuff for formula1 fans
+- [FastF1](https://github.com/theOehrly/Fast-F1)
+
+### Attention
+This project and this website are unofficial and are not associated in any way with the Formula 1 companies. F1, FORMULA ONE, FORMULA 1, FIA FORMULA ONE WORLD CHAMPIONSHIP, GRAND PRIX and related marks are trade marks of Formula One Licensing B.V.
