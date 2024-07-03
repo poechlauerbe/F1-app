@@ -53,5 +53,11 @@
 - add photo (maybe only for bigger devices)
 - think about update strategy to not reload everything all the time
 
+### Raceinfo
+- change time/date value of start & end time
+- what does rainfall mean - which values?
+- what does wind direction mean?
+- info: 1 update per minute
+
 Buglist:
 - linter - change config-file for JavaScript - change tabs/spaces
