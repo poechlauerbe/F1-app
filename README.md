@@ -1,13 +1,13 @@
-# F1 API test
+# My F1 APP
 
 Used API: [OpenF1](https://openf1.org/)
 
 Find API on [GitHub](https://github.com/br-g/openf1)
 
-Playing arround with the OpenF1 API to get useful information out of it.
+Playing arround with the OpenF1 API to get useful information out of it and create my own app.
 For now there are these tabs with inforamtion: Drivers, Track info, Race Leaderboard, Race Control & Teamradio.
 
-Next tests possible during the next race weekend starting on Fr 5.7.2024
+Next tests possible during the upcoming race weekend starting on Fr 5.7.2024
 
 [Open Points list](OpenPoints.md)
 
