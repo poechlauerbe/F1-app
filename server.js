@@ -10,7 +10,7 @@ const driverRouter = require('./routes/drivers');
 const leaderboardRouter = require('./routes/leaderboard');
 const racecontrolRouter = require('./routes/racecontrol');
 const teamradioRouter = require('./routes/teamradio');
-const raceinfoRouter = require('./routes/raceinfo');
+const trackinfoRouter = require('./routes/trackinfo');
 const singleDriverRouter = require('./routes/singledriver');
 
 // Serve static files from the 'public' directory
@@ -25,7 +25,7 @@ app.use('/drivers', driverRouter);
 app.use('/leaderboard', leaderboardRouter);
 app.use('/racecontrol', racecontrolRouter);
 app.use('/teamradio', teamradioRouter);
-app.use('/raceinfo', raceinfoRouter);
+app.use('/trackinfo', trackinfoRouter);
 app.use('/singledriver', singleDriverRouter);
 
 // API endpoints to fetch and return data;

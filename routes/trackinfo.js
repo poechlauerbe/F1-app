@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', (req, res) => {
-	res.render('page01', { title: 'Race Info', headline: 'Race Info', id: 'raceinfo', script: 'javascript/raceinfo.js'});
+	res.render('page01', { title: 'Track Info', headline: 'Track Info', id: 'trackinfo', script: 'javascript/trackinfo.js'});
 });
 
 module.exports = router;
