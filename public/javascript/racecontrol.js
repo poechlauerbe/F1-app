@@ -18,8 +18,11 @@ function loadSite() {
                 const timeString = date.toLocaleTimeString([], options);
 				if (raceControl['driver_number'] == null)
 					raceControlElement.textContent = timeString + '	' + raceControl['message'];
-				if (blueFlag % 2)
+				else if (blueFlag % 2)
+                {
 	                raceControlElement.textContent = timeString + ` ${raceControl['message']}`;
+                    raceControlElement.className = 'blue-flag';
+                }
                 raceControlDiv.appendChild(raceControlElement);
             });
         })
