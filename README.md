@@ -100,6 +100,10 @@ Working in progress...
 - add statistics
 - check for change - later when there is some server running permanently
 
+### Race leaderboard - open
+- add current lap
+- add tyre
+
 ### Race control - open
 - add CSS depending on the message
 
