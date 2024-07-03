@@ -63,6 +63,7 @@ Working in progress...
 - live results in race leaderboard
 
 ## next steps / ongoing
+- Race info
 - check automated updates
   - which intervals would be good?
 - add GitHub Actions
@@ -82,6 +83,7 @@ Working in progress...
 - add countdown to next race
 - errorhandling with EJS
 - single driver spectator
+- run in docker
 
 ### Data management / API management - open
 - how to store data from the api?
