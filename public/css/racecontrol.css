@@ -1,3 +1,35 @@
 .blue-flag {
 	background-color: lightblue;
 }
+
+.green-flag {
+	background-color: lightgreen;
+}
+
+.yellow-flag {
+	background-color: yellow;
+}
+
+.red-flag {
+	background-color: red;
+}
+
+.drs-on {
+	background-color: lightgreen;
+}
+
+.drs-off {
+	background-color: lightcoral;
+}
+
+.under-investigation {
+	background-color: orange;
+}
+
+.fia-penalty {
+	background-color: orange;
+}
+
+.safety-car {
+	background-color: yellow;
+}
