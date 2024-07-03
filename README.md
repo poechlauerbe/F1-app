@@ -9,7 +9,7 @@ For now there are 4 tabs with inforamtion: Drivers, Leaderboard, Race Control, T
 
 Next tests possible during the next race weekend starting on Fr 5.7.2024
 
-[Open Points list]("OpenPoints.md)
+[Open Points list](OpenPoints.md)
 
 ## How to use
 1. Clone repository:
