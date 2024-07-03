@@ -1,12 +1,7 @@
 const express = require('express');
-// const favicon = require('serve-favicon');
-// const path = require('path');
 const app = express();
 const port = 3000;
 let driverDataCache = null;
-
-// Use the serve-favicon middleware
-// app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
 app.set('view engine', 'ejs');
 
@@ -15,18 +10,23 @@ const driverRouter = require('./routes/drivers');
 const leaderboardRouter = require('./routes/leaderboard');
 const racecontrolRouter = require('./routes/racecontrol');
 const teamradioRouter = require('./routes/teamradio');
+const raceinfoRouter = require('./routes/raceinfo');
 const singleDriverRouter = require('./routes/singledriver');
 
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
 
+// Serve the favicon
+app.use('/favicon.ico', express.static('public/favicon.ico'));
+
+// Use the routes defined in the route files
 app.use('/', indexRouter);
 app.use('/drivers', driverRouter);
 app.use('/leaderboard', leaderboardRouter);
 app.use('/racecontrol', racecontrolRouter);
 app.use('/teamradio', teamradioRouter);
+app.use('/raceinfo', raceinfoRouter);
 app.use('/singledriver', singleDriverRouter);
-app.use('/favicon.ico', express.static('public/favicon.ico'));
 
 // API endpoint to fetch and return data
 app.get('/api/drivers', async (req, res) => {
