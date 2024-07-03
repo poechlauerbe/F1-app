@@ -1,11 +1,11 @@
 function Driver(number, position, photo, name, team, laps, gapToLeader) {
 	this.number = number;
-	this.position = position;
-	this.photo = photo;
-	this.name = name;
-	this.team = team;
-	this.laps = laps;
-	this.gapToLeader = gapToLeader;
+	this.position = position || 0;
+	this.photo = photo || '';
+	this.name = name || '';
+	this.team = team || '';
+	this.laps = laps || 0;
+	this.gapToLeader = gapToLeader || '';
 }
 
 let drivers = [];
@@ -47,7 +47,19 @@ const getDriverGapToLeader = (driverNumber) => {
 const addDriver = (driverNumber) => {
 	const driver = drivers.find(driver => driver.number === driverNumber);
 	if (!driver) {
-		drivers.push(new Driver(driverNumber, 0, '', '', '', 0, ''));
+		drivers.push(new Driver(driverNumber));
 	}
 }
 
+module.exports = {
+	getDrivers,
+	getDriverName,
+	getDriverTeam,
+	getDriverPhoto,
+	getDriverPosition,
+	getDriverLaps,
+	getDriverGapToLeader,
+	addDriver,
+	Driver,
+	drivers
+};

@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const port = 3000;
 let driverDataCache = null;
+const { getDrivers, addDriver, Driver } = require('./services/obj_drivers');
 
 app.set('view engine', 'ejs');
 
@@ -50,6 +51,7 @@ app.get('/api/drivers', async (req, res) => {
     try {
         const response = await fetch('https://api.openf1.org/v1/drivers?session_key=latest');
         const data = await response.json();
+        drivers = [];
         driverDataCache = data;
         res.json(data);
     } catch (error) {
