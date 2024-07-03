@@ -11,6 +11,7 @@
 - define requirements for app - what has to be installed (add on to "how to use")
 
 ## open points / ideas
+- add Pit Tab
 - adapt "how to use"
 - think about CSS grid of the different pages
 - idea layout change to tables
