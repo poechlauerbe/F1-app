@@ -17,7 +17,33 @@ function loadSite() {
                 };
                 const timeString = date.toLocaleTimeString([], options);
 				if (raceControl['driver_number'] == null)
+                {
+                    if (raceControl['message'].includes('GREEN FLAG') || raceControl['message'].includes('OPEN') || raceControl['message'].includes('CLEAR'))
+                        raceControlElement.className = 'green-flag';
+                    else if (raceControl['message'].includes('YELLOW'))
+                        raceControlElement.className = 'yellow-flag';
+                    else if (raceControl['message'].includes('CHEQUERED FLAG'))
+                        raceControlElement.className = 'finish-flag';
+                    else if (raceControl['message'].includes('RED FLAG') || raceControl['message'].includes('CLOSED'))
+                        raceControlElement.className = 'red-flag';
+                    else if (raceControl['message'].includes('PENALTY'))
+                        raceControlElement.className = 'penalty';
+                    else if (raceControl['message'].includes('BLACK FLAG'))
+                        raceControlElement.className = 'black-flag';
+                    else if (raceControl['message'].includes('SAFETY CAR'))
+                        raceControlElement.className = 'safety-car';
+                    else if (raceControl['message'].includes('DRS ENABLED'))
+                        raceControlElement.className = 'drs-enabled';
+                    else if (raceControl['message'].includes('DRS DISABLED'))
+                        raceControlElement.className = 'drs-disabled';
+                    else if (raceControl['message'].includes('FIA STEWARDS'))
+                        raceControlElement.className = 'fia-stewards';
+                    else if (raceControl['message'].includes('NOTED'))
+                        raceControlElement.className = 'noted';
+                    else if (raceControl['message'].includes('TRACK LIMITS'))
+                        raceControlElement.className = 'track-limits';
 					raceControlElement.textContent = timeString + '	' + raceControl['message'];
+                }
 				else if (blueFlag % 2)
                 {
 	                raceControlElement.textContent = timeString + ` ${raceControl['message']}`;

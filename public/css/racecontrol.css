@@ -3,7 +3,7 @@
 }
 
 .green-flag {
-	background-color: lightgreen;
+	background-color: greenyellow;
 }
 
 .yellow-flag {
@@ -14,22 +14,35 @@
 	background-color: red;
 }
 
-.drs-on {
+.drs-enabled {
 	background-color: lightgreen;
 }
 
-.drs-off {
+.drs-disabled {
 	background-color: lightcoral;
 }
 
-.under-investigation {
-	background-color: orange;
+.noted {
+	background-color: wheat;
 }
 
-.fia-penalty {
+.fia-stewards {
+	background-color: lightsalmon;
+}
+
+.penalty {
 	background-color: orange;
 }
 
 .safety-car {
 	background-color: yellow;
+}
+
+.track-limits {
+	background-color: lightgrey;
+}
+
+.finish-flag {
+	background-color: black;
+	color: white;
 }

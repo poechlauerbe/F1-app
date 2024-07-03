@@ -49,6 +49,7 @@ Working in progress...
 - in reversed order - top = newest
 - added button to turn on/off the blue flag messages
 - adapted time format
+- added CSS depending on the message
 
 ### TeamRadio Messages
 - reversed order - top = newest

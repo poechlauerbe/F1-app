@@ -46,9 +46,6 @@
 - add current lap
 - add tyre
 
-### Race control - open
-- add CSS depending on the message
-
 ### Teamradio - open
 - add photo (maybe only for bigger devices)
 - think about update strategy to not reload everything all the time
