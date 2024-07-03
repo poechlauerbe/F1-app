@@ -11,6 +11,7 @@ const leaderboardRouter = require('./routes/leaderboard');
 const racecontrolRouter = require('./routes/racecontrol');
 const teamradioRouter = require('./routes/teamradio');
 const trackinfoRouter = require('./routes/trackinfo');
+const trainingRouter = require('./routes/training');
 const singleDriverRouter = require('./routes/singledriver');
 
 // Serve static files from the 'public' directory
@@ -26,9 +27,21 @@ app.use('/leaderboard', leaderboardRouter);
 app.use('/racecontrol', racecontrolRouter);
 app.use('/teamradio', teamradioRouter);
 app.use('/trackinfo', trackinfoRouter);
+app.use('/training', trainingRouter);
 app.use('/singledriver', singleDriverRouter);
 
 // API endpoints to fetch and return data;
+
+app.get('/api/car_data', async (req, res) => {
+    try {
+        const response = await fetch('https://api.openf1.org/v1/car_data?session_key=latest');
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        console.error('Error fetching data (car_data):', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 
 app.get('/api/drivers', async (req, res) => {
     if (driverDataCache) {
@@ -52,6 +65,28 @@ app.get('/api/intervals', async (req, res) => {
         res.json(data);
     } catch (error) {
         console.error('Error fetching data (intervals):', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+app.get('/api/laps', async (req, res) => {
+    try {
+        const response = await fetch('https://api.openf1.org/v1/laps?session_key=latest');
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        console.error('Error fetching data (laps):', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+app.get('/api/pit', async (req, res) => {
+    try {
+        const response = await fetch('https://api.openf1.org/v1/pit?session_key=latest');
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        console.error('Error fetching data (pit):', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
@@ -85,6 +120,17 @@ app.get('/api/sessions', async (req, res) => {
         res.json(data);
     } catch (error) {
         console.error('Error fetching data (sessions):', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+app.get('/api/stints', async (req, res) => {
+    try {
+        const response = await fetch('https://api.openf1.org/v1/stints?session_key=latest');
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        console.error('Error fetching data (stints):', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
