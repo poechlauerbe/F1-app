@@ -1,21 +1,24 @@
 function formatDate(date) {
-	const options = {
-		year: 'numeric',
-		month: '2-digit',
-		day: '2-digit',
-	};
-	return date.toLocaleDateString([], options);
+	newDate = new Date(date);
+	const day = String(newDate.getDate());
+    const month = String(newDate.getMonth() + 1); // Months are zero-indexed
+    const year = newDate.getFullYear();
+
+    return `${day}.${month}.${year}`;
 }
 
 function formatTime(date) {
+	newDate = new Date(date);
 	const options = {
 		hour: '2-digit',
 		minute: '2-digit',
 		second: '2-digit',
 		hour12: false
 	};
-	return date.toLocaleTimeString([], options);
+	return newDate.toLocaleTimeString([], options);
 }
 
-export { formatDate, formatTime };
-
+module.exports = {
+	formatDate,
+	formatTime
+};
