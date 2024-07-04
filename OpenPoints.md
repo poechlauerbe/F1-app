@@ -4,7 +4,7 @@
 - live results in race leaderboard
 
 ## next steps / ongoing
-- Race info
+- training/qualifying mode
 - check automated updates
   - which intervals would be good?
 - add GitHub Actions
@@ -12,7 +12,6 @@
 
 ## open points / ideas
 - add Pit Tab
-- adapt "how to use"
 - think about CSS grid of the different pages
 - idea layout change to tables
 - add qualifying/training mode
@@ -41,6 +40,8 @@
 - add teamcolors
 - add statistics
 - check for change - later when there is some server running permanently
+- update: only at start
+- identifier: year + number
 
 ### Race leaderboard - open
 - add current lap
@@ -56,5 +57,9 @@
 - what does wind direction mean?
 - info: 1 update per minute
 
-Buglist:
+## Buglist
 - linter - change config-file for JavaScript - change tabs/spaces
+- local time is always server time
+
+## Fixed Bugs
+- you have to go first on drivers and then on race leaderbaord to get the race leaderboard shown. (drivers are not loaded)
