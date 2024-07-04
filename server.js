@@ -40,6 +40,19 @@ app.use(async (req, res, next) => {
     }
   });
 
+app.use(async (req, res, next) => {
+if (!getLocation()) {
+    try {
+    await loadLocation();
+    next();
+    } catch (error) {
+    res.status(500).json({ error: 'Failed to initialize location' });
+    }
+} else {
+    next();
+}
+});
+
 app.use('/', indexRouter);
 app.use('/drivers', driverRouter);
 app.use('/leaderboard', leaderboardRouter);
@@ -60,6 +73,16 @@ async function loadDrivers() {
         });
     } catch (error) {
         console.error('Error fetching data (drivers):', error);
+    }
+}
+
+async function loadLocation() {
+    try {
+        const response = await fetch('https://api.openf1.org/v1/sessions?session_key=latest');
+        const data = await response.json();
+        setLocation(data[0]['session_key'], data[0]['session_name'], data[0]['session_type'], data[0]['location'], data[0]['country_name'], data[0]['date_start'], data[0]['date_end'])
+    } catch (error) {
+        console.error('Error fetching data (sessions):', error);
     }
 }
 
