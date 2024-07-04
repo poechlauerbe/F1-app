@@ -3,7 +3,6 @@ const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch
 
 const app = express();
 const port = 3000;
-let driverDataCache = null;
 const { getDrivers, addDriver, Driver } = require('./services/obj_drivers');
 
 app.set('view engine', 'ejs');
@@ -47,14 +46,18 @@ app.get('/api/car_data', async (req, res) => {
 });
 
 app.get('/api/drivers', async (req, res) => {
-    if (driverDataCache) {
-        return res.json(driverDataCache);
+    const drivers = JSON.stringify(getDrivers(), null, 2) ;
+    if (getDrivers().length > 0) {
+        console.log('Error: $' + drivers[0] + '$')
+        return res.json(getDrivers());
     }
     try {
         const response = await fetch('https://api.openf1.org/v1/drivers?session_key=latest');
         const data = await response.json();
-        drivers = [];
-        driverDataCache = data;
+        data.forEach(element => {
+            console.log(element['driver_number']);
+            addDriver(element['driver_number']);
+        });
         res.json(data);
     } catch (error) {
         console.error('Error fetching data (drivers):', error);
