@@ -3,7 +3,10 @@ const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch
 
 const app = express();
 const port = 3000;
-const { getDrivers, addDriver, Driver } = require('./services/obj_drivers');
+
+const { getDrivers, addDriver, Driver, updatePositions } = require('./services/obj_drivers');
+
+let positionLastUpdate = 0;
 
 app.set('view engine', 'ejs');
 
@@ -101,7 +104,10 @@ app.get('/api/positions', async (req, res) => {
     try {
         const response = await fetch('https://api.openf1.org/v1/position?session_key=latest');
         const data = await response.json();
-        res.json(data);
+        data.forEach( element => {
+            updatePositions(element['driver_number'], element['position'])
+        })
+        res.json(getDrivers());
     } catch (error) {
         console.error('Error fetching data (positions):', error);
         res.status(500).json({ error: 'Internal Server Error' });

@@ -55,6 +55,11 @@ const addDriver = (driverNumber, driverName, driverCountry, team, teamColor, pho
 	}
 }
 
+const updatePositions = (driverNumber, position) => {
+	const driver = drivers.find(driver => driver.number === driverNumber);
+	driver.position = position;
+}
+
 module.exports = {
 	getDrivers,
 	getDriverName,
@@ -64,6 +69,7 @@ module.exports = {
 	getDriverLaps,
 	getDriverGapToLeader,
 	addDriver,
+	updatePositions,
 	Driver,
 	drivers
 };
