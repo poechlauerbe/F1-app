@@ -5,7 +5,8 @@ const app = express();
 const port = 3000;
 
 const { getDrivers, addDriver, updatePositions, updateGapToLeader } = require('./services/obj_drivers');
-const { getLocation, setLocation } = require('./services/obj_location');
+const { getLocation, setLocation, updateActualLocationWeather } = require('./services/obj_location');
+const { getLastWeather, addWeather } = require('./services/obj_weather');
 
 let positionLastUpdate = 0;
 
@@ -53,6 +54,19 @@ if (!getLocation()) {
 }
 });
 
+app.use(async (req, res, next) => {
+    if (!getLocation() || !getLastWeather()) {
+        try {
+        await loadWeather();
+        next();
+        } catch (error) {
+        res.status(500).json({ error: 'Failed to initialize weather' });
+        }
+    } else {
+        next();
+    }
+    });
+
 app.use('/', indexRouter);
 app.use('/drivers', driverRouter);
 app.use('/leaderboard', leaderboardRouter);
@@ -83,6 +97,19 @@ async function loadLocation() {
         setLocation(data[0]['session_key'], data[0]['session_name'], data[0]['session_type'], data[0]['location'], data[0]['country_name'], data[0]['date_start'], data[0]['date_end'])
     } catch (error) {
         console.error('Error fetching data (sessions):', error);
+    }
+}
+
+async function loadWeather() {
+    try {
+        const response = await fetch('https://api.openf1.org/v1/weather?session_key=latest');
+        const data = await response.json();
+        data.forEach( element => {
+            addWeather(element['date'], element['air_temperature'], element['track_temperature'], element['humidity'], element['pressure'], element['wind_speed'], element['wind_direction'], element['rainfall']);
+        })
+        updateActualLocationWeather();
+    } catch (error) {
+        console.error('Error fetching data (weather):', error);
     }
 }
 
@@ -189,6 +216,7 @@ app.get('/api/sessions', async (req, res) => {
         const response = await fetch('https://api.openf1.org/v1/sessions?session_key=latest');
         const data = await response.json();
         setLocation(data[0]['session_key'], data[0]['session_name'], data[0]['session_type'], data[0]['location'], data[0]['country_name'], data[0]['date_start'], data[0]['date_end'])
+        console.log(getLocation())
         res.json(getLocation());
     } catch (error) {
         console.error('Error fetching data (sessions):', error);
@@ -222,7 +250,10 @@ app.get('/api/weather', async (req, res) => {
     try {
         const response = await fetch('https://api.openf1.org/v1/weather?session_key=latest');
         const data = await response.json();
-        res.json(data);
+        data.forEach( element => {
+            addWeather(element['date'], element['air_temperature'], element['track_temperature'], element['humidity'], element['pressure'], element['wind_speed'], element['wind_direction'], element['rainfall']);
+        })
+        res.json(getLastWeather());
     } catch (error) {
         console.error('Error fetching data (weather):', error);
         res.status(500).json({ error: 'Internal Server Error' });

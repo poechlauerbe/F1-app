@@ -15,21 +15,16 @@ document.addEventListener('DOMContentLoaded', () => {
 			else
 				sessionElement.textContent = `Session: ${data['sessionName']} - ${data['sessionType']} `;
 			trackinfoDiv.appendChild(sessionElement);
+
 			const dateElement = document.createElement('p');
 			dateElement.textContent = `Date: ${data['date']} \nStart*: ${data['start']} \nEnd*: ${data['end']}\n * your local time `;
 			trackinfoDiv.appendChild(dateElement);
-			return fetch('/api/weather')
-        })
-        .then(response => response.json())
-        .then(data => {
-
 			const weatherHeading = document.createElement('h2');
 			weatherHeading.textContent = 'Weather';
 			trackinfoDiv.appendChild(weatherHeading);
-			last = data.length - 1;
 			const weatherElement = document.createElement('p');
-			let pressure = data[last]['pressure'] / 1000;
-			weatherElement.textContent = `date/time: ${data[last]['date']} \nAir temperature: ${data[last]['air_temperature']}°C\nHumidity: ${data[last]['humidity']}%\npressure: ${pressure} bar\nWind speed: ${data[last]['wind_speed']} m/s\nWind direction: ${data[last]['wind_direction']}°\nRainfall: ${data[last]['rainfall']}`;
+			let pressure = data['weather']['pressure'] / 1000;
+			weatherElement.textContent = `date/time: ${data['weather']['time']} \nAir temperature: ${data['weather']['airTemp']}°C\nTrack temperature: ${data['weather']['trackTemp']}°C\nHumidity: ${data['weather']['humidity']}%\npressure: ${pressure} bar\nWind speed: ${data['weather']['windSpeed']} m/s\nWind direction: ${data['weather']['windDirection']}°\nRainfall: ${data['weather']['rainfall']}`;
 			trackinfoDiv.appendChild(weatherElement);
         })
         .catch(error => {

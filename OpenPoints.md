@@ -59,6 +59,7 @@
 
 ## Buglist
 - linter - change config-file for JavaScript - change tabs/spaces
+- local time is always server time
 
 ## Fixed Bugs
 - you have to go first on drivers and then on race leaderbaord to get the race leaderboard shown. (drivers are not loaded)
