@@ -7,6 +7,7 @@ const port = 3000;
 const { getDrivers, addDriver, updatePositions, updateGapToLeader } = require('./services/obj_drivers');
 const { getLocation, setLocation, updateActualLocationWeather } = require('./services/obj_location');
 const { getLastWeather, addWeather } = require('./services/obj_weather');
+const { addTeamradios, getTeamradios } = require('./services/obj_teamradio');
 
 let positionLastUpdate = 0;
 
@@ -239,7 +240,10 @@ app.get('/api/teamradio', async (req, res) => {
     try {
         const response = await fetch('https://api.openf1.org/v1/team_radio?session_key=latest');
         const data = await response.json();
-        res.json(data);
+        data.forEach(element => {
+            addTeamradios(element['date'], element['driver_number'], element['recording_url']);
+        })
+        res.json(getTeamradios());
     } catch (error) {
         console.error('Error fetching data (teamradio):', error);
         res.status(500).json({ error: 'Internal Server Error' });

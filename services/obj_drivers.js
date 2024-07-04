@@ -23,25 +23,25 @@ const getDriverName = (driverNumber) => {
 	return driver.name;
 }
 
-const getDriverTeam = (driverNumber) => {
-	const driver = drivers.find(driver => driver.number === driverNumber);
-	return driver.team;
-}
+// const getDriverTeam = (driverNumber) => {
+// 	const driver = drivers.find(driver => driver.number === driverNumber);
+// 	return driver.team;
+// }
 
-const getDriverPhoto = (driverNumber) => {
-	const driver = drivers.find(driver => driver.number === driverNumber);
-	return driver.photo;
-}
+// const getDriverPhoto = (driverNumber) => {
+// 	const driver = drivers.find(driver => driver.number === driverNumber);
+// 	return driver.photo;
+// }
 
-const getDriverPosition = (driverNumber) => {
-	const driver = drivers.find(driver => driver.number === driverNumber);
-	return driver.position;
-}
+// const getDriverPosition = (driverNumber) => {
+// 	const driver = drivers.find(driver => driver.number === driverNumber);
+// 	return driver.position;
+// }
 
-const getDriverLaps = (driverNumber) => {
-	const driver = drivers.find(driver => driver.number === driverNumber);
-	return driver.laps;
-}
+// const getDriverLaps = (driverNumber) => {
+// 	const driver = drivers.find(driver => driver.number === driverNumber);
+// 	return driver.laps;
+// }
 
 const getDriverGapToLeader = (driverNumber) => {
 	const driver = drivers.find(driver => driver.number === driverNumber);
@@ -68,10 +68,10 @@ const updateGapToLeader = (driverNumber, newGap) => {
 module.exports = {
 	getDrivers,
 	getDriverName,
-	getDriverTeam,
-	getDriverPhoto,
-	getDriverPosition,
-	getDriverLaps,
+	// getDriverTeam,
+	// getDriverPhoto,
+	// getDriverPosition,
+	// getDriverLaps,
 	getDriverGapToLeader,
 	addDriver,
 	updatePositions,

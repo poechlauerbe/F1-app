@@ -1,5 +1,5 @@
 const { formatDate, formatTime } = require('./service_time')
-const { getLastWeather } = require('../services/obj_weather');
+const { getLastWeather } = require('./obj_weather');
 
 function Location(sessionId, sessionName, sessionType, name, country, date, start, end) {
 	this.sessionId = sessionId || 0;
