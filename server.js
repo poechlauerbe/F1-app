@@ -38,7 +38,7 @@ app.use(async (req, res, next) => {
       next();
     }
   });
-  
+
 app.use('/', indexRouter);
 app.use('/drivers', driverRouter);
 app.use('/leaderboard', leaderboardRouter);
@@ -59,6 +59,19 @@ async function loadDrivers() {
         });
     } catch (error) {
         console.error('Error fetching data (drivers):', error);
+    }
+}
+
+async function loadIntervals() {
+    try {
+        const response = await fetch('https://api.openf1.org/v1/intervals?session_key=latest');
+        const data = await response.json();
+        data.forEach(element => {
+            updateGapToLeader(element['driver_number'], element['gap_to_leader'])
+        })
+    } catch (error) {
+        console.error('Error fetching data (intervals):', error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 }
 
@@ -86,18 +99,18 @@ app.get('/api/drivers', async (req, res) => {
     }
 });
 
-app.get('/api/intervals', async (req, res) => {
-    try {
-        const response = await fetch('https://api.openf1.org/v1/intervals?session_key=latest');
-        const data = await response.json();
-        res.json(data);
-    } catch (error) {
-        console.error('Error fetching data (intervals):', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
+// app.get('/api/intervals', async (req, res) => {
+//     try {
+//         const response = await fetch('https://api.openf1.org/v1/intervals?session_key=latest');
+//         const data = await response.json();
+//         res.json(data);
+//     } catch (error) {
+//         console.error('Error fetching data (intervals):', error);
+//         res.status(500).json({ error: 'Internal Server Error' });
+//     }
 // update possible with request like this: curl 'https://api.openf1.org/v1/intervals?session_key=latest&date>2024-06-30T14:31:28.0'
+// });
 
-});
 
 app.get('/api/laps', async (req, res) => {
     try {
@@ -125,6 +138,7 @@ app.get('/api/positions', async (req, res) => {
     try {
         const response = await fetch('https://api.openf1.org/v1/position?session_key=latest');
         const data = await response.json();
+        await loadIntervals();
         data.forEach( element => {
             updatePositions(element['driver_number'], element['position'])
         })
