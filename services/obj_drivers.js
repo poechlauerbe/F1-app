@@ -1,12 +1,16 @@
-function Driver(number, position, photo, name, team, laps, gapToLeader) {
+function Driver(number, name, photo_url, country, team, team_color, position, laps, gapToLeader) {
 	this.number = number;
-	this.position = position || 0;
-	this.photo = photo || '';
 	this.name = name || '';
+	this.photo_url = photo_url || '';
+	this.country = country || '';
 	this.team = team || '';
+	this.team_color = team_color || '';
+	this.position = position || 0;
 	this.laps = laps || 0;
 	this.gapToLeader = gapToLeader || '';
+// check update depending on session key
 }
+
 
 let drivers = [];
 
@@ -44,10 +48,10 @@ const getDriverGapToLeader = (driverNumber) => {
 	return driver.gapToLeader;
 }
 
-const addDriver = (driverNumber) => {
+const addDriver = (driverNumber, driverName, driverCountry, team, teamColor, photoUrl) => {
 	const driver = drivers.find(driver => driver.number === driverNumber);
 	if (!driver) {
-		drivers.push(new Driver(driverNumber));
+		drivers.push(new Driver(driverNumber, driverName, photoUrl, driverCountry, team, teamColor));
 	}
 }
 

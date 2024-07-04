@@ -46,19 +46,16 @@ app.get('/api/car_data', async (req, res) => {
 });
 
 app.get('/api/drivers', async (req, res) => {
-    const drivers = JSON.stringify(getDrivers(), null, 2) ;
     if (getDrivers().length > 0) {
-        console.log('Error: $' + drivers[0] + '$')
         return res.json(getDrivers());
     }
     try {
         const response = await fetch('https://api.openf1.org/v1/drivers?session_key=latest');
         const data = await response.json();
         data.forEach(element => {
-            console.log(element['driver_number']);
-            addDriver(element['driver_number']);
+            addDriver(element['driver_number'], element['full_name'], element['country_code'], element['team_name'], element['team_colour'], element['headshot_url']);
         });
-        res.json(data);
+        res.json(getDrivers());
     } catch (error) {
         console.error('Error fetching data (drivers):', error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -74,6 +71,8 @@ app.get('/api/intervals', async (req, res) => {
         console.error('Error fetching data (intervals):', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
+// update possible with request like this: curl 'https://api.openf1.org/v1/intervals?session_key=latest&date>2024-06-30T14:31:28.0'
+
 });
 
 app.get('/api/laps', async (req, res) => {

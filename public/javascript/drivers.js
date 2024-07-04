@@ -5,9 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const driversDiv = document.getElementById('drivers');
             data.forEach(driver => {
                 const driverElement = document.createElement('p');
-                driverElement.textContent = `Name: ${driver['full_name']}, Number: ${driver['number']}, Team: ${driver['team_name']}, Country: ${driver['country_code']}`;
+                driverElement.textContent = `Name: ${driver['name']}, Number: ${driver['number']}, Team: ${driver['team']}, Country: ${driver['country']}`;
                 const driverImage = document.createElement('img');
-                driverImage.src = driver['headshot_url'];
+                driverImage.src = driver['photo_url'];
                 driversDiv.appendChild(driverElement);
                 driversDiv.appendChild(driverImage);
             });
