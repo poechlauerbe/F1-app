@@ -4,7 +4,7 @@ const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch
 const app = express();
 const port = 3000;
 
-const { getDrivers, addDriver, Driver, updatePositions } = require('./services/obj_drivers');
+const { getDrivers, addDriver, updatePositions, updateGapToLeader } = require('./services/obj_drivers');
 
 let positionLastUpdate = 0;
 
@@ -26,6 +26,19 @@ app.use(express.static('public'));
 app.use('/favicon.ico', express.static('public/favicon.ico'));
 
 // Use the routes defined in the route files
+app.use(async (req, res, next) => {
+    if (getDrivers().length === 0) {
+      try {
+        await loadDrivers();
+        next();
+      } catch (error) {
+        res.status(500).json({ error: 'Failed to initialize drivers' });
+      }
+    } else {
+      next();
+    }
+  });
+  
 app.use('/', indexRouter);
 app.use('/drivers', driverRouter);
 app.use('/leaderboard', leaderboardRouter);
@@ -36,6 +49,18 @@ app.use('/training', trainingRouter);
 app.use('/singledriver', singleDriverRouter);
 
 // API endpoints to fetch and return data;
+
+async function loadDrivers() {
+    try {
+        const response = await fetch('https://api.openf1.org/v1/drivers?session_key=latest');
+        const data = await response.json();
+        data.forEach(element => {
+            addDriver(element['driver_number'], element['full_name'], element['country_code'], element['team_name'], element['team_colour'], element['headshot_url']);
+        });
+    } catch (error) {
+        console.error('Error fetching data (drivers):', error);
+    }
+}
 
 app.get('/api/car_data', async (req, res) => {
     try {
@@ -53,11 +78,7 @@ app.get('/api/drivers', async (req, res) => {
         return res.json(getDrivers());
     }
     try {
-        const response = await fetch('https://api.openf1.org/v1/drivers?session_key=latest');
-        const data = await response.json();
-        data.forEach(element => {
-            addDriver(element['driver_number'], element['full_name'], element['country_code'], element['team_name'], element['team_colour'], element['headshot_url']);
-        });
+        await loadDrivers();
         res.json(getDrivers());
     } catch (error) {
         console.error('Error fetching data (drivers):', error);

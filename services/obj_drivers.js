@@ -60,6 +60,11 @@ const updatePositions = (driverNumber, position) => {
 	driver.position = position;
 }
 
+const updateGapToLeader = (driverNumber, newGap) => {
+	const driver = drivers.find(driver => driver.number === driverNumber);
+	driver.gapToLeader = newGap;
+}
+
 module.exports = {
 	getDrivers,
 	getDriverName,
@@ -70,6 +75,7 @@ module.exports = {
 	getDriverGapToLeader,
 	addDriver,
 	updatePositions,
+	updateGapToLeader,
 	Driver,
 	drivers
 };
