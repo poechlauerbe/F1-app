@@ -4,10 +4,11 @@ const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch
 const app = express();
 const port = 3000;
 
-const { getDrivers, addDriver, updatePositions, updateGapToLeader } = require('./services/obj_drivers');
+const { getDrivers, addDriver, updatePositions, updateGapToLeader, updateDriverLaps } = require('./services/obj_drivers');
 const { getLocation, setLocation, updateActualLocationWeather } = require('./services/obj_location');
 const { getLastWeather, addWeather } = require('./services/obj_weather');
 const { addTeamradios, getTeamradios } = require('./services/obj_teamradio');
+const { addLap, getLastLap } = require('./services/obj_laps');
 
 let positionLastUpdate = 0;
 
@@ -21,6 +22,8 @@ const teamradioRouter = require('./routes/teamradio');
 const trackinfoRouter = require('./routes/trackinfo');
 const trainingRouter = require('./routes/training');
 const singleDriverRouter = require('./routes/singledriver');
+
+
 
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
@@ -66,7 +69,20 @@ app.use(async (req, res, next) => {
     } else {
         next();
     }
-    });
+});
+
+app.use(async (req, res, next) => {
+    if (!getLocation() || !getLastWeather()) {
+        try {
+        await loadLaps();;
+        next();
+        } catch (error) {
+        res.status(500).json({ error: 'Failed to initialize weather' });
+        }
+    } else {
+        next();
+    }
+});
 
 app.use('/', indexRouter);
 app.use('/drivers', driverRouter);
@@ -132,7 +148,8 @@ async function loadLaps() {
         const response = await fetch('https://api.openf1.org/v1/laps?session_key=latest');
         const data = await response.json();
         data.forEach(element => {
-            addLap();
+            addLap(element['driver_number'], element['duration_sector_1'], element['duration_sector_2'], element['duration_sector_3'], element['lap_number']);
+            updateDriverLaps(element['driver_number'], getLastLap(element['driver_number']))
         })
     } catch (error) {
         console.error('Error fetching data (laps):', error);
@@ -151,6 +168,8 @@ app.get('/api/car_data', async (req, res) => {
 });
 
 app.get('/api/drivers', async (req, res) => {
+    await loadLaps();
+    // console.log(getDrivers());
     if (getDrivers().length > 0) {
         return res.json(getDrivers());
     }

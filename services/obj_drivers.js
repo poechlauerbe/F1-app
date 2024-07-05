@@ -1,4 +1,4 @@
-function Driver(number, name, photo_url, country, team, team_color, position, laps, gapToLeader, lastLap, fastestLap) {
+function Driver(number, name, photo_url, country, team, team_color, position, lapCount, gapToLeader, lastLap, fastestLap) {
 	this.number = number;
 	this.name = name || '';
 	this.photo_url = photo_url || '';
@@ -6,10 +6,11 @@ function Driver(number, name, photo_url, country, team, team_color, position, la
 	this.team = team || '';
 	this.team_color = team_color || '';
 	this.position = position || 0;
-	this.laps = laps || 0;
+	this.lapCount = lapCount || 0;
 	this.gapToLeader = gapToLeader || '';
-	this.lastLap = lastLap || 'no time';
-	this.fastestLap = fastestLap || 'no time';
+	this.lastLap = lastLap || {};
+	this.fastestLap = fastestLap || {};
+	this.laps = [];
 // check update depending on session key
 }
 
@@ -24,7 +25,7 @@ const getDriverName = (driverNumber) => {
 	return driver.name;
 }
 
-const getLastLap = (driverNumber) => {
+const getDriverLastLap = (driverNumber) => {
 	const driver = drivers.find(driver => driver.number === driverNumber);
 	return driver.lastLap;
 }
@@ -76,23 +77,31 @@ const updateGapToLeader = (driverNumber, newGap) => {
 	driver.gapToLeader = newGap;
 }
 
-const updateLaps = (driverNumber, newLap) => {
+const updateDriverLaps = (driverNumber, newLap) => {
 	const driver = drivers.find(driver => driver.number === driverNumber);
+	console.log(newLap);
+	if (!driver)
+	{
+		console.log("driver not found")
+		return null;
+	}
+	console.log(newLap);
 	driver.lastLap = newLap;
+	console.log(driver.lastLap);
 	// check also for fastest Lap
-	if (driver.fastestLap === 'no time')
-		driver.fastestLap = newLap; // not correct - have to add check for fastest lap
+	// if (driver.fastestLap === 'no time')
+	// 	driver.fastestLap = newLap; // not correct - have to add check for fastest lap
 
 }
 
 module.exports = {
 	getDrivers,
 	getDriverName,
-	getLastLap,
+	getDriverLastLap,
 	getFastestLap,
 	getDriverGapToLeader,
 	addDriver,
 	updatePositions,
 	updateGapToLeader,
-	updateLaps
+	updateDriverLaps
 };

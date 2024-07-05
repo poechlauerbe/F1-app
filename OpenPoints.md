@@ -64,3 +64,7 @@
 
 ## Fixed Bugs
 - you have to go first on drivers and then on race leaderbaord to get the race leaderboard shown. (drivers are not loaded)
+
+## Technical questions
+- how to automatically add versions
+- change package.json verson automatically
