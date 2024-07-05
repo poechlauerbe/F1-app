@@ -12,6 +12,7 @@
 
 ## open points / ideas
 - add Pit Tab
+- when new session - delete some of the data in driver, weather, laps, etc.
 - think about CSS grid of the different pages
 - idea layout change to tables
 - add qualifying/training mode

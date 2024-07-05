@@ -127,6 +127,18 @@ async function loadIntervals() {
     }
 }
 
+async function loadLaps() {
+    try {
+        const response = await fetch('https://api.openf1.org/v1/laps?session_key=latest');
+        const data = await response.json();
+        data.forEach(element => {
+            addLap();
+        })
+    } catch (error) {
+        console.error('Error fetching data (laps):', error);
+    }
+}
+
 app.get('/api/car_data', async (req, res) => {
     try {
         const response = await fetch('https://api.openf1.org/v1/car_data?session_key=latest');

@@ -1,4 +1,4 @@
-function Driver(number, name, photo_url, country, team, team_color, position, laps, gapToLeader) {
+function Driver(number, name, photo_url, country, team, team_color, position, laps, gapToLeader, lastLap, fastestLap) {
 	this.number = number;
 	this.name = name || '';
 	this.photo_url = photo_url || '';
@@ -8,9 +8,10 @@ function Driver(number, name, photo_url, country, team, team_color, position, la
 	this.position = position || 0;
 	this.laps = laps || 0;
 	this.gapToLeader = gapToLeader || '';
+	this.lastLap = lastLap || 'no time';
+	this.fastestLap = fastestLap || 'no time';
 // check update depending on session key
 }
-
 
 let drivers = [];
 
@@ -23,6 +24,16 @@ const getDriverName = (driverNumber) => {
 	return driver.name;
 }
 
+const getLastLap = (driverNumber) => {
+	const driver = drivers.find(driver => driver.number === driverNumber);
+	return driver.lastLap;
+}
+
+
+const getFastestLap = (driverNumber) => {
+	const driver = drivers.find(driver => driver.number === driverNumber);
+	return driver.lastLap;
+}
 // const getDriverTeam = (driverNumber) => {
 // 	const driver = drivers.find(driver => driver.number === driverNumber);
 // 	return driver.team;
@@ -65,17 +76,23 @@ const updateGapToLeader = (driverNumber, newGap) => {
 	driver.gapToLeader = newGap;
 }
 
+const updateLaps = (driverNumber, newLap) => {
+	const driver = drivers.find(driver => driver.number === driverNumber);
+	driver.lastLap = newLap;
+	// check also for fastest Lap
+	if (driver.fastestLap === 'no time')
+		driver.fastestLap = newLap; // not correct - have to add check for fastest lap
+
+}
+
 module.exports = {
 	getDrivers,
 	getDriverName,
-	// getDriverTeam,
-	// getDriverPhoto,
-	// getDriverPosition,
-	// getDriverLaps,
+	getLastLap,
+	getFastestLap,
 	getDriverGapToLeader,
 	addDriver,
 	updatePositions,
 	updateGapToLeader,
-	Driver,
-	drivers
+	updateLaps
 };
