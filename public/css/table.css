@@ -1,3 +1,13 @@
-.tableBorder {
-	border: 1px solid black;
+table {
+	border: 2px solid black;
+	border-collapse: collapse;
+}
+
+thead{
+	border: 2px solid black;
+}
+
+td, th  {
+	border: 1px solid grey;
+	padding: 5px;
 }

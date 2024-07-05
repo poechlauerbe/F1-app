@@ -61,11 +61,14 @@
 ## Buglist
 - linter - change config-file for JavaScript - change tabs/spaces
 - local time is always server time
+- during training sessions wrong messages in leaderboard (seconds behind leader)
 
-## Fixed Bugs
-- you have to go first on drivers and then on race leaderbaord to get the race leaderboard shown. (drivers are not loaded)
 
 ## Technical questions
 - how to automatically add versions
 - change package.json verson automatically
 - how to combine tyres with laps
+
+
+## Fixed Bugs
+- you have to go first on drivers and then on race leaderbaord to get the race leaderboard shown. (drivers are not loaded)

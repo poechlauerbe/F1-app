@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					{
 						const positionsElement = document.createElement('p');
 						const positionsImg = document.createElement('img');
+						// make textstring and then put it into textContent
 						if (i === 1) {
 							positionsElement.textContent = (i) +  `. ${driver['name']} - ${driver['team']} - Leader`;
 						}

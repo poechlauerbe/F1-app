@@ -333,10 +333,17 @@ loadDrivers();
 loadLocation();
 
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+    console.error(new Date().toISOString() + `: Server running at http://localhost:${port}`);
 });
-
 startUpdateLocation(15000);
 startUpdateStints(5000);
 startUpdateLaps(5000);
 startUpdatePositions(5000);
+
+function logTimeToStderr() {
+    const currentTime = new Date().toISOString();
+    console.error(currentTime);
+}
+
+// Log the current time to stderr every 10 minutes
+setInterval(logTimeToStderr, 10 * 60 * 1000);
