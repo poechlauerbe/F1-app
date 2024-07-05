@@ -68,3 +68,4 @@
 ## Technical questions
 - how to automatically add versions
 - change package.json verson automatically
+- how to combine tyres with laps

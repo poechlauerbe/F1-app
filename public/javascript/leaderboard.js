@@ -1,6 +1,6 @@
 
 document.addEventListener('DOMContentLoaded', () => {
-    fetch('/api/positions')
+    fetch('/api/drivers')
         .then(response => response.json())
         .then(data => {
 			const positionsDiv = document.getElementById('positions');

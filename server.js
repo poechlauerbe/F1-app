@@ -52,25 +52,6 @@ const trainingRouter = require('./routes/training');
 const singleDriverRouter = require('./routes/singledriver');
 
 
-
-// app.use(async (req, res, next) => {
-//     if (!getLastLap()) {
-//         try {
-//         await loadLaps();
-//         console.log('Laps loaded')
-//         next();
-//         } catch (error) {
-//         res.status(500).json({ error: 'Failed to initialize weather' });
-//         }
-//     } else {
-//         next();
-//     }
-// });
-
-
-
-
-
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
 
@@ -85,6 +66,11 @@ app.use('/teamradio', teamradioRouter);
 app.use('/trackinfo', trackinfoRouter);
 app.use('/training', trainingRouter);
 app.use('/singledriver', singleDriverRouter);
+
+loadLocationIsFetching = false;
+loadStintsIsFetching = false;
+loadLapsIsFetching = false;
+loadPositionsIsFetching = false;
 
 // Function to start the regular updates
 const startUpdateLocation = (interval) => {
@@ -118,6 +104,17 @@ const startUpdateLaps = (interval) => {
         await loadLaps();
 
         loadLapsIsFetching = false;
+    }, interval);
+};
+
+const startUpdatePositions = (interval) => {
+    setInterval(async () => {
+        if (loadPositionsIsFetching) return; // Prevent overlapping calls
+        loadPositionsIsFetching = true;
+
+        await loadPositions();
+
+        loadPositionsIsFetching = false;
     }, interval);
 };
 
@@ -156,6 +153,7 @@ async function loadWeather() {
     }
 }
 
+// only during race
 async function loadIntervals() {
     try {
         const response = await fetch('https://api.openf1.org/v1/intervals?session_key=latest');
@@ -179,6 +177,18 @@ async function loadLaps() {
         })
     } catch (error) {
         console.error('Error fetching data (laps):', error);
+    }
+}
+
+async function loadPositions() {
+    try {
+        const response = await fetch('https://api.openf1.org/v1/position?session_key=latest');
+        const data = await response.json();
+        data.forEach( element => {
+            updatePositions(element['driver_number'], element['position'])
+        })
+    } catch (error) {
+        console.error('Error fetching data (positions):', error);
     }
 }
 
@@ -321,18 +331,12 @@ console.log("Server loading ...");
 
 loadDrivers();
 loadLocation();
-// loadLaps();
-// loadIntervals();
-// loadStints();
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
 
-loadLocationIsFetching = false;
-loadStintsIsFetching = false;
-loadLapsIsFetching = false;
-
 startUpdateLocation(15000);
 startUpdateStints(5000);
 startUpdateLaps(5000);
+startUpdatePositions(5000);
