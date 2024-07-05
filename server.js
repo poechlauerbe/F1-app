@@ -3,14 +3,13 @@ const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch
 
 const app = express();
 const port = 3000;
+let startProcessFinished = 0;
 
 const { getDrivers, addDriver, updatePositions, updateGapToLeader, updateDriverLaps, updateDriverTyre } = require('./services/obj_drivers');
 const { getLocation, setLocation, updateActualLocationWeather } = require('./services/obj_location');
 const { getLastWeather, addWeather } = require('./services/obj_weather');
 const { addTeamradios, getTeamradios } = require('./services/obj_teamradio');
-const { addLap, getLastLap } = require('./services/obj_laps');
-
-let positionLastUpdate = 0;
+const { addLap, getLastLap, getPreLastLap } = require('./services/obj_laps');
 
 app.set('view engine', 'ejs');
 
@@ -23,6 +22,63 @@ const trackinfoRouter = require('./routes/trackinfo');
 const trainingRouter = require('./routes/training');
 const singleDriverRouter = require('./routes/singledriver');
 
+// Use the routes defined in the route files
+// app.use(async (req, res, next) => {
+//     if (getDrivers().length === 0) {
+//       try {
+//         await loadDrivers();
+//         console.log('Driver loaded')
+//         next();
+//       } catch (error) {
+//         res.status(500).json({ error: 'Failed to initialize drivers' });
+//       }
+//     } else {
+//       next();
+//     }
+//   });
+
+// app.use(async (req, res, next) => {
+// if (!getLocation()) {
+//     try {
+//     await loadLocation();
+//     console.log('Location loaded')
+//     next();
+//     } catch (error) {
+//     res.status(500).json({ error: 'Failed to initialize location' });
+//     }
+// } else {
+//     next();
+// }
+// });
+
+// app.use(async (req, res, next) => {
+//     if (!getLastLap()) {
+//         try {
+//         await loadLaps();
+//         console.log('Laps loaded')
+//         next();
+//         } catch (error) {
+//         res.status(500).json({ error: 'Failed to initialize weather' });
+//         }
+//     } else {
+//         next();
+//     }
+// });
+
+// app.use(async (req, res, next) => {
+//     if (getLocation() && !getLastWeather()) {
+//         try {
+//         await loadWeather();
+//         console.log('Weather loaded')
+//         next();
+//         } catch (error) {
+//         res.status(500).json({ error: 'Failed to initialize weather' });
+//         }
+//     } else {
+//         next();
+//     }
+// });
+
 
 
 // Serve static files from the 'public' directory
@@ -30,59 +86,6 @@ app.use(express.static('public'));
 
 // Serve the favicon
 app.use('/favicon.ico', express.static('public/favicon.ico'));
-
-// Use the routes defined in the route files
-app.use(async (req, res, next) => {
-    if (getDrivers().length === 0) {
-      try {
-        await loadDrivers();
-        next();
-      } catch (error) {
-        res.status(500).json({ error: 'Failed to initialize drivers' });
-      }
-    } else {
-      next();
-    }
-  });
-
-app.use(async (req, res, next) => {
-if (!getLocation()) {
-    try {
-    await loadLocation();
-    next();
-    } catch (error) {
-    res.status(500).json({ error: 'Failed to initialize location' });
-    }
-} else {
-    next();
-}
-});
-
-app.use(async (req, res, next) => {
-    if (!getLocation() || !getLastWeather()) {
-        try {
-        await loadWeather();
-        next();
-        } catch (error) {
-        res.status(500).json({ error: 'Failed to initialize weather' });
-        }
-    } else {
-        next();
-    }
-});
-
-app.use(async (req, res, next) => {
-    if (!getLocation() || !getLastWeather()) {
-        try {
-        await loadLaps();;
-        next();
-        } catch (error) {
-        res.status(500).json({ error: 'Failed to initialize weather' });
-        }
-    } else {
-        next();
-    }
-});
 
 app.use('/', indexRouter);
 app.use('/drivers', driverRouter);
@@ -94,6 +97,53 @@ app.use('/training', trainingRouter);
 app.use('/singledriver', singleDriverRouter);
 
 // API endpoints to fetch and return data;
+
+// setInterval(loadIntervals(), 5000);
+// setInterval(loadWeather(), 15000);
+
+
+let loadLocationIsFetching = true;
+let loadStintsIsFetching = true;
+let loadLapsIsFetching = true;
+
+// Function to start the regular updates
+const startUpdateLocation = (interval) => {
+    setInterval(async () => {
+        if (loadLocationIsFetching) return; // Prevent overlapping calls
+        loadLocationIsFetching = true;
+
+        await loadLocation();
+        await loadWeather();
+
+        loadLocationIsFetching = false;
+    }, interval);
+};
+
+const startUpdateStints = (interval) => {
+    setInterval(async () => {
+        if (loadStintsIsFetching) return; // Prevent overlapping calls
+        loadStintsIsFetching = true;
+
+        await loadStints();
+
+        loadStintsIsFetching = false;
+    }, interval);
+};
+
+const startUpdateLaps = (interval) => {
+    setInterval(async () => {
+        if (loadLapsIsFetching) return; // Prevent overlapping calls
+        loadLapsIsFetching = true;
+
+        await loadLaps();
+
+        loadLapsIsFetching = false;
+    }, interval);
+};
+
+startUpdateLocation(15000);
+startUpdateStints(5000);
+startUpdateLaps(5000);
 
 async function loadDrivers() {
     try {
@@ -116,6 +166,9 @@ async function loadLocation() {
         console.error('Error fetching data (sessions):', error);
     }
 }
+
+
+
 
 async function loadWeather() {
     try {
@@ -180,9 +233,6 @@ app.get('/api/car_data', async (req, res) => {
 });
 
 app.get('/api/drivers', async (req, res) => {
-    await loadLaps();
-    await loadStints();
-    // console.log(getDrivers());
     if (getDrivers().length > 0) {
         return res.json(getDrivers());
     }
@@ -256,11 +306,10 @@ app.get('/api/race_control', async (req, res) => {
     }
 });
 
-app.get('/api/sessions', async (req, res) => {
+app.get('/api/trackinfo', async (req, res) => {
     try {
         const response = await fetch('https://api.openf1.org/v1/sessions?session_key=latest');
         const data = await response.json();
-        setLocation(data[0]['session_key'], data[0]['session_name'], data[0]['session_type'], data[0]['location'], data[0]['country_name'], data[0]['date_start'], data[0]['date_end'])
         res.json(getLocation());
     } catch (error) {
         console.error('Error fetching data (sessions):', error);
@@ -311,3 +360,11 @@ app.get('/api/weather', async (req, res) => {
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
+
+loadDrivers();
+loadLocation();
+loadWeather();
+
+loadLocationIsFetching = false;
+loadStintsIsFetching = false;
+loadLapsIsFetching = false;

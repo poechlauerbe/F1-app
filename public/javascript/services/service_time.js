@@ -7,18 +7,29 @@ function formatDate(date) {
     return `${day}.${month}.${year}`;
 }
 
-function formatTime(date) {
-	newDate = new Date(date);
+export function formatTime(dateString) {
+	const date = new Date(dateString);
+
 	const options = {
 		hour: '2-digit',
 		minute: '2-digit',
 		second: '2-digit',
-		hour12: false
+		hour12: false,
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit'
 	};
-	return newDate.toLocaleTimeString([], options);
+
+	return date.toLocaleTimeString([], options);
 }
 
-module.exports = {
-	formatDate,
-	formatTime
-};
+// export function formatTime(date) {
+// 	newDate = new Date(date);
+// 	const options = {
+// 		hour: '2-digit',
+// 		minute: '2-digit',
+// 		second: '2-digit',
+// 		hour12: false
+// 	};
+// 	return newDate.toLocaleTimeString([], options);
+// }

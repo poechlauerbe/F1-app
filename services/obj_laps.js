@@ -22,6 +22,16 @@ const getLastLap = (driverNumber) => {
 	return lapArray[lapArray.length - 1];
 }
 
+const getPreLastLap = (driverNumber) => {
+	const lapArray = laps.filter(laps => laps.driverNumber == driverNumber);
+	if (lapArray.length < 2)
+	{
+		console.log("PreLastLap not working");
+		return null;
+	}
+	return lapArray[lapArray.length - 2];
+}
+
 // const getLapNumber = (driverNumber, lapNr) => {
 // 	const lapArray = laps;
 // 	// if (lapArray.length === 0 || lapNr > lapArray.length - 1)
@@ -40,5 +50,6 @@ module.exports = {
 	addLap,
 	getLaps,
 	getLastLap,
+	getPreLastLap
 	// getLapNumber
 }
