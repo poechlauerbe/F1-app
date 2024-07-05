@@ -1,11 +1,12 @@
 // const { getDriverName } = require('./obj_drivers');
 
-function Lap(driverNumber, timeS1, timeS2, timeS3, lapNr) {
+function Lap(driverNumber, timeS1, timeS2, timeS3, lapNr, lapTime ) {
 	this.driverNumber = driverNumber;
 	this.timeS1 = timeS1 || 'no time';
 	this.timeS2 = timeS2 || 'no time';
 	this.timeS3 = timeS3 || 'no time';
 	this.lapNr = lapNr || 0;
+	this.lapTime = lapTime || 'no time';
 }
 
 let laps = [];
@@ -28,11 +29,11 @@ const getLastLap = (driverNumber) => {
 // 	return lapArray;
 // }
 
-const addLap = (driverNumber, timeS1, timeS2, timeS3, lapNr) => {
+const addLap = (driverNumber, timeS1, timeS2, timeS3, lapNr, lapTime) => {
 	let laparr = laps.filter(laps => (laps.driverNumber === driverNumber));
 	const lap = laparr.find(laps => laps.lapNr === lapNr)
 	if (!lap)
-		laps.push(new Lap(driverNumber, timeS1, timeS2, timeS3, lapNr));
+		laps.push(new Lap(driverNumber, timeS1, timeS2, timeS3, lapNr, lapTime));
 }
 
 module.exports = {

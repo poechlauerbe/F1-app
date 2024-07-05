@@ -1,4 +1,4 @@
-function Driver(number, name, photo_url, country, team, team_color, position, lapCount, gapToLeader, lastLap, fastestLap) {
+function Driver(number, name, photo_url, country, team, team_color, position, lapCount, gapToLeader, lastLap, fastestLap, tyre) {
 	this.number = number;
 	this.name = name || '';
 	this.photo_url = photo_url || '';
@@ -11,6 +11,7 @@ function Driver(number, name, photo_url, country, team, team_color, position, la
 	this.lastLap = lastLap || {};
 	this.fastestLap = fastestLap || {};
 	this.laps = [];
+	this.tyre = tyre || '';
 // check update depending on session key
 }
 
@@ -79,19 +80,23 @@ const updateGapToLeader = (driverNumber, newGap) => {
 
 const updateDriverLaps = (driverNumber, newLap) => {
 	const driver = drivers.find(driver => driver.number === driverNumber);
-	console.log(newLap);
 	if (!driver)
 	{
 		console.log("driver not found")
 		return null;
 	}
-	console.log(newLap);
 	driver.lastLap = newLap;
-	console.log(driver.lastLap);
 	// check also for fastest Lap
 	// if (driver.fastestLap === 'no time')
 	// 	driver.fastestLap = newLap; // not correct - have to add check for fastest lap
 
+}
+
+const updateDriverTyre = (driverNumber, tyre) => {
+	const driver = drivers.find(driver => driver.number === driverNumber);
+	if (!driver)
+		return null;
+	driver.tyre = tyre;
 }
 
 module.exports = {
@@ -103,5 +108,6 @@ module.exports = {
 	addDriver,
 	updatePositions,
 	updateGapToLeader,
-	updateDriverLaps
+	updateDriverLaps,
+	updateDriverTyre
 };

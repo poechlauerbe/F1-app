@@ -4,7 +4,7 @@ const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch
 const app = express();
 const port = 3000;
 
-const { getDrivers, addDriver, updatePositions, updateGapToLeader, updateDriverLaps } = require('./services/obj_drivers');
+const { getDrivers, addDriver, updatePositions, updateGapToLeader, updateDriverLaps, updateDriverTyre } = require('./services/obj_drivers');
 const { getLocation, setLocation, updateActualLocationWeather } = require('./services/obj_location');
 const { getLastWeather, addWeather } = require('./services/obj_weather');
 const { addTeamradios, getTeamradios } = require('./services/obj_teamradio');
@@ -148,11 +148,23 @@ async function loadLaps() {
         const response = await fetch('https://api.openf1.org/v1/laps?session_key=latest');
         const data = await response.json();
         data.forEach(element => {
-            addLap(element['driver_number'], element['duration_sector_1'], element['duration_sector_2'], element['duration_sector_3'], element['lap_number']);
+            addLap(element['driver_number'], element['duration_sector_1'], element['duration_sector_2'], element['duration_sector_3'], element['lap_number'], element['lap_duration']);
             updateDriverLaps(element['driver_number'], getLastLap(element['driver_number']))
         })
     } catch (error) {
         console.error('Error fetching data (laps):', error);
+    }
+}
+
+async function loadStints() {
+    try {
+        const response = await fetch('https://api.openf1.org/v1/stints?session_key=latest');
+        const data = await response.json();
+        data.forEach(elem => {
+            updateDriverTyre(elem['driver_number'], elem['compound'])
+        })
+    } catch (error) {
+        console.error('Error fetching data (stints):', error);
     }
 }
 
@@ -169,6 +181,7 @@ app.get('/api/car_data', async (req, res) => {
 
 app.get('/api/drivers', async (req, res) => {
     await loadLaps();
+    await loadStints();
     // console.log(getDrivers());
     if (getDrivers().length > 0) {
         return res.json(getDrivers());
@@ -248,7 +261,6 @@ app.get('/api/sessions', async (req, res) => {
         const response = await fetch('https://api.openf1.org/v1/sessions?session_key=latest');
         const data = await response.json();
         setLocation(data[0]['session_key'], data[0]['session_name'], data[0]['session_type'], data[0]['location'], data[0]['country_name'], data[0]['date_start'], data[0]['date_end'])
-        console.log(getLocation())
         res.json(getLocation());
     } catch (error) {
         console.error('Error fetching data (sessions):', error);
