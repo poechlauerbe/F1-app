@@ -53,7 +53,8 @@ const updateLocation = (sessionId, sessionName, sessionType, name, country, star
 }
 
 const updateActualLocationWeather = () => {
-	location.weather = getLastWeather();
+	if (getLastWeather)
+		location.weather = getLastWeather();
 }
 
 module.exports = {

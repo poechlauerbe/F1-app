@@ -75,14 +75,24 @@ const updatePositions = (driverNumber, position) => {
 
 const updateGapToLeader = (driverNumber, newGap) => {
 	const driver = drivers.find(driver => driver.number === driverNumber);
+	if (!driver)
+	{
+		console.log(driverNumber);
+		console.log("updateGapToLeader: driver not found")
+		return null;
+	}
 	driver.gapToLeader = newGap;
 }
 
 const updateDriverLaps = (driverNumber, newLap) => {
+	if (!driverNumber || !newLap)
+		return null;
 	const driver = drivers.find(driver => driver.number === driverNumber);
 	if (!driver)
 	{
-		console.log("driver not found")
+		console.log(driverNumber);
+		console.log("UpdateDriverLaps: driver not found")
+		console.log(drivers);
 		return null;
 	}
 	driver.lastLap = newLap;
