@@ -8,6 +8,7 @@ function Driver(number, name, photo_url, country, team, team_color, position, la
 	this.position = position || 0;
 	this.lapCount = lapCount || 0;
 	this.gapToLeader = gapToLeader || '';
+	this.actualLap = '';
 	this.lastLap = lastLap || {};
 	this.fastestLap = fastestLap || {};
 	this.laps = [];
@@ -90,16 +91,19 @@ const updateDriverLaps = (driverNumber, newLap) => {
 	const driver = drivers.find(driver => driver.number === driverNumber);
 	if (!driver)
 	{
-		console.log(driverNumber);
 		console.log("UpdateDriverLaps: driver not found")
-		console.log(drivers);
 		return null;
 	}
-	driver.lastLap = newLap;
-	// check also for fastest Lap
-	// if (driver.fastestLap === 'no time')
-	// 	driver.fastestLap = newLap; // not correct - have to add check for fastest lap
+	if (driver.actualLap.lapNr != newLap.lapNr)
+	{
+		driver.lastLap = driver.actualLap;
+		if (driver.fastestLap === 'no time')
+			driver.fastestLap = newLap;
+		else if (driver.fastestLap.lapTime > driver.actualLap.lapTime)
+			driver.fastestLap = driver.actualLap;
 
+	}
+	driver.actualLap = newLap;
 }
 
 const updateDriverTyre = (driverNumber, tyre) => {
