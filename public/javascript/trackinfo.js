@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			trackinfoDiv.appendChild(locationElement);
 
 			const sessionElement = document.createElement('p');
+			// ider: concatenate string instead of creating elements
 			if (data['sessionName'] === data['sessionType'])
 				sessionElement.textContent = `Session: ${data['sessionName']} `;
 			else
