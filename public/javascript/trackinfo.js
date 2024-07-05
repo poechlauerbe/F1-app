@@ -1,7 +1,8 @@
 const trackinfoDiv = document.getElementById('trackinfo');
+// import { formatTime } from './services/service_time.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    fetch('/api/sessions')
+    fetch('/api/trackinfo')
         .then(response => response.json())
         .then(data => {
 
@@ -10,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			trackinfoDiv.appendChild(locationElement);
 
 			const sessionElement = document.createElement('p');
+			// ider: concatenate string instead of creating elements
 			if (data['sessionName'] === data['sessionType'])
 				sessionElement.textContent = `Session: ${data['sessionName']} `;
 			else
@@ -24,10 +26,13 @@ document.addEventListener('DOMContentLoaded', () => {
 			trackinfoDiv.appendChild(weatherHeading);
 			const weatherElement = document.createElement('p');
 			let pressure = data['weather']['pressure'] / 1000;
-			weatherElement.textContent = `date/time: ${data['weather']['time']} \nAir temperature: ${data['weather']['airTemp']}°C\nTrack temperature: ${data['weather']['trackTemp']}°C\nHumidity: ${data['weather']['humidity']}%\npressure: ${pressure} bar\nWind speed: ${data['weather']['windSpeed']} m/s\nWind direction: ${data['weather']['windDirection']}°\nRainfall: ${data['weather']['rainfall']}`;
+			weatherElement.textContent = `date/time: ${data['weather']['time']} \nAir temperature: ${data['weather']['airTemp']}°C\nTrack temperature: ${data['weather']['trackTemp']}°C\nHumidity: ${data['weather']['humidity']}%\npressure: ${pressure} bar\nWind speed: ${data['weather']['windSpeed']} m/s\nWind direction: ${data['weather']['windDirection']}°\nRainfall: ${data['weather']['rainfall']}\nSession ID: ${data['sessionId']}`;
 			trackinfoDiv.appendChild(weatherElement);
         })
         .catch(error => {
             console.error('Error fetching drivers:', error);
         });
 });
+
+
+// ${formatTime(data['weather']['time'])}

@@ -1,4 +1,4 @@
-function Driver(number, name, photo_url, country, team, team_color, position, laps, gapToLeader) {
+function Driver(number, name, photo_url, country, team, team_color, position, lapCount, gapToLeader, lastLap, fastestLap, tyre) {
 	this.number = number;
 	this.name = name || '';
 	this.photo_url = photo_url || '';
@@ -6,11 +6,14 @@ function Driver(number, name, photo_url, country, team, team_color, position, la
 	this.team = team || '';
 	this.team_color = team_color || '';
 	this.position = position || 0;
-	this.laps = laps || 0;
+	this.lapCount = lapCount || 0;
 	this.gapToLeader = gapToLeader || '';
+	this.lastLap = lastLap || {};
+	this.fastestLap = fastestLap || {};
+	this.laps = [];
+	this.tyre = tyre || '';
 // check update depending on session key
 }
-
 
 let drivers = [];
 
@@ -23,6 +26,16 @@ const getDriverName = (driverNumber) => {
 	return driver.name;
 }
 
+const getDriverLastLap = (driverNumber) => {
+	const driver = drivers.find(driver => driver.number === driverNumber);
+	return driver.lastLap;
+}
+
+
+const getFastestLap = (driverNumber) => {
+	const driver = drivers.find(driver => driver.number === driverNumber);
+	return driver.lastLap;
+}
 // const getDriverTeam = (driverNumber) => {
 // 	const driver = drivers.find(driver => driver.number === driverNumber);
 // 	return driver.team;
@@ -62,20 +75,49 @@ const updatePositions = (driverNumber, position) => {
 
 const updateGapToLeader = (driverNumber, newGap) => {
 	const driver = drivers.find(driver => driver.number === driverNumber);
+	if (!driver)
+	{
+		console.log(driverNumber);
+		console.log("updateGapToLeader: driver not found")
+		return null;
+	}
 	driver.gapToLeader = newGap;
+}
+
+const updateDriverLaps = (driverNumber, newLap) => {
+	if (!driverNumber || !newLap)
+		return null;
+	const driver = drivers.find(driver => driver.number === driverNumber);
+	if (!driver)
+	{
+		console.log(driverNumber);
+		console.log("UpdateDriverLaps: driver not found")
+		console.log(drivers);
+		return null;
+	}
+	driver.lastLap = newLap;
+	// check also for fastest Lap
+	// if (driver.fastestLap === 'no time')
+	// 	driver.fastestLap = newLap; // not correct - have to add check for fastest lap
+
+}
+
+const updateDriverTyre = (driverNumber, tyre) => {
+	const driver = drivers.find(driver => driver.number === driverNumber);
+	if (!driver)
+		return null;
+	driver.tyre = tyre;
 }
 
 module.exports = {
 	getDrivers,
 	getDriverName,
-	// getDriverTeam,
-	// getDriverPhoto,
-	// getDriverPosition,
-	// getDriverLaps,
+	getDriverLastLap,
+	getFastestLap,
 	getDriverGapToLeader,
 	addDriver,
 	updatePositions,
 	updateGapToLeader,
-	Driver,
-	drivers
+	updateDriverLaps,
+	updateDriverTyre
 };

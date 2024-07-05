@@ -12,6 +12,7 @@
 
 ## open points / ideas
 - add Pit Tab
+- when new session - delete some of the data in driver, weather, laps, etc.
 - think about CSS grid of the different pages
 - idea layout change to tables
 - add qualifying/training mode
@@ -63,3 +64,7 @@
 
 ## Fixed Bugs
 - you have to go first on drivers and then on race leaderbaord to get the race leaderboard shown. (drivers are not loaded)
+
+## Technical questions
+- how to automatically add versions
+- change package.json verson automatically
