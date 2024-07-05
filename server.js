@@ -10,6 +10,7 @@ const { getLocation, setLocation, updateActualLocationWeather } = require('./ser
 const { getLastWeather, addWeather } = require('./services/obj_weather');
 const { addTeamradios, getTeamradios } = require('./services/obj_teamradio');
 const { addLap, getLastLap, getPreLastLap } = require('./services/obj_laps');
+const { getRacecontrol, addRacecontrol } = require('./services/obj_racecontrol');
 
 app.set('view engine', 'ejs');
 
@@ -27,20 +28,6 @@ app.use(async (req, res, next) => {
       next();
     }
   });
-
-// app.use(async (req, res, next) => {
-//     if (!getLocation()) {
-//         try {
-//             await loadLocation();
-//             console.log('Location loaded')
-//             next();
-//         } catch (error) {
-//             res.status(500).json({ error: 'Failed to initialize location' });
-//         }
-//     } else {
-//         next();
-//     }
-// });
 
 const indexRouter = require('./routes/index');
 const driverRouter = require('./routes/drivers');
@@ -71,6 +58,8 @@ loadLocationIsFetching = false;
 loadStintsIsFetching = false;
 loadLapsIsFetching = false;
 loadPositionsIsFetching = false;
+loadRaceControlIsFetching = false;
+loadTeamRadioIsFetching = false;
 
 // Function to start the regular updates
 const startUpdateLocation = (interval) => {
@@ -117,6 +106,26 @@ const startUpdatePositions = (interval) => {
         loadPositionsIsFetching = false;
     }, interval);
 };
+
+startUpdateRaceControl = (interval) => {
+    setInterval(async () => {
+        if (loadRaceControlIsFetching) return; // Prevent overlapping calls
+        loadRaceControlIsFetching = true;
+
+        await loadRaceControl();
+        loadRaceControlIsFetching = false;
+    }, interval);
+}
+
+startUpdateTeamRadio = (interval) => {
+    setInterval(async () => {
+        if (loadTeamRadioIsFetching) return; // Prevent overlapping calls
+        loadTeamRadioIsFetching = true;
+
+        await loadTeamRadio();
+        loadTeamRadioIsFetching = false;
+    }, interval);
+}
 
 async function loadDrivers() {
     try {
@@ -192,6 +201,18 @@ async function loadPositions() {
     }
 }
 
+async function loadRaceControl() {
+    try {
+        const response = await fetch('https://api.openf1.org/v1/race_control?session_key=latest');
+        const data = await response.json();
+        data.forEach(element => {
+            addRacecontrol(element['category'], element['date'], element['driver_number'], element['flag'], element['lap_number'], element['message'], element['scope'], element['sector'])
+        })
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
+
 async function loadStints() {
     try {
         const response = await fetch('https://api.openf1.org/v1/stints?session_key=latest');
@@ -204,16 +225,29 @@ async function loadStints() {
     }
 }
 
-app.get('/api/car_data', async (req, res) => {
+async function loadTeamRadio() {
     try {
-        const response = await fetch('https://api.openf1.org/v1/car_data?session_key=latest');
+        const response = await fetch('https://api.openf1.org/v1/team_radio?session_key=latest');
         const data = await response.json();
-        res.json(data);
+        data.forEach(element => {
+            addTeamradios(element['date'], element['driver_number'], element['recording_url']);
+        })
     } catch (error) {
-        console.error('Error fetching data (car_data):', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        console.error('Error fetching data (teamradio):', error);
     }
-});
+}
+
+
+// app.get('/api/car_data', async (req, res) => {
+//     try {
+//         const response = await fetch('https://api.openf1.org/v1/car_data?session_key=latest');
+//         const data = await response.json();
+//         res.json(data);
+//     } catch (error) {
+//         console.error('Error fetching data (car_data):', error);
+//         res.status(500).json({ error: 'Internal Server Error' });
+//     }
+// });
 
 app.get('/api/drivers', async (req, res) => {
     if (getDrivers().length > 0) {
@@ -251,26 +285,13 @@ app.get('/api/pit', async (req, res) => {
     }
 });
 
-app.get('/api/positions', async (req, res) => {
-    try {
-        const response = await fetch('https://api.openf1.org/v1/position?session_key=latest');
-        const data = await response.json();
-        await loadIntervals();
-        data.forEach( element => {
-            updatePositions(element['driver_number'], element['position'])
-        })
-        res.json(getDrivers());
-    } catch (error) {
-        console.error('Error fetching data (positions):', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
-
 app.get('/api/race_control', async (req, res) => {
     try {
-        const response = await fetch('https://api.openf1.org/v1/race_control?session_key=latest');
-        const data = await response.json();
-        res.json(data);
+        if (getRacecontrol().length > 0) {
+            return res.json(getRacecontrol());
+        }
+        await loadRaceControl();
+        res.json(getRacecontrol());
     } catch (error) {
         console.error('Error fetching data:', error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -279,8 +300,10 @@ app.get('/api/race_control', async (req, res) => {
 
 app.get('/api/trackinfo', async (req, res) => {
     try {
-        const response = await fetch('https://api.openf1.org/v1/sessions?session_key=latest');
-        const data = await response.json();
+        if(getLocation().length > 0) {
+            return res.json(getLocation());
+        }
+        await loadLocation();
         res.json(getLocation());
     } catch (error) {
         console.error('Error fetching data (sessions):', error);
@@ -301,31 +324,16 @@ app.get('/api/stints', async (req, res) => {
 
 app.get('/api/teamradio', async (req, res) => {
     try {
-        const response = await fetch('https://api.openf1.org/v1/team_radio?session_key=latest');
-        const data = await response.json();
-        data.forEach(element => {
-            addTeamradios(element['date'], element['driver_number'], element['recording_url']);
-        })
+        if (getTeamradios().length > 0) {
+            return res.json(getTeamradios());
+        }
+        await loadTeamRadio();
         res.json(getTeamradios());
     } catch (error) {
         console.error('Error fetching data (teamradio):', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
-
-// app.get('/api/weather', async (req, res) => {
-//     try {
-//         const response = await fetch('https://api.openf1.org/v1/weather?session_key=latest');
-//         const data = await response.json();
-//         data.forEach( element => {
-//             addWeather(element['date'], element['air_temperature'], element['track_temperature'], element['humidity'], element['pressure'], element['wind_speed'], element['wind_direction'], element['rainfall']);
-//         })
-//         res.json(getLastWeather());
-//     } catch (error) {
-//         console.error('Error fetching data (weather):', error);
-//         res.status(500).json({ error: 'Internal Server Error' });
-//     }
-// });
 
 console.log("Server loading ...");
 
@@ -335,10 +343,12 @@ loadLocation();
 app.listen(port, () => {
     console.error(new Date().toISOString() + `: Server running at http://localhost:${port}`);
 });
-startUpdateLocation(15000);
-startUpdateStints(5000);
-startUpdateLaps(5000);
-startUpdatePositions(5000);
+startUpdateLocation(15010);
+startUpdateStints(5030);
+startUpdateLaps(5010);
+startUpdatePositions(4980);
+startUpdateRaceControl(10050);
+startUpdateTeamRadio(13025);
 
 function logTimeToStderr() {
     const currentTime = new Date().toISOString();
