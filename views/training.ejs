@@ -4,25 +4,7 @@
 <body>
     <%- include('partials/nav') %>
     <h1><%= headline %></h1>
-    <div id="<%- id %>"></div>
-	<table>
-	  <thead>
-		<tr>
-		  <th>Pos.</th>
-		  <th>Name</th>
-		  <th>Location</th>
-		</tr>
-	  </thead>
-	  <tbody>
-		<% drivers.forEach(driver => { %>
-		  <tr>
-			<td><%= driver.position %></td>
-			<td><%= driver.name %></td>
-			<td><img src="<%= driver.photo %>"></td>
-		  </tr>
-		<% }) %>
-	  </tbody>
-	</table>
+	<%- include('partials/training_thead') %>
     <script defer src="<%= script %>" ></script>
 </body>
 </html>
