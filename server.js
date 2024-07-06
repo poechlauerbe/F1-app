@@ -334,11 +334,12 @@ app.get('/api/teamradio', async (req, res) => {
     }
 });
 
-console.log("Server loading ...");
+let startLoading = new Date();
+console.error(startLoading.toISOString() + ": Server loading ...");
 
 async function serverStart() {
-    await loadDrivers();
-    await loadLocation();
+    await loadDrivers(); // no prerequesitary
+    await loadLocation(); // no prerequesitary
     await loadLaps();
     await loadWeather();
     await loadPositions();
@@ -346,11 +347,13 @@ async function serverStart() {
     await loadRaceControl();
     await loadStints();
 
+    let endLoading = new Date();
+    finishLoading = (endLoading - startLoading);
+    console.error('\nLoading time: ' + finishLoading / 1000 + ' seconds\n');
     // Server is ready to listen:
     app.listen(port, () => {
-        console.error(new Date().toISOString() + `: Server running at http://localhost:${port}`);
+        console.error(endLoading.toISOString() + `: Server running at http://localhost:${port}`);
     });
-
     // Set intervalls to synchronize with API:
     startUpdateLocation(15010);
     startUpdateStints(5030);
@@ -365,8 +368,11 @@ async function serverStart() {
 
 serverStart();
 
-// move to
+// move to services?
 function logTimeToStderr() {
     const currentTime = new Date().toISOString();
     console.error(currentTime);
 }
+
+
+// await Promise.all([startLogger(), startMetrics()]);
