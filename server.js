@@ -5,7 +5,7 @@ const app = express();
 const port = 3000;
 let startProcessFinished = 0;
 
-const { getDrivers, addDriver, updatePositions, updateGapToLeader, updateDriverLaps, updateDriverTyre } = require('./services/obj_drivers');
+const { getDrivers, getDriversByPositon, addDriver, updatePositions, updateGapToLeader, updateDriverLaps, updateDriverTyre } = require('./services/obj_drivers');
 const { getLocation, setLocation, updateActualLocationWeather } = require('./services/obj_location');
 const { getLastWeather, addWeather } = require('./services/obj_weather');
 const { addTeamradios, getTeamradios } = require('./services/obj_teamradio');
@@ -251,11 +251,11 @@ async function loadTeamRadio() {
 
 app.get('/api/drivers', async (req, res) => {
     if (getDrivers().length > 0) {
-        return res.json(getDrivers());
+        return res.json(getDriversByPositon());
     }
     try {
         await loadDrivers();
-        res.json(getDrivers());
+        res.json(getDriversByPositon());
     } catch (error) {
         console.error('Error fetching data (drivers):', error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -311,16 +311,16 @@ app.get('/api/trackinfo', async (req, res) => {
     }
 });
 
-app.get('/api/stints', async (req, res) => {
-    try {
-        const response = await fetch('https://api.openf1.org/v1/stints?session_key=latest');
-        const data = await response.json();
-        res.json(data);
-    } catch (error) {
-        console.error('Error fetching data (stints):', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
+// app.get('/api/stints', async (req, res) => {
+//     try {
+//         const response = await fetch('https://api.openf1.org/v1/stints?session_key=latest');
+//         const data = await response.json();
+//         res.json(data);
+//     } catch (error) {
+//         console.error('Error fetching data (stints):', error);
+//         res.status(500).json({ error: 'Internal Server Error' });
+//     }
+// });
 
 app.get('/api/teamradio', async (req, res) => {
     try {

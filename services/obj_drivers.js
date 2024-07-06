@@ -22,6 +22,15 @@ const getDrivers = () => {
 	return drivers;
 }
 
+const getDriversByPositon = () => {
+	let driversSorted = [];
+	for (i = 1; i < drivers.length; i++) {
+		const driver = drivers.find(driver => driver.position === i);
+		driversSorted.push(driver);
+	}
+	return driversSorted;
+}
+
 const getDriverName = (driverNumber) => {
 	const driver = drivers.find(driver => driver.number === driverNumber);
 	return driver.name;
@@ -116,6 +125,7 @@ const updateDriverTyre = (driverNumber, tyre) => {
 
 module.exports = {
 	getDrivers,
+	getDriversByPositon,
 	getDriverName,
 	getDriverLastLap,
 	getFastestLap,

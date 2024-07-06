@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 						else
 							positionsElement.textContent = (i) +  `. ${driver['name']} - ${driver['team']}  +${driver['gapToLeader']} seconds behind leader`;
 						positionsImg.src = driver['photo_url'];
+						console.log(driver['number'] + ': ' + driver['position']);
 						positionsDiv.appendChild(positionsElement);
 						positionsDiv.appendChild(positionsImg);
 					}
