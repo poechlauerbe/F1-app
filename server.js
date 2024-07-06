@@ -19,7 +19,6 @@ app.use(async (req, res, next) => {
     if (getDrivers().length < 5) {
       try {
         await loadDrivers();
-        console.log('Driver loaded')
         next();
       } catch (error) {
         res.status(500).json({ error: 'Failed to initialize drivers' });
@@ -107,7 +106,7 @@ const startUpdatePositions = (interval) => {
     }, interval);
 };
 
-startUpdateRaceControl = (interval) => {
+const startUpdateRaceControl = (interval) => {
     setInterval(async () => {
         if (loadRaceControlIsFetching) return; // Prevent overlapping calls
         loadRaceControlIsFetching = true;
@@ -117,7 +116,7 @@ startUpdateRaceControl = (interval) => {
     }, interval);
 }
 
-startUpdateTeamRadio = (interval) => {
+const startUpdateTeamRadio = (interval) => {
     setInterval(async () => {
         if (loadTeamRadioIsFetching) return; // Prevent overlapping calls
         loadTeamRadioIsFetching = true;
@@ -337,24 +336,37 @@ app.get('/api/teamradio', async (req, res) => {
 
 console.log("Server loading ...");
 
-loadDrivers();
-loadLaps();
-loadLocation();
+async function serverStart() {
+    await loadDrivers();
+    await loadLocation();
+    await loadLaps();
+    await loadWeather();
+    await loadPositions();
+    await loadTeamRadio();
+    await loadRaceControl();
+    await loadStints();
 
-app.listen(port, () => {
-    console.error(new Date().toISOString() + `: Server running at http://localhost:${port}`);
-});
-startUpdateLocation(15010);
-startUpdateStints(5030);
-startUpdateLaps(5010);
-startUpdatePositions(4980);
-startUpdateRaceControl(10050);
-startUpdateTeamRadio(13025);
+    // Server is ready to listen:
+    app.listen(port, () => {
+        console.error(new Date().toISOString() + `: Server running at http://localhost:${port}`);
+    });
 
+    // Set intervalls to synchronize with API:
+    startUpdateLocation(15010);
+    startUpdateStints(5030);
+    startUpdateLaps(5010);
+    startUpdatePositions(4980);
+    startUpdateRaceControl(10050);
+    startUpdateTeamRadio(13025);
+
+    // Log the current time to stderr every 15 minutes
+    setInterval(logTimeToStderr, 15 * 60 * 1000);
+}
+
+serverStart();
+
+// move to
 function logTimeToStderr() {
     const currentTime = new Date().toISOString();
     console.error(currentTime);
 }
-
-// Log the current time to stderr every 10 minutes
-setInterval(logTimeToStderr, 10 * 60 * 1000);
