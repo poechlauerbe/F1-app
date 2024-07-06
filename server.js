@@ -34,7 +34,7 @@ const leaderboardRouter = require('./routes/leaderboard');
 const racecontrolRouter = require('./routes/racecontrol');
 const teamradioRouter = require('./routes/teamradio');
 const trackinfoRouter = require('./routes/trackinfo');
-const trainingRouter = require('./routes/training');
+const laptimesRouter = require('./routes/laptimes');
 const singleDriverRouter = require('./routes/singledriver');
 
 
@@ -50,7 +50,7 @@ app.use('/leaderboard', leaderboardRouter);
 app.use('/racecontrol', racecontrolRouter);
 app.use('/teamradio', teamradioRouter);
 app.use('/trackinfo', trackinfoRouter);
-app.use('/training', trainingRouter);
+app.use('/laptimes', laptimesRouter);
 app.use('/singledriver', singleDriverRouter);
 
 loadLocationIsFetching = false;

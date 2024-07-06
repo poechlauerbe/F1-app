@@ -10,7 +10,7 @@ function Driver(number, name, photo_url, country, team, team_color, position, la
 	this.gapToLeader = gapToLeader || '';
 	this.actualLap = {driverNumber: number, timeS1: 'no time', timeS2: 'no time', timeS3: 'no time', lapNr: '', lapTime: 'no time'};
 	this.lastLap = lastLap || {driverNumber: number, timeS1: 'no time', timeS2: 'no time', timeS3: 'no time', lapNr: '', lapTime: 'no time'};;
-	this.fastestLap = fastestLap || {driverNumber: number, timeS1: 'no time', timeS2: 'no time', timeS3: 'no time', lapNr: '0', lapTime: 'no time'};;
+	this.fastestLap = fastestLap || {driverNumber: number, timeS1: 'no time', timeS2: 'no time', timeS3: 'no time', lapNr: '', lapTime: 'no time'};;
 	this.laps = [];
 	this.tyre = tyre || '';
 // check update depending on session key
