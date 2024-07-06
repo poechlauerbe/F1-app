@@ -126,7 +126,7 @@ const startUpdateTeamRadio = (interval) => {
     }, interval);
 }
 
-async function loadDrivers() {
+async function loadDrivers(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     try {
         const response = await fetch('https://api.openf1.org/v1/drivers?session_key=latest');
         const data = await response.json();
@@ -134,21 +134,35 @@ async function loadDrivers() {
             addDriver(element['driver_number'], element['full_name'], element['country_code'], element['team_name'], element['team_colour'], element['headshot_url']);
         });
     } catch (error) {
-        console.error('Error fetching data (drivers):', error);
+        // console.error(new Date().toISOString() + ': Error fetching data (drivers):', error);
+        if (retryCount < maxRetries) {
+            console.error(`loadDrivers: Retrying... (${retryCount + 1}/${maxRetries})`);
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+            await loadDrivers(retryCount + 1, maxRetries, delayMs);
+        } else {
+            console.error('Max retries reached. Unable to fetch driver data.');
+        }
     }
 }
 
-async function loadLocation() {
+async function loadLocation(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     try {
         const response = await fetch('https://api.openf1.org/v1/sessions?session_key=latest');
         const data = await response.json();
         setLocation(data[0]['session_key'], data[0]['session_name'], data[0]['session_type'], data[0]['location'], data[0]['country_name'], data[0]['date_start'], data[0]['date_end'])
     } catch (error) {
-        console.error('Error fetching data (sessions):', error);
+        // console.error(new Date().toISOString() + ': Error fetching data (sessions):', error);
+        if (retryCount < maxRetries) {
+            console.error(`loadLocation: Retrying... (${retryCount + 1}/${maxRetries})`);
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+            await loadLocation(retryCount + 1, maxRetries, delayMs);
+        } else {
+            console.error('Max retries reached. Unable to fetch driver data.');
+        }
     }
 }
 
-async function loadWeather() {
+async function loadWeather(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     try {
         const response = await fetch('https://api.openf1.org/v1/weather?session_key=latest');
         const data = await response.json();
@@ -157,7 +171,13 @@ async function loadWeather() {
         })
         updateActualLocationWeather();
     } catch (error) {
-        console.error('Error fetching data (weather):', error);
+        if (retryCount < maxRetries) {
+            console.error(`loadWeather: Retrying... (${retryCount + 1}/${maxRetries})`);
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+            await loadWeather(retryCount + 1, maxRetries, delayMs);
+        } else {
+            console.error('Max retries reached. Unable to fetch driver data.');
+        }
     }
 }
 
@@ -170,12 +190,12 @@ async function loadIntervals() {
             updateGapToLeader(element['driver_number'], element['gap_to_leader'])
         })
     } catch (error) {
-        console.error('Error fetching data (intervals):', error);
+        console.error(new Date().toISOString() + ': Error fetching data (intervals):', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }
 
-async function loadLaps() {
+async function loadLaps(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     try {
         const response = await fetch('https://api.openf1.org/v1/laps?session_key=latest');
         const data = await response.json();
@@ -184,11 +204,17 @@ async function loadLaps() {
             updateDriverLaps(element['driver_number'], getLastLap(element['driver_number']))
         })
     } catch (error) {
-        console.error('Error fetching data (laps):', error);
+        if (retryCount < maxRetries) {
+            console.error(`loadLaps: Retrying... (${retryCount + 1}/${maxRetries})`);
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+            await loadLaps(retryCount + 1, maxRetries, delayMs);
+        } else {
+            console.error('Max retries reached. Unable to fetch driver data.');
+        }
     }
 }
 
-async function loadPositions() {
+async function loadPositions(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     try {
         const response = await fetch('https://api.openf1.org/v1/position?session_key=latest');
         const data = await response.json();
@@ -196,11 +222,17 @@ async function loadPositions() {
             updatePositions(element['driver_number'], element['position'])
         })
     } catch (error) {
-        console.error('Error fetching data (positions):', error);
+        if (retryCount < maxRetries) {
+            console.error(`loadPositions: Retrying... (${retryCount + 1}/${maxRetries})`);
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+            await loadPositions(retryCount + 1, maxRetries, delayMs);
+        } else {
+            console.error('Max retries reached. Unable to fetch driver data.');
+        }
     }
 }
 
-async function loadRaceControl() {
+async function loadRaceControl(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     try {
         const response = await fetch('https://api.openf1.org/v1/race_control?session_key=latest');
         const data = await response.json();
@@ -208,11 +240,17 @@ async function loadRaceControl() {
             addRacecontrol(element['category'], element['date'], element['driver_number'], element['flag'], element['lap_number'], element['message'], element['scope'], element['sector'])
         })
     } catch (error) {
-        console.error('Error fetching data:', error);
+        if (retryCount < maxRetries) {
+            console.error(`loadRaceControl: Retrying... (${retryCount + 1}/${maxRetries})`);
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+            await loadRaceControl(retryCount + 1, maxRetries, delayMs);
+        } else {
+            console.error('Max retries reached. Unable to fetch driver data.');
+        }
     }
 }
 
-async function loadStints() {
+async function loadStints(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     try {
         const response = await fetch('https://api.openf1.org/v1/stints?session_key=latest');
         const data = await response.json();
@@ -220,11 +258,17 @@ async function loadStints() {
             updateDriverTyre(elem['driver_number'], elem['compound'])
         })
     } catch (error) {
-        console.error('Error fetching data (stints):', error);
+        if (retryCount < maxRetries) {
+            console.error(`loadStints: Retrying... (${retryCount + 1}/${maxRetries})`);
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+            await loadStints(retryCount + 1, maxRetries, delayMs);
+        } else {
+            console.error('Max retries reached. Unable to fetch driver data.');
+        }
     }
 }
 
-async function loadTeamRadio() {
+async function loadTeamRadio(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     try {
         const response = await fetch('https://api.openf1.org/v1/team_radio?session_key=latest');
         const data = await response.json();
@@ -232,7 +276,13 @@ async function loadTeamRadio() {
             addTeamradios(element['date'], element['driver_number'], element['recording_url']);
         })
     } catch (error) {
-        console.error('Error fetching data (teamradio):', error);
+        if (retryCount < maxRetries) {
+            console.error(`loadTeamRadio: Retrying... (${retryCount + 1}/${maxRetries})`);
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+            await loadTeamRadio(retryCount + 1, maxRetries, delayMs);
+        } else {
+            console.error('Max retries reached. Unable to fetch driver data.');
+        }
     }
 }
 
@@ -256,7 +306,7 @@ app.get('/api/drivers', async (req, res) => {
         await loadDrivers();
         res.json(getDriversByPositon());
     } catch (error) {
-        console.error('Error fetching data (drivers):', error);
+        console.error(new Date().toISOString() + ': Error fetching data (drivers):', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
@@ -268,7 +318,7 @@ app.get('/api/laps', async (req, res) => {
         const data = await response.json();
         res.json(data);
     } catch (error) {
-        console.error('Error fetching data (laps):', error);
+        console.error(new Date().toISOString() + ': Error fetching data (laps):', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
@@ -279,7 +329,7 @@ app.get('/api/pit', async (req, res) => {
         const data = await response.json();
         res.json(data);
     } catch (error) {
-        console.error('Error fetching data (pit):', error);
+        console.error(new Date().toISOString() + ': Error fetching data (pit):', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
@@ -292,7 +342,7 @@ app.get('/api/race_control', async (req, res) => {
         await loadRaceControl();
         res.json(getRacecontrol());
     } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error(new Date().toISOString() + ': Error fetching data:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
@@ -305,7 +355,7 @@ app.get('/api/trackinfo', async (req, res) => {
         await loadLocation();
         res.json(getLocation());
     } catch (error) {
-        console.error('Error fetching data (sessions):', error);
+        console.error(new Date().toISOString() + ': Error fetching data (sessions):', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
@@ -329,7 +379,7 @@ app.get('/api/teamradio', async (req, res) => {
         await loadTeamRadio();
         res.json(getTeamradios());
     } catch (error) {
-        console.error('Error fetching data (teamradio):', error);
+        console.error(new Date().toISOString() + ': Error fetching data (teamradio):', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
