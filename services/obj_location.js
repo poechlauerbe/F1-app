@@ -25,7 +25,7 @@ const setLocation = (sessionId, sessionName, sessionType, name, country, start, 
 		location = new Location (sessionId, sessionName, sessionType, name, country, formatDate(start), formatTime(start), formatTime(end));
 
 	}
-	else if (location.sessionId !== sessionId)
+	else if (sessionId.length && location.sessionId !== sessionId)
 	{
 		location.sessionId = sessionId;
 		location.sessionName = sessionName;

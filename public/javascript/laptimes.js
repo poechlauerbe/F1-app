@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch('/api/drivers')
         .then(response => response.json())
         .then(data => {
-            const trainingDiv = document.getElementById('training');
+            const trainingDiv = document.getElementById('laptimes');
             data.forEach(driver => {
                 const trainingRowElm = document.createElement('tr');
                 trainingDiv.appendChild(trainingRowElm);
