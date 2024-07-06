@@ -1,6 +1,6 @@
 
 document.addEventListener('DOMContentLoaded', () => {
-    fetch('/api/positions')
+    fetch('/api/drivers')
         .then(response => response.json())
         .then(data => {
 			const positionsDiv = document.getElementById('positions');
@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					{
 						const positionsElement = document.createElement('p');
 						const positionsImg = document.createElement('img');
+						// make textstring and then put it into textContent
 						if (i === 1) {
 							positionsElement.textContent = (i) +  `. ${driver['name']} - ${driver['team']} - Leader`;
 						}
@@ -19,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 						else
 							positionsElement.textContent = (i) +  `. ${driver['name']} - ${driver['team']}  +${driver['gapToLeader']} seconds behind leader`;
 						positionsImg.src = driver['photo_url'];
+						console.log(driver['number'] + ': ' + driver['position']);
 						positionsDiv.appendChild(positionsElement);
 						positionsDiv.appendChild(positionsImg);
 					}

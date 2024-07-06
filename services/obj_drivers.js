@@ -8,8 +8,9 @@ function Driver(number, name, photo_url, country, team, team_color, position, la
 	this.position = position || 0;
 	this.lapCount = lapCount || 0;
 	this.gapToLeader = gapToLeader || '';
-	this.lastLap = lastLap || {};
-	this.fastestLap = fastestLap || {};
+	this.actualLap = {driverNumber: number, timeS1: 'no time', timeS2: 'no time', timeS3: 'no time', lapNr: '', lapTime: 'no time'};
+	this.lastLap = lastLap || {driverNumber: number, timeS1: 'no time', timeS2: 'no time', timeS3: 'no time', lapNr: '', lapTime: 'no time'};;
+	this.fastestLap = fastestLap || {driverNumber: number, timeS1: 'no time', timeS2: 'no time', timeS3: 'no time', lapNr: '0', lapTime: 'no time'};;
 	this.laps = [];
 	this.tyre = tyre || '';
 // check update depending on session key
@@ -19,6 +20,15 @@ let drivers = [];
 
 const getDrivers = () => {
 	return drivers;
+}
+
+const getDriversByPositon = () => {
+	let driversSorted = [];
+	for (i = 1; i < drivers.length; i++) {
+		const driver = drivers.find(driver => driver.position === i);
+		driversSorted.push(driver);
+	}
+	return driversSorted;
 }
 
 const getDriverName = (driverNumber) => {
@@ -90,16 +100,20 @@ const updateDriverLaps = (driverNumber, newLap) => {
 	const driver = drivers.find(driver => driver.number === driverNumber);
 	if (!driver)
 	{
-		console.log(driverNumber);
 		console.log("UpdateDriverLaps: driver not found")
-		console.log(drivers);
 		return null;
 	}
-	driver.lastLap = newLap;
-	// check also for fastest Lap
-	// if (driver.fastestLap === 'no time')
-	// 	driver.fastestLap = newLap; // not correct - have to add check for fastest lap
+	if (driver.actualLap.lapNr != newLap.lapNr)
+	{
+		driver.lastLap = driver.actualLap;
 
+		if (driver.actualLap.lapNr == 2)
+			driver.fastestLap = newLap;
+		else if (driver.fastestLap.lapTime > driver.actualLap.lapTime || driver.fastestLap.lapTime === 'no time')
+			driver.fastestLap = driver.actualLap;
+
+	}
+	driver.actualLap = newLap;
 }
 
 const updateDriverTyre = (driverNumber, tyre) => {
@@ -111,6 +125,7 @@ const updateDriverTyre = (driverNumber, tyre) => {
 
 module.exports = {
 	getDrivers,
+	getDriversByPositon,
 	getDriverName,
 	getDriverLastLap,
 	getFastestLap,
