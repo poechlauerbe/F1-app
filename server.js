@@ -338,6 +338,7 @@ app.get('/api/teamradio', async (req, res) => {
 console.log("Server loading ...");
 
 loadDrivers();
+loadLaps();
 loadLocation();
 
 app.listen(port, () => {

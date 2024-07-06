@@ -1,7 +1,6 @@
 # Open Points
 
 ## To be tested
-- live results in race leaderboard
 
 ## next steps / ongoing
 - training/qualifying mode

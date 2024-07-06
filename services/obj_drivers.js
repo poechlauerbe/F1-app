@@ -8,9 +8,9 @@ function Driver(number, name, photo_url, country, team, team_color, position, la
 	this.position = position || 0;
 	this.lapCount = lapCount || 0;
 	this.gapToLeader = gapToLeader || '';
-	this.actualLap = '';
-	this.lastLap = lastLap || {};
-	this.fastestLap = fastestLap || {};
+	this.actualLap = {driverNumber: number, timeS1: 'no time', timeS2: 'no time', timeS3: 'no time', lapNr: '', lapTime: 'no time'};
+	this.lastLap = lastLap || {driverNumber: number, timeS1: 'no time', timeS2: 'no time', timeS3: 'no time', lapNr: '', lapTime: 'no time'};;
+	this.fastestLap = fastestLap || {driverNumber: number, timeS1: 'no time', timeS2: 'no time', timeS3: 'no time', lapNr: '0', lapTime: 'no time'};;
 	this.laps = [];
 	this.tyre = tyre || '';
 // check update depending on session key
@@ -109,7 +109,7 @@ const updateDriverLaps = (driverNumber, newLap) => {
 
 		if (driver.actualLap.lapNr == 2)
 			driver.fastestLap = newLap;
-		else if (driver.fastestLap.lapTime > driver.actualLap.lapTime)
+		else if (driver.fastestLap.lapTime > driver.actualLap.lapTime || driver.fastestLap.lapTime === 'no time')
 			driver.fastestLap = driver.actualLap;
 
 	}
