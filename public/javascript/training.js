@@ -9,11 +9,13 @@ document.addEventListener('DOMContentLoaded', () => {
 				const trainingDataElm1 = document.createElement('td')
 				trainingDataElm1.textContent = driver['number'];
                 trainingDataElm1.rowSpan = 3;
+                trainingDataElm1.className = 'bottomBorderThick'
 				trainingRowElm.appendChild(trainingDataElm1);
 
 				const trainingDataElm2 = document.createElement('td')
 				trainingDataElm2.textContent = driver['name'];
                 trainingDataElm2.rowSpan = 3;
+                trainingDataElm2.className = 'bottomBorderThick'
 				trainingRowElm.appendChild(trainingDataElm2);
 
                 const header1Elm = document.createElement('td')
@@ -81,31 +83,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 trainingDiv.appendChild(trainingRow3Elm);
 
                 const header3Elm = document.createElement('td')
-                header3Elm.textContent = 'Fastest Lap'
+                header3Elm.textContent = 'Fastest Lap';
+                header3Elm.className = 'bottomBorderThick';
                 trainingRow3Elm.appendChild(header3Elm);
 
                 const trainingData3Elm3 = document.createElement('td')
 				trainingData3Elm3.textContent = driver['fastestLap']['lapNr'];
+                trainingData3Elm3.className = 'bottomBorderThick'
 				trainingRow3Elm.appendChild(trainingData3Elm3);
 
                 const trainingData3ElmS1 = document.createElement('td')
                 trainingData3ElmS1.textContent = driver['fastestLap']['timeS1'];
+                trainingData3ElmS1.className = 'bottomBorderThick';
                 trainingRow3Elm.appendChild(trainingData3ElmS1);
 
                 const trainingData3ElmS2 = document.createElement('td')
                 trainingData3ElmS2.textContent = driver['fastestLap']['timeS2'];
+                trainingData3ElmS2.className = 'bottomBorderThick';
                 trainingRow3Elm.appendChild(trainingData3ElmS2);
 
                 const trainingData3ElmS3 = document.createElement('td')
                 trainingData3ElmS3.textContent = driver['fastestLap']['timeS3'];
+                trainingData3ElmS3.className = 'bottomBorderThick';
                 trainingRow3Elm.appendChild(trainingData3ElmS3);
 
                 const trainingData3ElmTime = document.createElement('td')
                 trainingData3ElmTime.textContent = driver['fastestLap']['lapTime'];
+                trainingData3ElmTime.className = 'bottomBorderThick';
                 trainingRow3Elm.appendChild(trainingData3ElmTime);
 
                 const trainingData3TyreElm = document.createElement('td')
                 trainingData3TyreElm.textContent = driver['tyre'];
+                trainingData3TyreElm.className = 'bottomBorderThick';
                 trainingRow3Elm.appendChild(trainingData3TyreElm);
                 // trainingRowElm.textContent = `Name: ${driver['name']}, Number: ${driver['number']}, Team: ${driver['team']}, Country: ${driver['country']}`;
                 // trainingDiv.appendChild(driverImage);
