@@ -1,3 +1,5 @@
+import { options } from './services/mod_options.js'
+
 let blueFlag = 0;
 
 function loadSite() {
@@ -9,12 +11,6 @@ function loadSite() {
             data.reverse().forEach(raceControl => {
                 const raceControlElement = document.createElement('p');
                 const date = new Date(raceControl['date']);
-                const options = {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: false
-                };
                 const timeString = date.toLocaleTimeString([], options);
 				if (raceControl['driver_number'] == null)
                 {

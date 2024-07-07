@@ -489,7 +489,7 @@ serverStart();
 // move to services?
 function logTimeToStderr() {
     const currentTime = new Date().toISOString();
-    console.error(currentTime);
+    console.error(currentTime + ': Status OK');
 }
 
 
