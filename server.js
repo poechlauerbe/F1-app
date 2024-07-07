@@ -9,7 +9,7 @@ let lastLoading = 0;
 const { getDrivers, getDriversByPositon, addDriver, updatePositions, updateGapToLeader, updateDriverLaps, updateDriverTyre } = require('./services/obj_drivers');
 const { getLocation, setLocation, updateActualLocationWeather } = require('./services/obj_location');
 const { getLastWeather, addWeather } = require('./services/obj_weather');
-const { addTeamradios, getTeamradios } = require('./services/obj_teamradio');
+const { addTeamradios, getTeamradios, getTeamradiosLength } = require('./services/obj_teamradio');
 const { addLap, getLastLap, getPreLastLap } = require('./services/obj_laps');
 const { getRacecontrol, addRacecontrol } = require('./services/obj_racecontrol');
 
@@ -466,7 +466,7 @@ app.get('/api/trackinfo', async (req, res) => {
 
 app.get('/api/teamradio', async (req, res) => {
     try {
-        if (getTeamradios().length > 0) {
+        if (getTeamradiosLength() > 0) {
             return res.json(getTeamradios());
         }
         await loadTeamRadio();
