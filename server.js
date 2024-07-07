@@ -3,30 +3,19 @@ const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch
 
 const app = express();
 const port = 3000;
-let startProcessFinished = 0;
+let startProcess = true;
+let lastLoading = 0;
 
 const { getDrivers, getDriversByPositon, addDriver, updatePositions, updateGapToLeader, updateDriverLaps, updateDriverTyre } = require('./services/obj_drivers');
 const { getLocation, setLocation, updateActualLocationWeather } = require('./services/obj_location');
 const { getLastWeather, addWeather } = require('./services/obj_weather');
-const { addTeamradios, getTeamradios } = require('./services/obj_teamradio');
+const { addTeamradios, getTeamradios, getTeamradiosLength } = require('./services/obj_teamradio');
 const { addLap, getLastLap, getPreLastLap } = require('./services/obj_laps');
 const { getRacecontrol, addRacecontrol } = require('./services/obj_racecontrol');
 
 app.set('view engine', 'ejs');
 
 // Use the routes defined in the route files
-app.use(async (req, res, next) => {
-    if (getDrivers().length < 5) {
-      try {
-        await loadDrivers();
-        next();
-      } catch (error) {
-        res.status(500).json({ error: 'Failed to initialize drivers' });
-      }
-    } else {
-      next();
-    }
-  });
 
 const indexRouter = require('./routes/index');
 const driverRouter = require('./routes/drivers');
@@ -53,6 +42,7 @@ app.use('/trackinfo', trackinfoRouter);
 app.use('/laptimes', laptimesRouter);
 app.use('/singledriver', singleDriverRouter);
 
+loadIntervalsIsFetching = false;
 loadLocationIsFetching = false;
 loadStintsIsFetching = false;
 loadLapsIsFetching = false;
@@ -61,26 +51,15 @@ loadRaceControlIsFetching = false;
 loadTeamRadioIsFetching = false;
 
 // Function to start the regular updates
-const startUpdateLocation = (interval) => {
+
+const startUpdateIntervals = (interval) => {
     setInterval(async () => {
-        if (loadLocationIsFetching) return; // Prevent overlapping calls
-        loadLocationIsFetching = true;
+        if (loadIntervalsIsFetching) return; // Prevent overlapping calls
+        loadIntervalsIsFetching = true;
 
-        await loadLocation();
-        await loadWeather();
+        await loadIntervals();
 
-        loadLocationIsFetching = false;
-    }, interval);
-};
-
-const startUpdateStints = (interval) => {
-    setInterval(async () => {
-        if (loadStintsIsFetching) return; // Prevent overlapping calls
-        loadStintsIsFetching = true;
-
-        await loadStints();
-
-        loadStintsIsFetching = false;
+        loadIntervalsIsFetching = false;
     }, interval);
 };
 
@@ -92,6 +71,18 @@ const startUpdateLaps = (interval) => {
         await loadLaps();
 
         loadLapsIsFetching = false;
+    }, interval);
+};
+
+const startUpdateLocation = (interval) => {
+    setInterval(async () => {
+        if (loadLocationIsFetching) return; // Prevent overlapping calls
+        loadLocationIsFetching = true;
+
+        await loadLocation();
+        await loadWeather();
+
+        loadLocationIsFetching = false;
     }, interval);
 };
 
@@ -116,6 +107,18 @@ const startUpdateRaceControl = (interval) => {
     }, interval);
 }
 
+const startUpdateStints = (interval) => {
+    setInterval(async () => {
+        if (loadStintsIsFetching) return; // Prevent overlapping calls
+        loadStintsIsFetching = true;
+
+        await loadStints();
+
+        loadStintsIsFetching = false;
+    }, interval);
+};
+
+
 const startUpdateTeamRadio = (interval) => {
     setInterval(async () => {
         if (loadTeamRadioIsFetching) return; // Prevent overlapping calls
@@ -127,16 +130,24 @@ const startUpdateTeamRadio = (interval) => {
 }
 
 async function loadDrivers(retryCount = 0, maxRetries = 5, delayMs = 3000) {
+    let response_err;
     try {
         const response = await fetch('https://api.openf1.org/v1/drivers?session_key=latest');
+        response_err = response;
         const data = await response.json();
         data.forEach(element => {
             addDriver(element['driver_number'], element['full_name'], element['country_code'], element['team_name'], element['team_colour'], element['headshot_url']);
         });
+        if (startProcess) {
+            let actualTime = new Date();
+            console.log((actualTime - startLoading) + 'ms \tDrivers loaded');
+            lastLoading = actualTime;
+        }
     } catch (error) {
         // console.error(new Date().toISOString() + ': Error fetching data (drivers):', error);
         if (retryCount < maxRetries) {
-            console.error(`loadDrivers: Retrying... (${retryCount + 1}/${maxRetries})`);
+            console.error('Response error loadDrivers:\n' + response_err)
+            console.error(`\nloadDrivers: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
             await loadDrivers(retryCount + 1, maxRetries, delayMs);
         } else {
@@ -146,14 +157,22 @@ async function loadDrivers(retryCount = 0, maxRetries = 5, delayMs = 3000) {
 }
 
 async function loadLocation(retryCount = 0, maxRetries = 5, delayMs = 3000) {
+    let response_err;
     try {
         const response = await fetch('https://api.openf1.org/v1/sessions?session_key=latest');
+        response_err = response;
         const data = await response.json();
         setLocation(data[0]['session_key'], data[0]['session_name'], data[0]['session_type'], data[0]['location'], data[0]['country_name'], data[0]['date_start'], data[0]['date_end'])
+        if (startProcess) {
+            let actualTime = new Date();
+            console.log((actualTime - lastLoading) + 'ms \tLocation loaded');
+            lastLoading = actualTime;
+        }
     } catch (error) {
         // console.error(new Date().toISOString() + ': Error fetching data (sessions):', error);
         if (retryCount < maxRetries) {
-            console.error(`loadLocation: Retrying... (${retryCount + 1}/${maxRetries})`);
+            console.error('Response error loadLocation:\n' + response_err);
+            console.error(`\nloadLocation: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
             await loadLocation(retryCount + 1, maxRetries, delayMs);
         } else {
@@ -163,15 +182,23 @@ async function loadLocation(retryCount = 0, maxRetries = 5, delayMs = 3000) {
 }
 
 async function loadWeather(retryCount = 0, maxRetries = 5, delayMs = 3000) {
+    let response_err;
     try {
         const response = await fetch('https://api.openf1.org/v1/weather?session_key=latest');
+        response_err = response;
         const data = await response.json();
         data.forEach( element => {
             addWeather(element['date'], element['air_temperature'], element['track_temperature'], element['humidity'], element['pressure'], element['wind_speed'], element['wind_direction'], element['rainfall']);
         })
         updateActualLocationWeather();
+        if (startProcess) {
+            let actualTime = new Date();
+            console.log((actualTime - lastLoading) + 'ms \tWeather loaded');
+            lastLoading = actualTime;
+        }
     } catch (error) {
         if (retryCount < maxRetries) {
+            console.error('Response error loadWeather:\n' + response_err);
             console.error(`loadWeather: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
             await loadWeather(retryCount + 1, maxRetries, delayMs);
@@ -182,29 +209,50 @@ async function loadWeather(retryCount = 0, maxRetries = 5, delayMs = 3000) {
 }
 
 // only during race
-async function loadIntervals() {
+async function loadIntervals(retryCount = 0, maxRetries = 5, delayMs = 3000) {
+    let response_err;
     try {
         const response = await fetch('https://api.openf1.org/v1/intervals?session_key=latest');
+        response_err = response;
         const data = await response.json();
         data.forEach(element => {
             updateGapToLeader(element['driver_number'], element['gap_to_leader'])
         })
+        if (startProcess) {
+            let actualTime = new Date();
+            console.log((actualTime - lastLoading) + 'ms \tIntervals loaded');
+            lastLoading = actualTime;
+        }
     } catch (error) {
-        console.error(new Date().toISOString() + ': Error fetching data (intervals):', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        if (retryCount < maxRetries) {
+            console.error('Response error loadIntervals:\n' + response_err);
+            console.error(`loadIntervals: Retrying... (${retryCount + 1}/${maxRetries})`);
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+            await loadIntervals(retryCount + 1, maxRetries, delayMs);
+        } else {
+            console.error('Max retries reached. Unable to fetch driver data.');
+        }
     }
 }
 
 async function loadLaps(retryCount = 0, maxRetries = 5, delayMs = 3000) {
+    let response_err;
     try {
         const response = await fetch('https://api.openf1.org/v1/laps?session_key=latest');
+        response_err = response;
         const data = await response.json();
         data.forEach(element => {
             addLap(element['driver_number'], element['duration_sector_1'], element['duration_sector_2'], element['duration_sector_3'], element['lap_number'], element['lap_duration']);
             updateDriverLaps(element['driver_number'], getLastLap(element['driver_number']))
         })
+        if (startProcess) {
+            let actualTime = new Date();
+            console.log((actualTime - lastLoading) + 'ms \tLaps loaded');
+            lastLoading = actualTime;
+        }
     } catch (error) {
         if (retryCount < maxRetries) {
+            console.error('Response error loadLaps:\n' + response_err);
             console.error(`loadLaps: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
             await loadLaps(retryCount + 1, maxRetries, delayMs);
@@ -215,14 +263,22 @@ async function loadLaps(retryCount = 0, maxRetries = 5, delayMs = 3000) {
 }
 
 async function loadPositions(retryCount = 0, maxRetries = 5, delayMs = 3000) {
+    let response_err;
     try {
         const response = await fetch('https://api.openf1.org/v1/position?session_key=latest');
+        response_err = response;
         const data = await response.json();
         data.forEach( element => {
             updatePositions(element['driver_number'], element['position'])
         })
+        if (startProcess) {
+            let actualTime = new Date();
+            console.log((actualTime - lastLoading) + 'ms \tPositions loaded');
+            lastLoading = actualTime;
+        }
     } catch (error) {
         if (retryCount < maxRetries) {
+            console.error('Response error loadPositions:\n' + response_err);
             console.error(`loadPositions: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
             await loadPositions(retryCount + 1, maxRetries, delayMs);
@@ -233,14 +289,22 @@ async function loadPositions(retryCount = 0, maxRetries = 5, delayMs = 3000) {
 }
 
 async function loadRaceControl(retryCount = 0, maxRetries = 5, delayMs = 3000) {
+    let response_err;
     try {
         const response = await fetch('https://api.openf1.org/v1/race_control?session_key=latest');
+        response_err = response;
         const data = await response.json();
         data.forEach(element => {
             addRacecontrol(element['category'], element['date'], element['driver_number'], element['flag'], element['lap_number'], element['message'], element['scope'], element['sector'])
         })
+        if (startProcess) {
+            actualTime = new Date();
+            console.log((actualTime - lastLoading) + 'ms \tRacecontrol loaded');
+            lastLoading = actualTime;
+        }
     } catch (error) {
         if (retryCount < maxRetries) {
+            console.error('Response error loadRaceControl:\n' + response_err);
             console.error(`loadRaceControl: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
             await loadRaceControl(retryCount + 1, maxRetries, delayMs);
@@ -251,14 +315,22 @@ async function loadRaceControl(retryCount = 0, maxRetries = 5, delayMs = 3000) {
 }
 
 async function loadStints(retryCount = 0, maxRetries = 5, delayMs = 3000) {
+    let response_err;
     try {
         const response = await fetch('https://api.openf1.org/v1/stints?session_key=latest');
+        response_err = response;
         const data = await response.json();
         data.forEach(elem => {
             updateDriverTyre(elem['driver_number'], elem['compound'])
         })
+        if (startProcess) {
+            actualTime = new Date();
+            console.log((actualTime - lastLoading) + 'ms \tStints loaded');
+            lastLoading = actualTime;
+        }
     } catch (error) {
         if (retryCount < maxRetries) {
+            console.error('Response error loadStints:\n' + response_err);
             console.error(`loadStints: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
             await loadStints(retryCount + 1, maxRetries, delayMs);
@@ -269,14 +341,22 @@ async function loadStints(retryCount = 0, maxRetries = 5, delayMs = 3000) {
 }
 
 async function loadTeamRadio(retryCount = 0, maxRetries = 5, delayMs = 3000) {
+    let response_err;
     try {
         const response = await fetch('https://api.openf1.org/v1/team_radio?session_key=latest');
+        response_err = response;
         const data = await response.json();
         data.forEach(element => {
             addTeamradios(element['date'], element['driver_number'], element['recording_url']);
         })
+        if (startProcess) {
+            actualTime = new Date();
+            console.log((actualTime - lastLoading) + 'ms \tTeamRadio loaded');
+            lastLoading = actualTime;
+        }
     } catch (error) {
         if (retryCount < maxRetries) {
+            console.error('Response error loadTeamRadio:\n' + response_err);
             console.error(`loadTeamRadio: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
             await loadTeamRadio(retryCount + 1, maxRetries, delayMs);
@@ -298,7 +378,7 @@ async function loadTeamRadio(retryCount = 0, maxRetries = 5, delayMs = 3000) {
 //     }
 // });
 
-app.get('/api/drivers', async (req, res) => {
+app.get('/api/driversbyposition', async (req, res) => {
     if (getDrivers().length > 0) {
         return res.json(getDriversByPositon());
     }
@@ -311,6 +391,19 @@ app.get('/api/drivers', async (req, res) => {
     }
 });
 
+
+app.get('/api/drivers', async (req, res) => {
+    if (getDrivers().length > 0) {
+        return res.json(getDrivers());
+    }
+    try {
+        await loadDrivers();
+        res.json(getDrivers());
+    } catch (error) {
+        console.error(new Date().toISOString() + ': Error fetching data (drivers):', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 
 app.get('/api/laps', async (req, res) => {
     try {
@@ -373,7 +466,7 @@ app.get('/api/trackinfo', async (req, res) => {
 
 app.get('/api/teamradio', async (req, res) => {
     try {
-        if (getTeamradios().length > 0) {
+        if (getTeamradiosLength() > 0) {
             return res.json(getTeamradios());
         }
         await loadTeamRadio();
@@ -385,7 +478,7 @@ app.get('/api/teamradio', async (req, res) => {
 });
 
 let startLoading = new Date();
-console.error(startLoading.toISOString() + ": Server loading ...");
+console.error(startLoading.toISOString() + ": Server loading ...\n");
 
 async function serverStart() {
     await loadDrivers(); // no prerequesitary
@@ -396,10 +489,12 @@ async function serverStart() {
     await loadTeamRadio();
     await loadRaceControl();
     await loadStints();
+    await loadIntervals();
 
     let endLoading = new Date();
     finishLoading = (endLoading - startLoading);
     console.error('\nLoading time: ' + finishLoading / 1000 + ' seconds\n');
+    startProcess = false;
     // Server is ready to listen:
     app.listen(port, () => {
         console.error(endLoading.toISOString() + `: Server running at http://localhost:${port}`);
@@ -409,6 +504,7 @@ async function serverStart() {
     startUpdateStints(5030);
     startUpdateLaps(5010);
     startUpdatePositions(4980);
+    startUpdateIntervals(4870);
     startUpdateRaceControl(10050);
     startUpdateTeamRadio(13025);
 
@@ -421,7 +517,7 @@ serverStart();
 // move to services?
 function logTimeToStderr() {
     const currentTime = new Date().toISOString();
-    console.error(currentTime);
+    console.error(currentTime + ': Status OK');
 }
 
 

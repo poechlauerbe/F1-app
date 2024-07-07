@@ -1,11 +1,11 @@
 const trackinfoDiv = document.getElementById('trackinfo');
 // import { formatTime } from './services/service_time.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+function loadSite() {
     fetch('/api/trackinfo')
         .then(response => response.json())
         .then(data => {
-
+			trackinfoDiv.innerHTML = '';
 			const locationElement = document.createElement('p');
 			locationElement.textContent = `Location: ${data['name']} - ${data['country']} `;
 			trackinfoDiv.appendChild(locationElement);
@@ -32,7 +32,11 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(error => {
             console.error('Error fetching drivers:', error);
         });
-});
+};
 
+document.addEventListener('DOMContentLoaded', () => {
+    loadSite();
+    setInterval(loadSite, 30000);
+});
 
 // ${formatTime(data['weather']['time'])}

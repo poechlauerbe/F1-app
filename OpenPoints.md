@@ -3,9 +3,6 @@
 ## To be tested
 
 ## next steps / ongoing
-- training/qualifying mode
-- check automated updates
-  - which intervals would be good?
 - add GitHub Actions
 - define requirements for app - what has to be installed (add on to "how to use")
 
@@ -13,7 +10,6 @@
 - add Pit Tab
 - when new session - delete some of the data in driver, weather, laps, etc.
 - think about CSS grid of the different pages
-- idea layout change to tables
 - add qualifying/training mode
   - get info what session is through session mode
 - add point table (maybe change drivers in to general leaderboard)
@@ -22,7 +18,6 @@
 - add testing
 - add results of old races
 - add countdown to next race
-- errorhandling with EJS
 - single driver spectator
 - run server in docker
 
@@ -53,14 +48,13 @@
 
 ### Raceinfo
 - change time/date value of start & end time
-- what does rainfall mean - which values?
+- what does rainfall mean - which values? only 0 or 1 - change text
 - what does wind direction mean?
 - info: 1 update per minute
 
 ## Buglist
 - linter - change config-file for JavaScript - change tabs/spaces
 - local time is always server time
-- during training sessions wrong messages in leaderboard (seconds behind leader)
 
 
 ## Technical questions
@@ -71,3 +65,4 @@
 
 ## Fixed Bugs
 - you have to go first on drivers and then on race leaderbaord to get the race leaderboard shown. (drivers are not loaded)
+- during training/qualifying sessions wrong messages in leaderboard (seconds behind leader)

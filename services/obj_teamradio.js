@@ -9,6 +9,10 @@ function Teamradio(date, driverNumber, driverName, recUrl) {
 
 let teamradios = [];
 
+const getTeamradiosLength = () => {
+	return teamradios.length;
+}
+
 const getTeamradios = () => {
 	return teamradios.reverse();
 }
@@ -22,5 +26,6 @@ const addTeamradios = (date, driverNumber, recUrl) => {
 
 module.exports = {
 	addTeamradios,
-	getTeamradios
+	getTeamradios,
+	getTeamradiosLength
 }
