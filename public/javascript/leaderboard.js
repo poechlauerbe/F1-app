@@ -1,5 +1,5 @@
 
-document.addEventListener('DOMContentLoaded', () => {
+function loadSite() {
     fetch('/api/driversbyposition')
         .then(response => response.json())
         .then(data => {
@@ -31,4 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(error => {
             console.error('Error fetching drivers:', error);
         });
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadSite();
+    setInterval(loadSite, 10000);
 });

@@ -1,6 +1,7 @@
 import { options } from "./services/mod_options.js";
 
 let blueFlag = 0;
+// let siteLoading = false; enventually add check if site is loading to prevent multiple fetches
 
 function loadSite() {
     fetch('/api/race_control')
@@ -65,4 +66,5 @@ document.getElementById('blue-flag').addEventListener('click', () => {
 
 document.addEventListener('DOMContentLoaded', () => {
     loadSite();
+    setInterval(loadSite, 10000);
 });

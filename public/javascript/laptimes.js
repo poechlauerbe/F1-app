@@ -1,8 +1,9 @@
-document.addEventListener('DOMContentLoaded', () => {
+function loadSite() {
     fetch('/api/driversbyposition')
         .then(response => response.json())
         .then(data => {
             const lapTimesDiv = document.getElementById('laptimes');
+            lapTimesDiv.innerHTML = '';
             data.forEach(driver => {
                 const lapTimesRowElm = document.createElement('tr');
                 lapTimesDiv.appendChild(lapTimesRowElm);
@@ -129,4 +130,9 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(error => {
             console.error('Error fetching drivers:', error);
         });
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadSite();
+    setInterval(loadSite, 10000);
 });

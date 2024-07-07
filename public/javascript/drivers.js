@@ -16,3 +16,5 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error fetching drivers:', error);
         });
 });
+
+// only update when change in session id is detected
