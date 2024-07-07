@@ -140,7 +140,7 @@ async function loadDrivers(retryCount = 0, maxRetries = 5, delayMs = 3000) {
         });
         if (startProcess) {
             let actualTime = new Date();
-            console.log((actualTime - startLoading) + 'ms Drivers loaded');
+            console.log((actualTime - startLoading) + 'ms \tDrivers loaded');
             lastLoading = actualTime;
         }
     } catch (error) {
@@ -165,7 +165,7 @@ async function loadLocation(retryCount = 0, maxRetries = 5, delayMs = 3000) {
         setLocation(data[0]['session_key'], data[0]['session_name'], data[0]['session_type'], data[0]['location'], data[0]['country_name'], data[0]['date_start'], data[0]['date_end'])
         if (startProcess) {
             let actualTime = new Date();
-            console.log((actualTime - lastLoading) + 'ms Location loaded');
+            console.log((actualTime - lastLoading) + 'ms \tLocation loaded');
             lastLoading = actualTime;
         }
     } catch (error) {
@@ -193,7 +193,7 @@ async function loadWeather(retryCount = 0, maxRetries = 5, delayMs = 3000) {
         updateActualLocationWeather();
         if (startProcess) {
             let actualTime = new Date();
-            console.log((actualTime - lastLoading) + 'ms Weather loaded');
+            console.log((actualTime - lastLoading) + 'ms \tWeather loaded');
             lastLoading = actualTime;
         }
     } catch (error) {
@@ -220,7 +220,7 @@ async function loadIntervals(retryCount = 0, maxRetries = 5, delayMs = 3000) {
         })
         if (startProcess) {
             let actualTime = new Date();
-            console.log((actualTime - lastLoading) + 'ms Intervals loaded');
+            console.log((actualTime - lastLoading) + 'ms \tIntervals loaded');
             lastLoading = actualTime;
         }
     } catch (error) {
@@ -247,7 +247,7 @@ async function loadLaps(retryCount = 0, maxRetries = 5, delayMs = 3000) {
         })
         if (startProcess) {
             let actualTime = new Date();
-            console.log((actualTime - lastLoading) + 'ms Laps loaded');
+            console.log((actualTime - lastLoading) + 'ms \tLaps loaded');
             lastLoading = actualTime;
         }
     } catch (error) {
@@ -273,7 +273,7 @@ async function loadPositions(retryCount = 0, maxRetries = 5, delayMs = 3000) {
         })
         if (startProcess) {
             let actualTime = new Date();
-            console.log((actualTime - lastLoading) + 'ms Positions loaded');
+            console.log((actualTime - lastLoading) + 'ms \tPositions loaded');
             lastLoading = actualTime;
         }
     } catch (error) {
@@ -299,7 +299,7 @@ async function loadRaceControl(retryCount = 0, maxRetries = 5, delayMs = 3000) {
         })
         if (startProcess) {
             actualTime = new Date();
-            console.log((actualTime - lastLoading) + 'ms Racecontrol loaded');
+            console.log((actualTime - lastLoading) + 'ms \tRacecontrol loaded');
             lastLoading = actualTime;
         }
     } catch (error) {
@@ -325,7 +325,7 @@ async function loadStints(retryCount = 0, maxRetries = 5, delayMs = 3000) {
         })
         if (startProcess) {
             actualTime = new Date();
-            console.log((actualTime - lastLoading) + 'ms loadStints loaded');
+            console.log((actualTime - lastLoading) + 'ms \tStints loaded');
             lastLoading = actualTime;
         }
     } catch (error) {
@@ -351,7 +351,7 @@ async function loadTeamRadio(retryCount = 0, maxRetries = 5, delayMs = 3000) {
         })
         if (startProcess) {
             actualTime = new Date();
-            console.log((actualTime - lastLoading) + 'ms loadTeamRadio loaded');
+            console.log((actualTime - lastLoading) + 'ms \tTeamRadio loaded');
             lastLoading = actualTime;
         }
     } catch (error) {
@@ -378,7 +378,7 @@ async function loadTeamRadio(retryCount = 0, maxRetries = 5, delayMs = 3000) {
 //     }
 // });
 
-app.get('/api/drivers', async (req, res) => {
+app.get('/api/driversbyposition', async (req, res) => {
     if (getDrivers().length > 0) {
         return res.json(getDriversByPositon());
     }
@@ -391,6 +391,19 @@ app.get('/api/drivers', async (req, res) => {
     }
 });
 
+
+app.get('/api/drivers', async (req, res) => {
+    if (getDrivers().length > 0) {
+        return res.json(getDrivers());
+    }
+    try {
+        await loadDrivers();
+        res.json(getDrivers());
+    } catch (error) {
+        console.error(new Date().toISOString() + ': Error fetching data (drivers):', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 
 app.get('/api/laps', async (req, res) => {
     try {
