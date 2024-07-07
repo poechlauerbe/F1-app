@@ -10,7 +10,7 @@ const { getDrivers, getDriversByPositon, addDriver, updatePositions, updateGapTo
 const { getLocation, setLocation, updateActualLocationWeather } = require('./services/obj_location');
 const { getLastWeather, addWeather } = require('./services/obj_weather');
 const { addTeamradios, getTeamradios, getTeamradiosLength } = require('./services/obj_teamradio');
-const { addLap, getLastLap, getPreLastLap } = require('./services/obj_laps');
+const { addLap, delLaps, getLastLap, getPreLastLap } = require('./services/obj_laps');
 const { getRacecontrol, addRacecontrol } = require('./services/obj_racecontrol');
 
 app.set('view engine', 'ejs');
@@ -199,7 +199,7 @@ async function loadWeather(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     } catch (error) {
         if (retryCount < maxRetries) {
             console.error('Response error loadWeather:\n' + response_err);
-            console.error(`loadWeather: Retrying... (${retryCount + 1}/${maxRetries})`);
+            console.error(new Date() + `loadWeather: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
             await loadWeather(retryCount + 1, maxRetries, delayMs);
         } else {
@@ -226,7 +226,7 @@ async function loadIntervals(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     } catch (error) {
         if (retryCount < maxRetries) {
             console.error('Response error loadIntervals:\n' + response_err);
-            console.error(`loadIntervals: Retrying... (${retryCount + 1}/${maxRetries})`);
+            console.error(new Date() + `loadIntervals: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
             await loadIntervals(retryCount + 1, maxRetries, delayMs);
         } else {
@@ -241,6 +241,7 @@ async function loadLaps(retryCount = 0, maxRetries = 5, delayMs = 3000) {
         const response = await fetch('https://api.openf1.org/v1/laps?session_key=latest');
         response_err = response;
         const data = await response.json();
+        delLaps();
         data.forEach(element => {
             addLap(element['driver_number'], element['duration_sector_1'], element['duration_sector_2'], element['duration_sector_3'], element['lap_number'], element['lap_duration']);
             updateDriverLaps(element['driver_number'], getLastLap(element['driver_number']))
@@ -253,7 +254,7 @@ async function loadLaps(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     } catch (error) {
         if (retryCount < maxRetries) {
             console.error('Response error loadLaps:\n' + response_err);
-            console.error(`loadLaps: Retrying... (${retryCount + 1}/${maxRetries})`);
+            console.error(new Date() + `loadLaps: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
             await loadLaps(retryCount + 1, maxRetries, delayMs);
         } else {
@@ -279,7 +280,7 @@ async function loadPositions(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     } catch (error) {
         if (retryCount < maxRetries) {
             console.error('Response error loadPositions:\n' + response_err);
-            console.error(`loadPositions: Retrying... (${retryCount + 1}/${maxRetries})`);
+            console.error(new Date() + `loadPositions: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
             await loadPositions(retryCount + 1, maxRetries, delayMs);
         } else {
@@ -305,7 +306,7 @@ async function loadRaceControl(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     } catch (error) {
         if (retryCount < maxRetries) {
             console.error('Response error loadRaceControl:\n' + response_err);
-            console.error(`loadRaceControl: Retrying... (${retryCount + 1}/${maxRetries})`);
+            console.error(new Date() + `loadRaceControl: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
             await loadRaceControl(retryCount + 1, maxRetries, delayMs);
         } else {
@@ -331,7 +332,7 @@ async function loadStints(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     } catch (error) {
         if (retryCount < maxRetries) {
             console.error('Response error loadStints:\n' + response_err);
-            console.error(`loadStints: Retrying... (${retryCount + 1}/${maxRetries})`);
+            console.error(new Date() + `loadStints: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
             await loadStints(retryCount + 1, maxRetries, delayMs);
         } else {
@@ -357,7 +358,7 @@ async function loadTeamRadio(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     } catch (error) {
         if (retryCount < maxRetries) {
             console.error('Response error loadTeamRadio:\n' + response_err);
-            console.error(`loadTeamRadio: Retrying... (${retryCount + 1}/${maxRetries})`);
+            console.error(new Date() + `loadTeamRadio: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
             await loadTeamRadio(retryCount + 1, maxRetries, delayMs);
         } else {
@@ -499,6 +500,7 @@ async function serverStart() {
     app.listen(port, () => {
         console.error(endLoading.toISOString() + `: Server running at http://localhost:${port}`);
     });
+
     // Set intervalls to synchronize with API:
     startUpdateLocation(15010);
     startUpdateStints(5030);

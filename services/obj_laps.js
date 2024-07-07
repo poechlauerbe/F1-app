@@ -15,6 +15,10 @@ const getLaps = () => {
 	return laps;
 }
 
+const delLaps = () => {
+	laps = [];
+}
+
 const getLastLap = (driverNumber) => {
 	const lapArray = laps.filter(laps => laps.driverNumber == driverNumber);
 	if (lapArray.length === 0)
@@ -48,6 +52,7 @@ const addLap = (driverNumber, timeS1, timeS2, timeS3, lapNr, lapTime) => {
 
 module.exports = {
 	addLap,
+	delLaps,
 	getLaps,
 	getLastLap,
 	getPreLastLap
