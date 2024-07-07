@@ -42,6 +42,7 @@ app.use('/trackinfo', trackinfoRouter);
 app.use('/laptimes', laptimesRouter);
 app.use('/singledriver', singleDriverRouter);
 
+loadIntervalsIsFetching = false;
 loadLocationIsFetching = false;
 loadStintsIsFetching = false;
 loadLapsIsFetching = false;
@@ -50,26 +51,15 @@ loadRaceControlIsFetching = false;
 loadTeamRadioIsFetching = false;
 
 // Function to start the regular updates
-const startUpdateLocation = (interval) => {
+
+const startUpdateIntervals = (interval) => {
     setInterval(async () => {
-        if (loadLocationIsFetching) return; // Prevent overlapping calls
-        loadLocationIsFetching = true;
+        if (loadIntervalsIsFetching) return; // Prevent overlapping calls
+        loadIntervalsIsFetching = true;
 
-        await loadLocation();
-        await loadWeather();
+        await loadIntervals();
 
-        loadLocationIsFetching = false;
-    }, interval);
-};
-
-const startUpdateStints = (interval) => {
-    setInterval(async () => {
-        if (loadStintsIsFetching) return; // Prevent overlapping calls
-        loadStintsIsFetching = true;
-
-        await loadStints();
-
-        loadStintsIsFetching = false;
+        loadIntervalsIsFetching = false;
     }, interval);
 };
 
@@ -81,6 +71,18 @@ const startUpdateLaps = (interval) => {
         await loadLaps();
 
         loadLapsIsFetching = false;
+    }, interval);
+};
+
+const startUpdateLocation = (interval) => {
+    setInterval(async () => {
+        if (loadLocationIsFetching) return; // Prevent overlapping calls
+        loadLocationIsFetching = true;
+
+        await loadLocation();
+        await loadWeather();
+
+        loadLocationIsFetching = false;
     }, interval);
 };
 
@@ -104,6 +106,18 @@ const startUpdateRaceControl = (interval) => {
         loadRaceControlIsFetching = false;
     }, interval);
 }
+
+const startUpdateStints = (interval) => {
+    setInterval(async () => {
+        if (loadStintsIsFetching) return; // Prevent overlapping calls
+        loadStintsIsFetching = true;
+
+        await loadStints();
+
+        loadStintsIsFetching = false;
+    }, interval);
+};
+
 
 const startUpdateTeamRadio = (interval) => {
     setInterval(async () => {
@@ -477,6 +491,7 @@ async function serverStart() {
     startUpdateStints(5030);
     startUpdateLaps(5010);
     startUpdatePositions(4980);
+    startUpdateIntervals(4870);
     startUpdateRaceControl(10050);
     startUpdateTeamRadio(13025);
 
