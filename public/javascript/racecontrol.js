@@ -39,9 +39,10 @@ function loadSite() {
                         raceControlElement.className = 'noted';
                     else if (raceControl['message'].includes('TRACK LIMITS'))
                         raceControlElement.className = 'track-limits';
-					raceControlElement.textContent = timeString + '	' + raceControl['message'];
+                    if (!raceControl['message'].includes('WAVED BLUE FLAG'))
+					    raceControlElement.textContent = timeString + '	' + raceControl['message'];
                 }
-				else if (blueFlag % 2)
+				if (blueFlag % 2 && raceControl['message'].includes('WAVED BLUE FLAG'))
                 {
 	                raceControlElement.textContent = timeString + ` ${raceControl['message']}`;
                     raceControlElement.className = 'blue-flag';

@@ -14,7 +14,7 @@ const getTeamradiosLength = () => {
 }
 
 const getTeamradios = () => {
-	return teamradios.reverse();
+	return teamradios.slice().reverse();
 }
 
 const addTeamradios = (date, driverNumber, recUrl) => {

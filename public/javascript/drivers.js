@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(data => {
             const driversDiv = document.getElementById('drivers');
+            driversDiv.innerHTML = '';
             data.forEach(driver => {
                 const driverElement = document.createElement('p');
                 driverElement.textContent = `Name: ${driver['name']}, Number: ${driver['number']}, Team: ${driver['team']}, Country: ${driver['country']}`;

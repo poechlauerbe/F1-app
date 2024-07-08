@@ -16,6 +16,8 @@ function Location(sessionId, sessionName, sessionType, name, country, date, star
 let location = null;
 
 const getLocation = () => {
+	if (location.sessionId === 0)
+		return null;
 	return location;
 }
 

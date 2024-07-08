@@ -4,6 +4,7 @@ function loadSite() {
         .then(response => response.json())
         .then(data => {
 			const positionsDiv = document.getElementById('positions');
+			positionsDiv.innerHTML = '';
 			for(let i = 1; i < 22; i++)
 			{
 				data.forEach(driver => {
