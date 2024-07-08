@@ -18,7 +18,13 @@ function formatTime(date) {
 	return newDate.toLocaleTimeString([], options);
 }
 
+function getTimeNowIsoString() {
+	const date = new Date();
+	return date.toISOString();
+}
+
 module.exports = {
 	formatDate,
-	formatTime
+	formatTime,
+	getTimeNowIsoString
 };

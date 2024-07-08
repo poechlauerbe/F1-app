@@ -7,11 +7,12 @@ let startProcess = true;
 let lastLoading = 0;
 
 const { getDrivers, getDriversByPositon, addDriver, updatePositions, updateGapToLeader, updateDriverLaps, updateDriverTyre } = require('./services/obj_drivers');
-const { getLocation, setLocation, updateActualLocationWeather } = require('./services/obj_location');
+const { getLocation, getLastLocation, setLocation, updateActualLocationWeather } = require('./services/obj_location');
 const { getLastWeather, addWeather } = require('./services/obj_weather');
 const { addTeamradios, getTeamradios, getTeamradiosLength } = require('./services/obj_teamradio');
 const { addLap, delLaps, getLastLap, getPreLastLap } = require('./services/obj_laps');
 const { getRacecontrol, addRacecontrol } = require('./services/obj_racecontrol');
+const { getTimeNowIsoString } = require('./services/service_time');
 
 app.set('view engine', 'ejs');
 
@@ -147,7 +148,7 @@ async function loadDrivers(retryCount = 0, maxRetries = 5, delayMs = 3000) {
         // console.error(new Date().toISOString() + ': Error fetching data (drivers):', error);
         if (retryCount < maxRetries) {
             console.error('Response error loadDrivers:\n' + response_err)
-            console.error(`\nloadDrivers: Retrying... (${retryCount + 1}/${maxRetries})`);
+            console.error(getTimeNowIsoString() + `: loadDrivers: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
             await loadDrivers(retryCount + 1, maxRetries, delayMs);
         } else {
@@ -162,7 +163,10 @@ async function loadLocation(retryCount = 0, maxRetries = 5, delayMs = 3000) {
         const response = await fetch('https://api.openf1.org/v1/sessions?session_key=latest');
         response_err = response;
         const data = await response.json();
-        setLocation(data[0]['session_key'], data[0]['session_name'], data[0]['session_type'], data[0]['location'], data[0]['country_name'], data[0]['date_start'], data[0]['date_end'])
+        if (data[0]['location'])
+            setLocation(data[0]['session_key'], data[0]['session_name'], data[0]['session_type'], data[0]['location'], data[0]['country_name'], data[0]['date_start'], data[0]['date_end'])
+        else
+            throw {};
         if (startProcess) {
             let actualTime = new Date();
             console.log((actualTime - lastLoading) + 'ms \tLocation loaded');
@@ -172,7 +176,7 @@ async function loadLocation(retryCount = 0, maxRetries = 5, delayMs = 3000) {
         // console.error(new Date().toISOString() + ': Error fetching data (sessions):', error);
         if (retryCount < maxRetries) {
             console.error('Response error loadLocation:\n' + response_err);
-            console.error(`\nloadLocation: Retrying... (${retryCount + 1}/${maxRetries})`);
+            console.error(`\n`+ getTimeNowIsoString() + `: loadLocation: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
             await loadLocation(retryCount + 1, maxRetries, delayMs);
         } else {
@@ -199,7 +203,7 @@ async function loadWeather(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     } catch (error) {
         if (retryCount < maxRetries) {
             console.error('Response error loadWeather:\n' + response_err);
-            console.error(new Date() + `loadWeather: Retrying... (${retryCount + 1}/${maxRetries})`);
+            console.error(getTimeNowIsoString() + `: loadWeather: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
             await loadWeather(retryCount + 1, maxRetries, delayMs);
         } else {
@@ -226,7 +230,7 @@ async function loadIntervals(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     } catch (error) {
         if (retryCount < maxRetries) {
             console.error('Response error loadIntervals:\n' + response_err);
-            console.error(new Date() + `loadIntervals: Retrying... (${retryCount + 1}/${maxRetries})`);
+            console.error(getTimeNowIsoString() + `: loadIntervals: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
             await loadIntervals(retryCount + 1, maxRetries, delayMs);
         } else {
@@ -254,7 +258,7 @@ async function loadLaps(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     } catch (error) {
         if (retryCount < maxRetries) {
             console.error('Response error loadLaps:\n' + response_err);
-            console.error(new Date() + `loadLaps: Retrying... (${retryCount + 1}/${maxRetries})`);
+            console.error(getTimeNowIsoString() + `: loadLaps: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
             await loadLaps(retryCount + 1, maxRetries, delayMs);
         } else {
@@ -280,7 +284,7 @@ async function loadPositions(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     } catch (error) {
         if (retryCount < maxRetries) {
             console.error('Response error loadPositions:\n' + response_err);
-            console.error(new Date() + `loadPositions: Retrying... (${retryCount + 1}/${maxRetries})`);
+            console.error(getTimeNowIsoString() + `: loadPositions: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
             await loadPositions(retryCount + 1, maxRetries, delayMs);
         } else {
@@ -306,7 +310,7 @@ async function loadRaceControl(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     } catch (error) {
         if (retryCount < maxRetries) {
             console.error('Response error loadRaceControl:\n' + response_err);
-            console.error(new Date() + `loadRaceControl: Retrying... (${retryCount + 1}/${maxRetries})`);
+            console.error(getTimeNowIsoString() + `: loadRaceControl: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
             await loadRaceControl(retryCount + 1, maxRetries, delayMs);
         } else {
@@ -332,7 +336,7 @@ async function loadStints(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     } catch (error) {
         if (retryCount < maxRetries) {
             console.error('Response error loadStints:\n' + response_err);
-            console.error(new Date() + `loadStints: Retrying... (${retryCount + 1}/${maxRetries})`);
+            console.error(getTimeNowIsoString() + `: loadStints: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
             await loadStints(retryCount + 1, maxRetries, delayMs);
         } else {
@@ -358,7 +362,7 @@ async function loadTeamRadio(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     } catch (error) {
         if (retryCount < maxRetries) {
             console.error('Response error loadTeamRadio:\n' + response_err);
-            console.error(new Date() + `loadTeamRadio: Retrying... (${retryCount + 1}/${maxRetries})`);
+            console.error(getTimeNowIsoString() + `: loadTeamRadio: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
             await loadTeamRadio(retryCount + 1, maxRetries, delayMs);
         } else {
@@ -387,7 +391,7 @@ app.get('/api/driversbyposition', async (req, res) => {
         await loadDrivers();
         res.json(getDriversByPositon());
     } catch (error) {
-        console.error(new Date().toISOString() + ': Error fetching data (drivers):', error);
+        console.error(getTimeNowIsoString() + ': Error fetching data (drivers):', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
@@ -401,21 +405,21 @@ app.get('/api/drivers', async (req, res) => {
         await loadDrivers();
         res.json(getDrivers());
     } catch (error) {
-        console.error(new Date().toISOString() + ': Error fetching data (drivers):', error);
+        console.error(getTimeNowIsoString() + ': Error fetching data (drivers):', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
-app.get('/api/laps', async (req, res) => {
-    try {
-        const response = await fetch('https://api.openf1.org/v1/laps?session_key=latest');
-        const data = await response.json();
-        res.json(data);
-    } catch (error) {
-        console.error(new Date().toISOString() + ': Error fetching data (laps):', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
+// app.get('/api/laps', async (req, res) => {
+//     try {
+//         const response = await fetch('https://api.openf1.org/v1/laps?session_key=latest');
+//         const data = await response.json();
+//         res.json(data);
+//     } catch (error) {
+//         console.error(getTimeNowIsoString() + ': Error fetching data (laps):', error);
+//         res.status(500).json({ error: 'Internal Server Error' });
+//     }
+// });
 
 app.get('/api/pit', async (req, res) => {
     try {
@@ -436,20 +440,20 @@ app.get('/api/race_control', async (req, res) => {
         await loadRaceControl();
         res.json(getRacecontrol());
     } catch (error) {
-        console.error(new Date().toISOString() + ': Error fetching data:', error);
+        console.error(getTimeNowIsoString() + ': Error fetching data:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
 app.get('/api/trackinfo', async (req, res) => {
     try {
-        if(getLocation().length > 0) {
+        if(getLocation()) {
             return res.json(getLocation());
         }
         await loadLocation();
         res.json(getLocation());
     } catch (error) {
-        console.error(new Date().toISOString() + ': Error fetching data (sessions):', error);
+        console.error(getTimeNowIsoString() + ': Error fetching data (sessions):', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
