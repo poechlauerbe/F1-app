@@ -1,5 +1,6 @@
 @import url('racecontrol.css');
 @import url('table.css');
+
 * {
 	box-sizing: border-box;
 }
@@ -74,3 +75,24 @@ button {
 #pages {
 	line-height: 2;
 }
+
+
+/* nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav > ul > li {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.subnav {
+    display: none;
+    list-style-type: none;
+    padding-left: 20px;
+}
+
+.subnav li {
+    margin-bottom: 10px;
+} */
