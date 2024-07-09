@@ -7,7 +7,7 @@ let startProcess = true;
 let lastLoading = 0;
 
 const { getDrivers, getDriversByPositon, addDriver, updatePositions, updateGapToLeader, updateDriverLaps, updateDriverTyre } = require('./services/obj_drivers');
-const { getLocation, getLastLocation, setLocation, updateActualLocationWeather } = require('./services/obj_location');
+const { getLocation, setLocation, updateActualLocationWeather } = require('./services/obj_location');
 const { getLastWeather, addWeather } = require('./services/obj_weather');
 const { addTeamradios, getTeamradios, getTeamradiosLength } = require('./services/obj_teamradio');
 const { addLap, delLaps, getLastLap, getPreLastLap } = require('./services/obj_laps');
@@ -19,13 +19,15 @@ app.set('view engine', 'ejs');
 // Use the routes defined in the route files
 
 const indexRouter = require('./routes/index');
+
 const driverRouter = require('./routes/drivers');
+const laptimesRouter = require('./routes/laptimes');
 const leaderboardRouter = require('./routes/leaderboard');
+const pitRouter = require('./routes/pit');
 const racecontrolRouter = require('./routes/racecontrol');
+const singleDriverRouter = require('./routes/singledriver');
 const teamradioRouter = require('./routes/teamradio');
 const trackinfoRouter = require('./routes/trackinfo');
-const laptimesRouter = require('./routes/laptimes');
-const singleDriverRouter = require('./routes/singledriver');
 
 
 // Serve static files from the 'public' directory
@@ -35,13 +37,15 @@ app.use(express.static('public'));
 app.use('/favicon.ico', express.static('public/favicon.ico'));
 
 app.use('/', indexRouter);
+
 app.use('/drivers', driverRouter);
+app.use('/laptimes', laptimesRouter);
 app.use('/leaderboard', leaderboardRouter);
+app.use('/pit', pitRouter);
 app.use('/racecontrol', racecontrolRouter);
+app.use('/singledriver', singleDriverRouter);
 app.use('/teamradio', teamradioRouter);
 app.use('/trackinfo', trackinfoRouter);
-app.use('/laptimes', laptimesRouter);
-app.use('/singledriver', singleDriverRouter);
 
 loadIntervalsIsFetching = false;
 loadLocationIsFetching = false;

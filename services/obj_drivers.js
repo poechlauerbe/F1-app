@@ -13,10 +13,16 @@ function Driver(number, name, photo_url, country, team, team_color, position, la
 	this.fastestLap = fastestLap || {driverNumber: number, timeS1: 'no time', timeS2: 'no time', timeS3: 'no time', lapNr: '', lapTime: 'no time'};;
 	this.laps = [];
 	this.tyre = tyre || '';
+	this.pits = [];
 // check update depending on session key
 }
 
 let drivers = [];
+
+const getDriverPits = (driverNumber) => {
+	const driver = drivers.find(driver => driver.number === driverNumber);
+	return driver.pits;
+}
 
 const getDrivers = () => {
 	return drivers;
@@ -46,25 +52,7 @@ const getFastestLap = (driverNumber) => {
 	const driver = drivers.find(driver => driver.number === driverNumber);
 	return driver.lastLap;
 }
-// const getDriverTeam = (driverNumber) => {
-// 	const driver = drivers.find(driver => driver.number === driverNumber);
-// 	return driver.team;
-// }
 
-// const getDriverPhoto = (driverNumber) => {
-// 	const driver = drivers.find(driver => driver.number === driverNumber);
-// 	return driver.photo;
-// }
-
-// const getDriverPosition = (driverNumber) => {
-// 	const driver = drivers.find(driver => driver.number === driverNumber);
-// 	return driver.position;
-// }
-
-// const getDriverLaps = (driverNumber) => {
-// 	const driver = drivers.find(driver => driver.number === driverNumber);
-// 	return driver.laps;
-// }
 
 const getDriverGapToLeader = (driverNumber) => {
 	const driver = drivers.find(driver => driver.number === driverNumber);
@@ -117,6 +105,15 @@ const updateDriverLaps = (driverNumber, newLap) => {
 
 	}
 	driver.actualLap = newLap;
+}
+
+const updateDriverPits = (driverNumber, pit) => {
+	const driver = drivers.find(driver => driver.number === driverNumber);
+	if (!driver)
+		return null;
+	const pits = driver.pits.find(pit => pit.lapNr === driver.pits.lapNr);
+	if (!driver.pits.length || !pits)
+		driver.pits.push(pit);
 }
 
 const updateDriverTyre = (driverNumber, tyre) => {
