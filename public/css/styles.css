@@ -2,7 +2,7 @@
 @import url('table.css');
 
 * {
-	box-sizing: border-box;
+	/* box-sizing: border-box; */
 }
 
 body {
@@ -35,29 +35,6 @@ p {
 	white-space: pre-line;
 }
 
-nav {
-	display: flex;
-	justify-content: center;
-    align-items: center;
-}
-
-nav li {
-	list-style-type: none;
-}
-
-nav a{
-	background-color: white;
-	color: black;
-	padding: 10px;
-	margin: 10px;
-	border: 1px solid black;
-	border-radius: 10px;
-	text-decoration: none;
-	text-align: center;
-	display: flex;
-	flex-wrap: wrap;
-}
-
 button {
 	background-color: white;
 	color: black;
@@ -77,22 +54,64 @@ button {
 }
 
 
-/* nav ul {
+/* Ensure the main ul is styled properly */
+nav > ul {
     list-style-type: none;
     padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
+nav a {
+    background-color: white;
+    color: black;
+    padding: 10px;
+    margin: 10px 20px;
+    border: 1px solid black;
+    border-radius: 10px;
+    text-decoration: none;
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+/* Style the main li elements */
 nav > ul > li {
-    display: inline-block;
-    margin-right: 20px;
+    position: relative;
 }
 
+/* Hide the subnav by default */
 .subnav {
     display: none;
+    position: absolute;
+    top: 20px; /* Position it 20px below the Live button */
+    left: 50%; /* Start from the center of the parent element */
+    transform: translateX(-50%); /* Center align */
     list-style-type: none;
-    padding-left: 20px;
+    padding: 0;
+    margin: 0;
+    background-color: white; /* Adjust as needed */
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); Optional shadow for better visibility */
 }
 
+/* Show the subnav when the live button is hovered */
+.live-button:hover .subnav {
+    display: block;
+}
+
+/* Style the subnav items */
 .subnav li {
-    margin-bottom: 10px;
-} */
+    margin: 0;
+    padding: 5px; /* Adjust padding as needed */
+}
+
+.subnav li a {
+    text-decoration: none;
+    color: black; /* Adjust text color as needed */
+}
+
+.subnav li a:hover {
+    background-color: #f0f0f0; /* Adjust hover background color as needed */
+}

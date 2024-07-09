@@ -1,18 +1,20 @@
-<% if (typeof showHomeLink == 'undefined' || showHomeLink) { %>
-    <header>
-        <nav>
+<!-- make sure to update also pages_list.ejs to include the new pages -->
+ 
+<header>
+    <nav>
+        <ul>
             <li><a href="./">Home</a></li>
-<% } %>
-<li><a href="./drivers">Drivers</a></li>
-<li><a href="./trackinfo">Track info</a></li>
-<li><a href="#" onclick="toggleSubnav('subnav1')">Live</a></li>
-<ul id="subnav1" class="subnav">
-    <li><a href="./laptimes">Lap Times</a></li>
-    <li><a href="./leaderboard">Race Leaderboard</a></li>
-    <li><a href="./racecontrol">Race Control</a></li>
-    <li><a href="./teamradio">Team Radio</a></li>
-</ul>
-<% if (typeof showHomeLink == 'undefined' || showHomeLink) { %>
-        </nav>
-    </header>
-<% } %>
+            <li><a href="#" onclick="toggleSubnav('subnav1')">Live</a></li>
+            <li class="live-button">
+                <ul id="subnav1" class="subnav">
+                    <li class="subnavElem"><a href="./laptimes">Lap Times</a></li>
+                    <li><a href="./leaderboard">Race Leaderboard</a></li>
+                    <li><a href="./racecontrol">Race Control</a></li>
+                    <li><a href="./teamradio">Team Radio</a></li>
+                </ul>
+            </li>
+            <li><a href="./trackinfo">Track info</a></li>
+            <li><a href="./drivers">Drivers</a></li>
+        </ul>
+    </nav>
+</header>
