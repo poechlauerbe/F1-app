@@ -28,7 +28,6 @@ function loadSite() {
 			let pressure = data['weather']['pressure'] / 1000;
 			weatherElement.textContent = `date/time: ${data['weather']['time']} \nAir temperature: ${data['weather']['airTemp']}°C\nTrack temperature: ${data['weather']['trackTemp']}°C\nHumidity: ${data['weather']['humidity']}%\npressure: ${pressure} bar\nWind speed: ${data['weather']['windSpeed']} m/s\nWind direction: ${data['weather']['windDirection']}°\nRainfall: ${data['weather']['rainfall']}\nSession ID: ${data['sessionId']}`;
 			trackinfoDiv.appendChild(weatherElement);
-			console.log(getLastPage());
         })
         .catch(error => {
             console.error('Error fetching drivers:', error);
