@@ -5,7 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const pitDiv = document.getElementById('pit');
             pitDiv.innerHTML = '';
             data.forEach(pitinfo => {
-				console.log(pitinfo);
+				const pitElem = document.createElement('p');
+				pitElem.innerHTML = `Number: ${pitinfo['driver_number']} | Lap: ${pitinfo['lap_number']} | Time: ${pitinfo['pit_duration']}`;
+				pitDiv.appendChild(pitElem);
             });
         })
         .catch(error => {
