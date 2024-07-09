@@ -54,6 +54,7 @@ Working in progress...
 	-css: added colors to different race control messages
 6. Added new features, many tests during Silverstone GP weekend
 	- single Lap calculation
+	- pit stops page
 
 If you have any ideas - make a comment in the [discussions](https://github.com/poechlauerbe/F1-app/discussions) or create an [issue](https://github.com/poechlauerbe/F1-app/issues)
 
