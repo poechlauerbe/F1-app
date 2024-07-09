@@ -13,6 +13,7 @@ const { addTeamradios, getTeamradios, getTeamradiosLength } = require('./service
 const { addLap, delLaps, getLastLap, getPreLastLap } = require('./services/obj_laps');
 const { getRacecontrol, addRacecontrol } = require('./services/obj_racecontrol');
 const { getTimeNowIsoString } = require('./services/service_time');
+const { getGpList, addGpList } = require('./services/obj_GP_list');
 
 app.set('view engine', 'ejs');
 
@@ -21,6 +22,7 @@ app.set('view engine', 'ejs');
 const indexRouter = require('./routes/index');
 
 const driverRouter = require('./routes/drivers');
+const gplistRouter = require('./routes/gplist');
 const laptimesRouter = require('./routes/laptimes');
 const leaderboardRouter = require('./routes/leaderboard');
 const pitRouter = require('./routes/pit');
@@ -39,6 +41,7 @@ app.use('/favicon.ico', express.static('public/favicon.ico'));
 app.use('/', indexRouter);
 
 app.use('/drivers', driverRouter);
+app.use('/gplist', gplistRouter);
 app.use('/laptimes', laptimesRouter);
 app.use('/leaderboard', leaderboardRouter);
 app.use('/pit', pitRouter);
@@ -271,6 +274,34 @@ async function loadLaps(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     }
 }
 
+async function loadMeetings(retryCount = 0, maxRetries = 5, delayMs = 3000, reload=false) {
+    let response_err = null;
+    try {
+        const response = await fetch('https://api.openf1.org/v1/meetings');
+        response_err = response;
+        const data = await response.json();
+        data.forEach(element => {
+            addGpList(element['meeting_key'], element['circuit_short_name'], element['official_name'], element['country_name'], element['date_start'], element['gmt_offset']);
+        })
+        if (startProcess) {
+            let actualTime = new Date();
+            console.log((actualTime - lastLoading) + 'ms \tMeetings loaded');
+            lastLoading = actualTime;
+        }
+        if (reload)
+            console.log("loadMeetings: done");
+    } catch (error) {
+        if (retryCount < maxRetries) {
+            console.error('Response error loadMeetings:\n' + response_err);
+            console.error(getTimeNowIsoString() + `: loadMeetings: Retrying... (${retryCount + 1}/${maxRetries})`);
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+            await loadMeetings(retryCount + 1, maxRetries, delayMs, true);
+        } else {
+            console.error('Max retries reached. Unable to fetch driver data.');
+        }
+    }
+}
+
 async function loadPositions(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     let response_err;
     try {
@@ -414,17 +445,6 @@ app.get('/api/drivers', async (req, res) => {
     }
 });
 
-// app.get('/api/laps', async (req, res) => {
-//     try {
-//         const response = await fetch('https://api.openf1.org/v1/laps?session_key=latest');
-//         const data = await response.json();
-//         res.json(data);
-//     } catch (error) {
-//         console.error(getTimeNowIsoString() + ': Error fetching data (laps):', error);
-//         res.status(500).json({ error: 'Internal Server Error' });
-//     }
-// });
-
 app.get('/api/pit', async (req, res) => {
     try {
         const response = await fetch('https://api.openf1.org/v1/pit?session_key=latest');
@@ -432,6 +452,19 @@ app.get('/api/pit', async (req, res) => {
         res.json(data);
     } catch (error) {
         console.error(new Date().toISOString() + ': Error fetching data (pit):', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+app.get('/api/gplist', async (req, res) => {
+    if (getGpList().length > 0) {
+        return res.json(getGpList());
+    }
+    try {
+        await loadMeetings();
+        res.json(getGpList());
+    } catch (error) {
+        console.error(getTimeNowIsoString() + ': Error fetching data (drivers):', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
@@ -462,17 +495,6 @@ app.get('/api/trackinfo', async (req, res) => {
     }
 });
 
-// app.get('/api/stints', async (req, res) => {
-//     try {
-//         const response = await fetch('https://api.openf1.org/v1/stints?session_key=latest');
-//         const data = await response.json();
-//         res.json(data);
-//     } catch (error) {
-//         console.error('Error fetching data (stints):', error);
-//         res.status(500).json({ error: 'Internal Server Error' });
-//     }
-// });
-
 app.get('/api/teamradio', async (req, res) => {
     try {
         if (getTeamradiosLength() > 0) {
@@ -499,6 +521,7 @@ async function serverStart() {
     await loadRaceControl();
     await loadStints();
     await loadIntervals();
+    await loadMeetings();
 
     let endLoading = new Date();
     finishLoading = (endLoading - startLoading);
