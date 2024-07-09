@@ -137,7 +137,7 @@ const startUpdateTeamRadio = (interval) => {
     }, interval);
 }
 
-async function loadDrivers(retryCount = 0, maxRetries = 5, delayMs = 3000) {
+async function loadDrivers(retryCount = 0, maxRetries = 5, delayMs = 3000, reload=false) {
     let response_err;
     try {
         const response = await fetch('https://api.openf1.org/v1/drivers?session_key=latest');
@@ -151,6 +151,8 @@ async function loadDrivers(retryCount = 0, maxRetries = 5, delayMs = 3000) {
             console.log((actualTime - startLoading) + 'ms \tDrivers loaded');
             lastLoading = actualTime;
         }
+        if (reload && !startProcess)
+            console.log("loadDrivers: done (" + retryCount + "/" + maxRetries + ")");
     } catch (error) {
         // console.error(new Date().toISOString() + ': Error fetching data (drivers):', error);
         if (retryCount < maxRetries) {
@@ -164,7 +166,7 @@ async function loadDrivers(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     }
 }
 
-async function loadLocation(retryCount = 0, maxRetries = 5, delayMs = 3000) {
+async function loadLocation(retryCount = 0, maxRetries = 5, delayMs = 3000, reload=false) {
     let response_err;
     try {
         const response = await fetch('https://api.openf1.org/v1/sessions?session_key=latest');
@@ -179,6 +181,8 @@ async function loadLocation(retryCount = 0, maxRetries = 5, delayMs = 3000) {
             console.log((actualTime - lastLoading) + 'ms \tLocation loaded');
             lastLoading = actualTime;
         }
+        if (reload && !startProcess)
+            console.log("loadLocation: done (" + retryCount + "/" + maxRetries + ")");
     } catch (error) {
         // console.error(new Date().toISOString() + ': Error fetching data (sessions):', error);
         if (retryCount < maxRetries) {
@@ -192,7 +196,7 @@ async function loadLocation(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     }
 }
 
-async function loadWeather(retryCount = 0, maxRetries = 5, delayMs = 3000) {
+async function loadWeather(retryCount = 0, maxRetries = 5, delayMs = 3000, reload=false) {
     let response_err;
     try {
         const response = await fetch('https://api.openf1.org/v1/weather?session_key=latest');
@@ -207,6 +211,8 @@ async function loadWeather(retryCount = 0, maxRetries = 5, delayMs = 3000) {
             console.log((actualTime - lastLoading) + 'ms \tWeather loaded');
             lastLoading = actualTime;
         }
+        if (reload && !startProcess)
+            console.log("loadWeather: done (" + retryCount + "/" + maxRetries + ")");
     } catch (error) {
         if (retryCount < maxRetries) {
             console.error('Response error loadWeather:\n' + response_err);
@@ -220,7 +226,7 @@ async function loadWeather(retryCount = 0, maxRetries = 5, delayMs = 3000) {
 }
 
 // only during race
-async function loadIntervals(retryCount = 0, maxRetries = 5, delayMs = 3000) {
+async function loadIntervals(retryCount = 0, maxRetries = 5, delayMs = 3000, reload=false) {
     let response_err;
     try {
         const response = await fetch('https://api.openf1.org/v1/intervals?session_key=latest');
@@ -234,6 +240,8 @@ async function loadIntervals(retryCount = 0, maxRetries = 5, delayMs = 3000) {
             console.log((actualTime - lastLoading) + 'ms \tIntervals loaded');
             lastLoading = actualTime;
         }
+        if (reload && !startProcess)
+            console.log("loadIntervals: done (" + retryCount + "/" + maxRetries + ")");
     } catch (error) {
         if (retryCount < maxRetries) {
             console.error('Response error loadIntervals:\n' + response_err);
@@ -246,7 +254,7 @@ async function loadIntervals(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     }
 }
 
-async function loadLaps(retryCount = 0, maxRetries = 5, delayMs = 3000) {
+async function loadLaps(retryCount = 0, maxRetries = 5, delayMs = 3000, reload=false) {
     let response_err;
     try {
         const response = await fetch('https://api.openf1.org/v1/laps?session_key=latest');
@@ -262,6 +270,8 @@ async function loadLaps(retryCount = 0, maxRetries = 5, delayMs = 3000) {
             console.log((actualTime - lastLoading) + 'ms \tLaps loaded');
             lastLoading = actualTime;
         }
+        if (reload && !startProcess)
+            console.log("loadLaps: done (" + retryCount + "/" + maxRetries + ")");
     } catch (error) {
         if (retryCount < maxRetries) {
             console.error('Response error loadLaps:\n' + response_err);
@@ -289,7 +299,7 @@ async function loadMeetings(retryCount = 0, maxRetries = 5, delayMs = 3000, relo
             lastLoading = actualTime;
         }
         if (reload)
-            console.log("loadMeetings: done");
+            console.log("loadMeetings: done (" + retryCount + "/" + maxRetries + ")");
     } catch (error) {
         if (retryCount < maxRetries) {
             console.error('Response error loadMeetings:\n' + response_err);
@@ -302,7 +312,7 @@ async function loadMeetings(retryCount = 0, maxRetries = 5, delayMs = 3000, relo
     }
 }
 
-async function loadPositions(retryCount = 0, maxRetries = 5, delayMs = 3000) {
+async function loadPositions(retryCount = 0, maxRetries = 5, delayMs = 3000, reload=false) {
     let response_err;
     try {
         const response = await fetch('https://api.openf1.org/v1/position?session_key=latest');
@@ -316,6 +326,8 @@ async function loadPositions(retryCount = 0, maxRetries = 5, delayMs = 3000) {
             console.log((actualTime - lastLoading) + 'ms \tPositions loaded');
             lastLoading = actualTime;
         }
+        if (reload && !startProcess)
+            console.log("loadPositions: done (" + retryCount + "/" + maxRetries + ")");
     } catch (error) {
         if (retryCount < maxRetries) {
             console.error('Response error loadPositions:\n' + response_err);
@@ -328,7 +340,7 @@ async function loadPositions(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     }
 }
 
-async function loadRaceControl(retryCount = 0, maxRetries = 5, delayMs = 3000) {
+async function loadRaceControl(retryCount = 0, maxRetries = 5, delayMs = 3000, reload=false) {
     let response_err;
     try {
         const response = await fetch('https://api.openf1.org/v1/race_control?session_key=latest');
@@ -342,6 +354,8 @@ async function loadRaceControl(retryCount = 0, maxRetries = 5, delayMs = 3000) {
             console.log((actualTime - lastLoading) + 'ms \tRacecontrol loaded');
             lastLoading = actualTime;
         }
+        if (reload && !startProcess)
+            console.log("loadRaceControl: done (" + retryCount + "/" + maxRetries + ")");
     } catch (error) {
         if (retryCount < maxRetries) {
             console.error('Response error loadRaceControl:\n' + response_err);
@@ -354,7 +368,7 @@ async function loadRaceControl(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     }
 }
 
-async function loadStints(retryCount = 0, maxRetries = 5, delayMs = 3000) {
+async function loadStints(retryCount = 0, maxRetries = 5, delayMs = 3000, reload=false) {
     let response_err;
     try {
         const response = await fetch('https://api.openf1.org/v1/stints?session_key=latest');
@@ -368,6 +382,8 @@ async function loadStints(retryCount = 0, maxRetries = 5, delayMs = 3000) {
             console.log((actualTime - lastLoading) + 'ms \tStints loaded');
             lastLoading = actualTime;
         }
+        if (reload && !startProcess)
+            console.log("loadStints: done (" + retryCount + "/" + maxRetries + ")");
     } catch (error) {
         if (retryCount < maxRetries) {
             console.error('Response error loadStints:\n' + response_err);
@@ -380,7 +396,7 @@ async function loadStints(retryCount = 0, maxRetries = 5, delayMs = 3000) {
     }
 }
 
-async function loadTeamRadio(retryCount = 0, maxRetries = 5, delayMs = 3000) {
+async function loadTeamRadio(retryCount = 0, maxRetries = 5, delayMs = 3000, reload=false) {
     let response_err;
     try {
         const response = await fetch('https://api.openf1.org/v1/team_radio?session_key=latest');
@@ -394,6 +410,8 @@ async function loadTeamRadio(retryCount = 0, maxRetries = 5, delayMs = 3000) {
             console.log((actualTime - lastLoading) + 'ms \tTeamRadio loaded');
             lastLoading = actualTime;
         }
+        if (reload && !startProcess)
+            console.log("loadTeamradio: done (" + retryCount + "/" + maxRetries + ")");
     } catch (error) {
         if (retryCount < maxRetries) {
             console.error('Response error loadTeamRadio:\n' + response_err);
