@@ -159,7 +159,7 @@ async function loadDrivers(retryCount = 0, maxRetries = 5, delayMs = 3000, reloa
             console.error('Response error loadDrivers:\n' + response_err)
             console.error(getTimeNowIsoString() + `: loadDrivers: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
-            await loadDrivers(retryCount + 1, maxRetries, delayMs);
+            await loadDrivers(retryCount + 1, maxRetries, delayMs, true);
         } else {
             console.error('Max retries reached. Unable to fetch driver data.');
         }
@@ -189,7 +189,7 @@ async function loadLocation(retryCount = 0, maxRetries = 5, delayMs = 3000, relo
             console.error('Response error loadLocation:\n' + response_err);
             console.error(`\n`+ getTimeNowIsoString() + `: loadLocation: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
-            await loadLocation(retryCount + 1, maxRetries, delayMs);
+            await loadLocation(retryCount + 1, maxRetries, delayMs, true);
         } else {
             console.error('Max retries reached. Unable to fetch driver data.');
         }
@@ -218,7 +218,7 @@ async function loadWeather(retryCount = 0, maxRetries = 5, delayMs = 3000, reloa
             console.error('Response error loadWeather:\n' + response_err);
             console.error(getTimeNowIsoString() + `: loadWeather: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
-            await loadWeather(retryCount + 1, maxRetries, delayMs);
+            await loadWeather(retryCount + 1, maxRetries, delayMs, true);
         } else {
             console.error('Max retries reached. Unable to fetch driver data.');
         }
@@ -247,7 +247,7 @@ async function loadIntervals(retryCount = 0, maxRetries = 5, delayMs = 3000, rel
             console.error('Response error loadIntervals:\n' + response_err);
             console.error(getTimeNowIsoString() + `: loadIntervals: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
-            await loadIntervals(retryCount + 1, maxRetries, delayMs);
+            await loadIntervals(retryCount + 1, maxRetries, delayMs, true);
         } else {
             console.error('Max retries reached. Unable to fetch driver data.');
         }
@@ -277,7 +277,7 @@ async function loadLaps(retryCount = 0, maxRetries = 5, delayMs = 3000, reload=f
             console.error('Response error loadLaps:\n' + response_err);
             console.error(getTimeNowIsoString() + `: loadLaps: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
-            await loadLaps(retryCount + 1, maxRetries, delayMs);
+            await loadLaps(retryCount + 1, maxRetries, delayMs, true);
         } else {
             console.error('Max retries reached. Unable to fetch driver data.');
         }
@@ -333,7 +333,7 @@ async function loadPositions(retryCount = 0, maxRetries = 5, delayMs = 3000, rel
             console.error('Response error loadPositions:\n' + response_err);
             console.error(getTimeNowIsoString() + `: loadPositions: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
-            await loadPositions(retryCount + 1, maxRetries, delayMs);
+            await loadPositions(retryCount + 1, maxRetries, delayMs, true);
         } else {
             console.error('Max retries reached. Unable to fetch driver data.');
         }
@@ -361,7 +361,7 @@ async function loadRaceControl(retryCount = 0, maxRetries = 5, delayMs = 3000, r
             console.error('Response error loadRaceControl:\n' + response_err);
             console.error(getTimeNowIsoString() + `: loadRaceControl: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
-            await loadRaceControl(retryCount + 1, maxRetries, delayMs);
+            await loadRaceControl(retryCount + 1, maxRetries, delayMs, true);
         } else {
             console.error('Max retries reached. Unable to fetch driver data.');
         }
@@ -389,7 +389,7 @@ async function loadStints(retryCount = 0, maxRetries = 5, delayMs = 3000, reload
             console.error('Response error loadStints:\n' + response_err);
             console.error(getTimeNowIsoString() + `: loadStints: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
-            await loadStints(retryCount + 1, maxRetries, delayMs);
+            await loadStints(retryCount + 1, maxRetries, delayMs, true);
         } else {
             console.error('Max retries reached. Unable to fetch driver data.');
         }
@@ -417,7 +417,7 @@ async function loadTeamRadio(retryCount = 0, maxRetries = 5, delayMs = 3000, rel
             console.error('Response error loadTeamRadio:\n' + response_err);
             console.error(getTimeNowIsoString() + `: loadTeamRadio: Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
-            await loadTeamRadio(retryCount + 1, maxRetries, delayMs);
+            await loadTeamRadio(retryCount + 1, maxRetries, delayMs, true);
         } else {
             console.error('Max retries reached. Unable to fetch driver data.');
         }
@@ -436,13 +436,13 @@ async function loadCarData(driverNumber, retryCount = 0, maxRetries = 5, delayMs
             lastLoading = actualTime;
         }
         if (reload && !startProcess)
-            console.log("carData: done (" + retryCount + "/" + maxRetries + ")");
+            console.log(getTimeNowIsoString() + `: loadCarData (car ${driverNumber}): done (` + retryCount + "/" + maxRetries + ")");
     } catch (error) {
         if (retryCount < maxRetries) {
             console.error('Response error carData:\n' + response_err);
-            console.error(getTimeNowIsoString() + `: carData: Retrying... (${retryCount + 1}/${maxRetries})`);
+            console.error(getTimeNowIsoString() + `: carData (car ${driverNumber}): Retrying... (${retryCount + 1}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, delayMs));
-            await loadCarData(driverNumber, retryCount + 1, maxRetries, delayMs);
+            await loadCarData(driverNumber, retryCount + 1, maxRetries, delayMs, true);
         } else {
             console.error('Max retries reached. Unable to fetch driver data.');
         }
