@@ -424,6 +424,30 @@ async function loadTeamRadio(retryCount = 0, maxRetries = 5, delayMs = 3000, rel
     }
 }
 
+async function loadCarData(driverNumber, retryCount = 0, maxRetries = 5, delayMs = 3000, reload=false) {
+    let response_err;
+    try {
+        const response = await fetch('https://api.openf1.org/v1/car_data?session_key=latest&driver_number=' + driverNumber);
+        response_err = response;
+        const data = await response.json();
+        if (startProcess) {
+            actualTime = new Date();
+            console.log((actualTime - lastLoading) + 'ms \tCarData loaded');
+            lastLoading = actualTime;
+        }
+        if (reload && !startProcess)
+            console.log("carData: done (" + retryCount + "/" + maxRetries + ")");
+    } catch (error) {
+        if (retryCount < maxRetries) {
+            console.error('Response error carData:\n' + response_err);
+            console.error(getTimeNowIsoString() + `: carData: Retrying... (${retryCount + 1}/${maxRetries})`);
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+            await loadCarData(driverNumber, retryCount + 1, maxRetries, delayMs);
+        } else {
+            console.error('Max retries reached. Unable to fetch driver data.');
+        }
+    }
+}
 
 // app.get('/api/car_data', async (req, res) => {
 //     try {
@@ -540,6 +564,7 @@ async function serverStart() {
     await loadStints();
     await loadIntervals();
     await loadMeetings();
+    await loadCarData(1);
 
     let endLoading = new Date();
     finishLoading = (endLoading - startLoading);
