@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		driverDiv.innerHTML = '';
 		data.forEach(driverinfo => {
 			const driverElem = document.createElement('p');
-			driverElem.innerHTML = `Number: ${driverinfo['driver_number']} | Lap: ${driverinfo['lap_number']} | Time: ${driverinfo['lap_duration']}`;
+			driverElem.innerHTML = `Number: ${driverinfo['driver_number']}`;
 			driverDiv.appendChild(driverElem);
 		});
 	})

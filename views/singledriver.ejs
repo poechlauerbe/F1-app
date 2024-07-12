@@ -8,8 +8,8 @@
         </nav>
     </header>
     <h1><%= headline %></h1>
-    <div id="positions"></div>
-    <script defer src="javascript/leaderboard.js"></script>
+    <div id="<%- id %>"></div>
+    <script defer type="module" src="<%= script %>" ></script>
     <script defer src="javascript/services/navbar.js" ></script>
 </body>
 </html>
