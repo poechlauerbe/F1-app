@@ -17,3 +17,12 @@ const getCarData = (driverNumber) => {
 	const driver = cardata.find(driver => driver.number === driverNumber);
 	return driver;
 }
+
+const updateCarData = (newCarData) => {
+	const index = cardata.findIndex(driver => driver.number === newCarData.number);
+	if (index === -1) {
+		cardata.push(newCarData);
+	} else {
+		cardata[index] = newCarData;
+	}
+}
