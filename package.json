@@ -20,6 +20,7 @@
   "dependencies": {
     "ejs": "^3.1.10",
     "express": "^4.19.2",
+    "ical": "^0.8.0",
     "node-fetch": "^3.3.2"
   },
   "devDependencies": {

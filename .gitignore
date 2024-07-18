@@ -2,3 +2,4 @@ temp
 .env
 stderr*.log
 log
+test

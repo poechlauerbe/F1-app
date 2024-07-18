@@ -1,4 +1,5 @@
 const express = require('express');
+const ical = require('ical');
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 const app = express();
@@ -15,6 +16,7 @@ const { getRacecontrol, addRacecontrol } = require('./services/obj_racecontrol')
 const { getTimeNowIsoString } = require('./services/service_time');
 const { getGpList, addGpList } = require('./services/obj_GP_list');
 const { updateCarData, getCarData } = require('./services/obj_cardata');
+const { addSchedule, getSchedule } = require('./services/obj_schedule');
 
 app.set('view engine', 'ejs');
 
@@ -453,6 +455,26 @@ async function loadCarData(driverNumber, retryCount = 0, maxRetries = 5, delayMs
     }
 }
 
+async function loadSchedule() {
+    try {
+        const response = await fetch('https://files-f1.motorsportcalendars.com/f1-calendar_p1_p2_p3_qualifying_sprint_gp.ics');
+        const icsText = await response.text();
+        const events = ical.parseICS(icsText);
+
+        for (const event of Object.values(events)) {
+            addSchedule(event.summary, event.categories[0], new Date(event.start), new Date (event.end), event.location);
+        }
+        if (startProcess) {
+            actualTime = new Date();
+            console.log((actualTime - lastLoading) + 'ms \tSchedule loaded');
+            lastLoading = actualTime;
+        }
+    } catch (error) {
+        console.error('Error fetching data (schedule):', error);
+    }
+
+}
+
 // app.get('/api/car_data', async (req, res) => {
 //     try {
 //         const response = await fetch('https://api.openf1.org/v1/car_data?session_key=latest');
@@ -581,7 +603,7 @@ async function serverStart() {
     await loadStints();
     await loadIntervals();
     await loadMeetings();
-    await loadCarData(1);
+    await loadSchedule();
 
     let endLoading = new Date();
     finishLoading = (endLoading - startLoading);
@@ -592,6 +614,7 @@ async function serverStart() {
         console.error(endLoading.toISOString() + `: Server running at http://localhost:${port}`);
     });
 
+    loadCarData(1);
     // Set intervalls to synchronize with API:
     startUpdateLocation(15010);
     startUpdateStints(5030);
