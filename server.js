@@ -462,7 +462,7 @@ async function loadSchedule() {
         const events = ical.parseICS(icsText);
 
         for (const event of Object.values(events)) {
-            addSchedule(event.summary, event.categories[0], new Date(event.start), new Date (event.end), event.location);
+            addSchedule(event.summary, event.categories[0], new Date(event.start), new Date (event.end), event.location, event.geo.lat, event.geo.lon);
         }
         if (startProcess) {
             actualTime = new Date();
@@ -537,13 +537,26 @@ app.get('/api/pit', async (req, res) => {
     }
 });
 
-app.get('/api/gplist', async (req, res) => {
+app.get('/api/oldgplist', async (req, res) => {
     if (getGpList().length > 0) {
         return res.json(getGpList());
     }
     try {
         await loadMeetings();
         res.json(getGpList());
+    } catch (error) {
+        console.error(getTimeNowIsoString() + ': Error fetching data (drivers):', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+app.get('/api/schedule', async (req, res) => {
+    if (getSchedule().length > 0) {
+        return res.json(getSchedule());
+    }
+    try {
+        await loadSchedule();
+        res.json(getSchedule());
     } catch (error) {
         console.error(getTimeNowIsoString() + ': Error fetching data (drivers):', error);
         res.status(500).json({ error: 'Internal Server Error' });

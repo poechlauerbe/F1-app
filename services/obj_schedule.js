@@ -1,14 +1,11 @@
-function RaceScheduleObj(name, category, start, end, location) {
+function RaceScheduleObj(name, category, start, end, location, lat, lon) {
 	this.name = name || '';
 	this.category = category || '';
 	this.start = start || '';
 	this.end = end || '';
 	this.location = location || '';
-
-
-	// this.date = date || '';
-	// this.time = time || '';
-	// this.category = category || '';
+	this.lat = lat || '';
+	this.lon = lon || '';
 }
 
 schedule = [];
@@ -21,8 +18,8 @@ const getSchedule = () => {
 // 	schedule.push(new RaceScheduleObj(date, time, location, category, description));
 // }
 
-const addSchedule = (name, category, start, end, location) => {
-	schedule.push(new RaceScheduleObj(name, category, start, end, location));
+const addSchedule = (name, category, start, end, location, lat, lon) => {
+	schedule.push(new RaceScheduleObj(name, category, start, end, location, lat, lon));
 }
 
 module.exports = {
