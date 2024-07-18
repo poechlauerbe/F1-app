@@ -13,15 +13,15 @@ function CarData(number, date, brake, drs, meeting_key, gear, rpm, session_key, 
 
 let cardata = [];
 
-const getCarData = (driverNumber) => {
+const getCarData = () => {
 	// const driver = cardata.find(driver => driver.number === driverNumber);
 	// return driver;
-	return cardata;
+	return cardata.slice().reverse();
 }
 
 const updateCarData = (number, date, brake, drs, meeting_key, gear, rpm, session_key, speed, throttle)  => {
 	const driver = cardata.find(driver => driver.date === date);
-	if (!driver && rpm > 0) {
+	if (!driver) {
 		cardata.push(new CarData(number, date, brake, drs, meeting_key, gear, rpm, session_key, speed, throttle));
 	}
 }
