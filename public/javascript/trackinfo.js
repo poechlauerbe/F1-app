@@ -12,7 +12,6 @@ function loadSchedule() {
 					const sessionElement = document.createElement('p');
 					sessionElement.textContent = `Test - combining data: ${event.name} - ${event.location} - ${event.category} - ${event.start}`;
 					trackinfoDiv.appendChild(sessionElement);
-					console.log("done");
 				}
 			});
 		})
@@ -49,7 +48,6 @@ function loadSite() {
 			weatherElement.textContent = `date/time: ${data['weather']['time']} \nAir temperature: ${data['weather']['airTemp']}°C\nTrack temperature: ${data['weather']['trackTemp']}°C\nHumidity: ${data['weather']['humidity']}%\npressure: ${pressure} bar\nWind speed: ${data['weather']['windSpeed']} m/s\nWind direction: ${data['weather']['windDirection']}°\nRainfall: ${data['weather']['rainfall']}\nSession ID: ${data['sessionId']}`;
 			trackinfoDiv.appendChild(weatherElement);
 			start_time = data['isoDate'];
-			console.log(start_time);
 			loadSchedule();
         })
         .catch(error => {
