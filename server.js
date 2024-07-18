@@ -492,12 +492,12 @@ app.get('/api/drivers', async (req, res) => {
 });
 
 app.get('/api/singledriver', async (req, res) => {
-    if (getDrivers().length > 0) {
-        return res.json(getCarData());
+    if (getCarData(1).length > 0) {
+        return res.json(getCarData(1));
     }
     try {
-        await loadCarData();
-        res.json(getCarData());
+        await loadCarData(1);
+        res.json(getCarData(1));
     } catch (error) {
         console.error(getTimeNowIsoString() + ': Error fetching data (drivers):', error);
         res.status(500).json({ error: 'Internal Server Error' });
