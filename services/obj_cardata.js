@@ -11,18 +11,21 @@ function CarData(number, date, brake, drs, meeting_key, gear, rpm, session_key, 
 	this.throttle = throttle || 0;
 }
 
-let cardata = [];
+let cardata = {};
 
-const getCarData = () => {
+const getCarData = (driverNumber) => {
 	// const driver = cardata.find(driver => driver.number === driverNumber);
 	// return driver;
-	return cardata.slice().reverse();
+	return cardata[driverNumber].slice().reverse();
 }
 
 const updateCarData = (number, date, brake, drs, meeting_key, gear, rpm, session_key, speed, throttle)  => {
-	const driver = cardata.find(driver => driver.date === date);
-	if (!driver) {
-		cardata.push(new CarData(number, date, brake, drs, meeting_key, gear, rpm, session_key, speed, throttle));
+	if (!cardata[number]) {
+		cardata[number] = [];
+	}
+	const driver = cardata[number].find(driver => driver.date === date);
+	if (!driver && brake <= 100) {
+		cardata[number].push(new CarData(number, date, brake, drs, meeting_key, gear, rpm, session_key, speed, throttle));
 	}
 }
 
