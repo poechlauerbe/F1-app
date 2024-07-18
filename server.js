@@ -433,7 +433,6 @@ async function loadCarData(driverNumber, retryCount = 0, maxRetries = 5, delayMs
         const data = await response.json();
         data.forEach(element => {
             updateCarData(element['driver_number'], element['date'], element['brake'], element['drs'], element['meeting_key'], element['n_gear'], element['rpm'], element['session_key'], element['speed'], element['throttle']);
-            console.log(element);
         });
         if (startProcess) {
             actualTime = new Date();
