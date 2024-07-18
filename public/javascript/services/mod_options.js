@@ -4,3 +4,11 @@ export const options = {
 	second: '2-digit',
 	hour12: false
 };
+
+export const options2 = {
+	weekday: 'long',
+	year: 'numeric',
+	month: 'long',
+	day: 'numeric',
+	hour12: false
+};

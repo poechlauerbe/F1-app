@@ -1,7 +1,7 @@
 const { formatDate, formatTime } = require('./service_time')
 const { getLastWeather } = require('./obj_weather');
 
-function Location(sessionId, sessionName, sessionType, name, country, date, start, end) {
+function Location(sessionId, sessionName, sessionType, name, country, date, start, end, isoDate) {
 	this.sessionId = sessionId || 0;
 	this.sessionName = sessionName || '';
 	this.sessionType = sessionType || ''
@@ -11,6 +11,7 @@ function Location(sessionId, sessionName, sessionType, name, country, date, star
 	this.start = start || '';
 	this.end = end || '';
 	this.weather = '';
+	this.isoDate = isoDate || '';
 }
 
 let location = null;
@@ -24,7 +25,7 @@ const getLocation = () => {
 const setLocation = (sessionId, sessionName, sessionType, name, country, start, end) => {
 	if (!location)
 	{
-		location = new Location (sessionId, sessionName, sessionType, name, country, formatDate(start), formatTime(start), formatTime(end));
+		location = new Location (sessionId, sessionName, sessionType, name, country, formatDate(start), formatTime(start), formatTime(end), new Date(start).toISOString());
 
 	}
 	else if (sessionId.length && location.sessionId !== sessionId)
