@@ -123,14 +123,19 @@ const updateDriverTyre = (driverNumber, tyre) => {
 	driver.tyre = tyre;
 }
 
+const deleteDrivers = () => {
+	drivers = [];
+}
+
 module.exports = {
+	addDriver,
+	deleteDrivers,
+	getDriverGapToLeader,
+	getDriverLastLap,
+	getDriverName,
 	getDrivers,
 	getDriversByPositon,
-	getDriverName,
-	getDriverLastLap,
 	getFastestLap,
-	getDriverGapToLeader,
-	addDriver,
 	updatePositions,
 	updateGapToLeader,
 	updateDriverLaps,

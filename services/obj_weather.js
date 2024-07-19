@@ -23,7 +23,12 @@ const getLastWeather = () => {
 	return null;
 }
 
+const deleteWeather = () => {
+	weather = [];
+}
+
 module.exports = {
 	addWeather,
+	deleteWeather,
 	getLastWeather
 }

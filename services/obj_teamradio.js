@@ -24,8 +24,13 @@ const addTeamradios = (date, driverNumber, recUrl) => {
 	}
 }
 
+const deleteTeamradios = () => {
+	teamradios = []
+}
+
 module.exports = {
 	addTeamradios,
+	deleteTeamradios,
 	getTeamradios,
 	getTeamradiosLength
 }

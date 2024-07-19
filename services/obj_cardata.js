@@ -42,4 +42,13 @@ const updateCarData = (number, date, brake, drs, meeting_key, gear, rpm, session
 	}
 }
 
-module.exports = { getCarData, getLast100CarData, updateCarData };
+const deleteCarData = () => {
+	cardata = [];
+}
+
+module.exports = {
+	deleteCarData,
+	getCarData,
+	getLast100CarData,
+	updateCarData
+};

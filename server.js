@@ -7,16 +7,17 @@ const port = 3000;
 let startProcess = true;
 let lastLoading = 0;
 let lastLoadingCarData = [];
+let sessionId = 0;
 
-const { getDrivers, getDriversByPositon, addDriver, updatePositions, updateGapToLeader, updateDriverLaps, updateDriverTyre } = require('./services/obj_drivers');
+const { deleteDrivers, getDrivers, getDriversByPositon, addDriver, updatePositions, updateGapToLeader, updateDriverLaps, updateDriverTyre } = require('./services/obj_drivers');
 const { getLocation, setLocation, updateActualLocationWeather } = require('./services/obj_location');
-const { getLastWeather, addWeather } = require('./services/obj_weather');
-const { addTeamradios, getTeamradios, getTeamradiosLength } = require('./services/obj_teamradio');
-const { addLap, delLaps, getLastLap, getPreLastLap } = require('./services/obj_laps');
-const { getRacecontrol, addRacecontrol } = require('./services/obj_racecontrol');
+const { deleteWeather, addWeather } = require('./services/obj_weather');
+const { deleteTeamradios, addTeamradios, getTeamradios, getTeamradiosLength } = require('./services/obj_teamradio');
+const { deleteLaps, addLap, getLastLap, getPreLastLap } = require('./services/obj_laps');
+const { deleteRacecontrol, getRacecontrol, addRacecontrol } = require('./services/obj_racecontrol');
 const { getTimeNowIsoString } = require('./services/service_time');
 const { getGpList, addGpList } = require('./services/obj_GP_list');
-const { updateCarData, getCarData, getLast100CarData } = require('./services/obj_cardata');
+const { deleteCarData, updateCarData, getCarData, getLast100CarData } = require('./services/obj_cardata');
 const { addSchedule, getSchedule } = require('./services/obj_schedule');
 
 app.set('view engine', 'ejs');
@@ -63,10 +64,17 @@ loadRaceControlIsFetching = false;
 loadTeamRadioIsFetching = false;
 loadCarDataIsFetching = false;
 
+let stintsInterval = 0;
+let lapsInterval = 0;
+let positionsInterval = 0;
+let intervalsInterval = 0;
+let racecontrolInterval = 0;
+let teamradioInterval = 0;
+
 // Function to start the regular updates
 
 const startUpdateIntervals = (interval) => {
-    setInterval(async () => {
+    intervalsInterval = setInterval(async () => {
         if (loadIntervalsIsFetching) return; // Prevent overlapping calls
         loadIntervalsIsFetching = true;
 
@@ -77,7 +85,7 @@ const startUpdateIntervals = (interval) => {
 };
 
 const startUpdateLaps = (interval) => {
-    setInterval(async () => {
+    lapsInterval = setInterval(async () => {
         if (loadLapsIsFetching) return; // Prevent overlapping calls
         loadLapsIsFetching = true;
 
@@ -100,7 +108,7 @@ const startUpdateLocation = (interval) => {
 };
 
 const startUpdatePositions = (interval) => {
-    setInterval(async () => {
+    positionsInterval = setInterval(async () => {
         if (loadPositionsIsFetching) return; // Prevent overlapping calls
         loadPositionsIsFetching = true;
 
@@ -111,7 +119,7 @@ const startUpdatePositions = (interval) => {
 };
 
 const startUpdateRaceControl = (interval) => {
-    setInterval(async () => {
+    racecontrolInterval = setInterval(async () => {
         if (loadRaceControlIsFetching) return; // Prevent overlapping calls
         loadRaceControlIsFetching = true;
 
@@ -120,8 +128,9 @@ const startUpdateRaceControl = (interval) => {
     }, interval);
 }
 
+
 const startUpdateStints = (interval) => {
-    setInterval(async () => {
+    stintsInterval = setInterval(async () => {
         if (loadStintsIsFetching) return; // Prevent overlapping calls
         loadStintsIsFetching = true;
 
@@ -133,7 +142,7 @@ const startUpdateStints = (interval) => {
 
 
 const startUpdateTeamRadio = (interval) => {
-    setInterval(async () => {
+    teamradioInterval = setInterval(async () => {
         if (loadTeamRadioIsFetching) return; // Prevent overlapping calls
         loadTeamRadioIsFetching = true;
 
@@ -187,10 +196,37 @@ async function loadLocation(retryCount = 0, maxRetries = 5, delayMs = 3000, relo
         const response = await fetch('https://api.openf1.org/v1/sessions?session_key=latest');
         response_err = response;
         const data = await response.json();
-        if (data[0]['location'])
-            setLocation(data[0]['session_key'], data[0]['session_name'], data[0]['session_type'], data[0]['location'], data[0]['country_name'], data[0]['date_start'], data[0]['date_end'])
-        else
+        if (!data[0]['session_key'])
             throw {};
+        if (data[0]['session_key'] != sessionId) {
+            setLocation(data[0]['session_key'], data[0]['session_name'], data[0]['session_type'], data[0]['location'], data[0]['country_name'], data[0]['date_start'], data[0]['date_end']);
+            sessionId = data[0]['session_key'];
+            console.log(sessionId);
+            if (!startProcess) {
+                // stop update, delete objects, load new files, start update
+                clearInterval(intervalsInterval);
+                clearInterval(lapsInterval);
+                clearInterval(stintsInterval);
+                clearInterval(positionsInterval);
+                clearInterval(teamradioInterval);
+                clearInterval(racecontrolInterval)
+
+                deleteLaps();
+                deleteCarData();
+                deleteDrivers();
+                deleteRacecontrol();
+                deleteTeamradios();
+                deleteWeather();
+
+                // check if function for this
+                startUpdateStints(5030);
+                startUpdateLaps(5010);
+                startUpdatePositions(4980);
+                startUpdateIntervals(4870);
+                startUpdateRaceControl(10050);
+                startUpdateTeamRadio(13025);
+            }
+        }
         if (startProcess) {
             let actualTime = new Date();
             console.log((actualTime - lastLoading) + 'ms \tLocation loaded');
@@ -206,7 +242,7 @@ async function loadLocation(retryCount = 0, maxRetries = 5, delayMs = 3000, relo
             await new Promise(resolve => setTimeout(resolve, delayMs));
             await loadLocation(retryCount + 1, maxRetries, delayMs, true);
         } else {
-            console.error('Max retries reached. Unable to fetch driver data.');
+            console.error('Max retries reached. Unable to fetch location data.');
         }
     }
 }
@@ -634,6 +670,7 @@ async function serverStart() {
 
     startProcess = false;
     // Set intervalls to synchronize with API:
+
     startUpdateLocation(15010);
     startUpdateStints(5030);
     startUpdateLaps(5010);

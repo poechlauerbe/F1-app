@@ -19,6 +19,7 @@ const getSchedule = () => {
 // }
 
 const addSchedule = (name, category, start, end, location, lat, lon) => {
+	// add check if already existing
 	schedule.push(new RaceScheduleObj(name, category, start, end, location, lat, lon));
 }
 
