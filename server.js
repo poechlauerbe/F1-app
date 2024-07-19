@@ -6,6 +6,7 @@ const app = express();
 const port = 3000;
 let startProcess = true;
 let lastLoading = 0;
+let lastLoadingCarData = [];
 
 const { getDrivers, getDriversByPositon, addDriver, updatePositions, updateGapToLeader, updateDriverLaps, updateDriverTyre } = require('./services/obj_drivers');
 const { getLocation, setLocation, updateActualLocationWeather } = require('./services/obj_location');
@@ -441,7 +442,8 @@ async function loadTeamRadio(retryCount = 0, maxRetries = 5, delayMs = 3000, rel
 async function loadCarData(driverNumber, retryCount = 0, maxRetries = 5, delayMs = 3000, reload=false) {
     let response_err;
     try {
-        const response = await fetch('https://api.openf1.org/v1/car_data?session_key=latest&driver_number=' + driverNumber);
+        const apiString = 'https://api.openf1.org/v1/car_data?session_key=latest&driver_number=' + driverNumber;
+        const response = await fetch(apiString);
         response_err = response;
         const data = await response.json();
         data.forEach(element => {
@@ -515,7 +517,9 @@ app.get('/api/drivers', async (req, res) => {
 
 app.get('/api/singledriver', async (req, res) => {
     const driverNumber = req.query.driverNumber;
-    if (getLast100CarData(driverNumber).length > 0) {
+    if (driverNumber < 0 && driverNumber > 99)
+        return res.json(null);
+    if (getLast100CarData(driverNumber) && getLast100CarData(driverNumber).length > 0) {
         return res.json(getLast100CarData(driverNumber));
     }
     try {
@@ -637,7 +641,7 @@ async function serverStart() {
     startUpdateIntervals(4870);
     startUpdateRaceControl(10050);
     startUpdateTeamRadio(13025);
-    startUpdateCarData(7000);
+    // startUpdateCarData(7000);
 
     // Log the current time to stderr every 15 minutes
     setInterval(logTimeToStderr, 15 * 60 * 1000);

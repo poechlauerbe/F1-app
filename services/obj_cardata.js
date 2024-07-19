@@ -20,9 +20,13 @@ const getCarData = (driverNumber) => {
 }
 
 const getLast100CarData = (driverNumber) => {
+	if (!cardata[driverNumber])
+		return ;
 	let data = cardata[driverNumber].slice().reverse();
 	let last100 = [];
 	for (i = 0; i < 100; i++) {
+		if (!data[i])
+			break;
 		last100.push(data[i]);
 	}
 	return last100;
@@ -33,7 +37,7 @@ const updateCarData = (number, date, brake, drs, meeting_key, gear, rpm, session
 		cardata[number] = [];
 	}
 	const driver = cardata[number].find(driver => driver.date === date);
-	if (!driver && brake <= 100) {
+	if (!driver) {
 		cardata[number].push(new CarData(number, date, brake, drs, meeting_key, gear, rpm, session_key, speed, throttle));
 	}
 }
