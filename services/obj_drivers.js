@@ -95,9 +95,7 @@ const updateDriverLaps = (driverNumber, newLap) => {
 	{
 		driver.lastLap = driver.actualLap;
 
-		if (driver.actualLap.lapNr == 2)
-			driver.fastestLap = newLap;
-		else if (driver.fastestLap.lapTime > driver.actualLap.lapTime || driver.fastestLap.lapTime === 'no time')
+		if (driver.fastestLap.lapTime > driver.actualLap.lapTime || driver.fastestLap.lapTime === 'no time')
 		{
 			if (driver.actualLap.LapTime != 'no time')
 				driver.fastestLap = driver.actualLap;
