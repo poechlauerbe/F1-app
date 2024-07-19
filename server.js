@@ -311,7 +311,7 @@ async function loadLaps(retryCount = 0, maxRetries = 5, delayMs = 3000, reload=f
         const response = await fetch('https://api.openf1.org/v1/laps?session_key=latest');
         response_err = response;
         const data = await response.json();
-        delLaps();
+        deleteLaps();
         data.forEach(element => {
             addLap(element['driver_number'], element['duration_sector_1'], element['duration_sector_2'], element['duration_sector_3'], element['lap_number'], element['lap_duration']);
             updateDriverLaps(element['driver_number'], getLastLap(element['driver_number']))

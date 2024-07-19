@@ -30,7 +30,7 @@ const getDrivers = () => {
 
 const getDriversByPositon = () => {
 	let driversSorted = [];
-	for (i = 1; i < drivers.length; i++) {
+	for (i = 1; i <= drivers.length; i++) {
 		const driver = drivers.find(driver => driver.position === i);
 		driversSorted.push(driver);
 	}
