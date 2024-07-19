@@ -21,8 +21,12 @@ const addRacecontrol = (category, date, driverNumber, flag, lapNr, message, scop
 		racecontrol.push(new Racecontrol(category, date, driverNumber, flag, lapNr, message, scope, sector));
 }
 
+const deleteRacecontrol = () => {
+	racecontrol = [];
+}
 
 module.exports = {
-	getRacecontrol,
-	addRacecontrol
+	addRacecontrol,
+	deleteRacecontrol,
+	getRacecontrol
 }

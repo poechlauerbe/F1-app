@@ -30,7 +30,7 @@ const getDrivers = () => {
 
 const getDriversByPositon = () => {
 	let driversSorted = [];
-	for (i = 1; i < drivers.length; i++) {
+	for (i = 1; i <= drivers.length; i++) {
 		const driver = drivers.find(driver => driver.position === i);
 		driversSorted.push(driver);
 	}
@@ -95,9 +95,7 @@ const updateDriverLaps = (driverNumber, newLap) => {
 	{
 		driver.lastLap = driver.actualLap;
 
-		if (driver.actualLap.lapNr == 2)
-			driver.fastestLap = newLap;
-		else if (driver.fastestLap.lapTime > driver.actualLap.lapTime || driver.fastestLap.lapTime === 'no time')
+		if (driver.fastestLap.lapTime > driver.actualLap.lapTime || driver.fastestLap.lapTime === 'no time')
 		{
 			if (driver.actualLap.LapTime != 'no time')
 				driver.fastestLap = driver.actualLap;
@@ -123,14 +121,19 @@ const updateDriverTyre = (driverNumber, tyre) => {
 	driver.tyre = tyre;
 }
 
+const deleteDrivers = () => {
+	drivers = [];
+}
+
 module.exports = {
+	addDriver,
+	deleteDrivers,
+	getDriverGapToLeader,
+	getDriverLastLap,
+	getDriverName,
 	getDrivers,
 	getDriversByPositon,
-	getDriverName,
-	getDriverLastLap,
 	getFastestLap,
-	getDriverGapToLeader,
-	addDriver,
 	updatePositions,
 	updateGapToLeader,
 	updateDriverLaps,

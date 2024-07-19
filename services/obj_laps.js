@@ -15,7 +15,7 @@ const getLaps = () => {
 	return laps;
 }
 
-const delLaps = () => {
+const deleteLaps = () => {
 	laps = [];
 }
 
@@ -50,9 +50,10 @@ const addLap = (driverNumber, timeS1, timeS2, timeS3, lapNr, lapTime) => {
 		laps.push(new Lap(driverNumber, timeS1, timeS2, timeS3, lapNr, lapTime));
 }
 
+
 module.exports = {
 	addLap,
-	delLaps,
+	deleteLaps,
 	getLaps,
 	getLastLap,
 	getPreLastLap
