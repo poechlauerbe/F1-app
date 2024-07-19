@@ -1,0 +1,25 @@
+(node:281358) UnhandledPromiseRejectionWarning: TypeError: Cannot read property 'slice' of undefined
+    at getLast100CarData (/home/bpochlau/fullstack/F1-app/services/obj_cardata.js:23:35)
+    at /home/bpochlau/fullstack/F1-app/server.js:518:9
+    at Layer.handle [as handle_request] (/home/bpochlau/fullstack/F1-app/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/bpochlau/fullstack/F1-app/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/home/bpochlau/fullstack/F1-app/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/home/bpochlau/fullstack/F1-app/node_modules/express/lib/router/layer.js:95:5)
+    at /home/bpochlau/fullstack/F1-app/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/home/bpochlau/fullstack/F1-app/node_modules/express/lib/router/index.js:346:12)
+    at next (/home/bpochlau/fullstack/F1-app/node_modules/express/lib/router/index.js:280:10)
+    at /home/bpochlau/fullstack/F1-app/node_modules/express/lib/router/index.js:646:15
+(node:281358) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 1)
+(node:281358) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
+(node:281358) UnhandledPromiseRejectionWarning: TypeError: Cannot read property 'slice' of undefined
+    at getLast100CarData (/home/bpochlau/fullstack/F1-app/services/obj_cardata.js:23:35)
+    at /home/bpochlau/fullstack/F1-app/server.js:518:9
+    at Layer.handle [as handle_request] (/home/bpochlau/fullstack/F1-app/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/bpochlau/fullstack/F1-app/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/home/bpochlau/fullstack/F1-app/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/home/bpochlau/fullstack/F1-app/node_modules/express/lib/router/layer.js:95:5)
+    at /home/bpochlau/fullstack/F1-app/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/home/bpochlau/fullstack/F1-app/node_modules/express/lib/router/index.js:346:12)
+    at next (/home/bpochlau/fullstack/F1-app/node_modules/express/lib/router/index.js:280:10)
+    at /home/bpochlau/fullstack/F1-app/node_modules/express/lib/router/index.js:646:15
+(node:281358) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 2)

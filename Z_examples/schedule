@@ -1,0 +1,14 @@
+http://2024.f1calendar.com/#GP0_2024_fp3': {
+    type: 'VEVENT',
+    params: [],
+    uid: 'http://2024.f1calendar.com/#GP0_2024_fp3',
+    summary: 'F1: FP3 (Bahrain Grand Prix)',
+    dtstamp: 2024-03-24T23:11:56.000Z { tz: undefined },
+    start: 2024-03-01T12:30:00.000Z { tz: undefined },
+    end: 2024-03-01T13:30:00.000Z { tz: undefined },
+    sequence: '2024',
+    geo: { lat: 26.037, lon: 50.5112 },
+    location: 'Sakhir',
+    status: 'CONFIRMED',
+    categories: [ 'FP3', 'F1' ]
+  }

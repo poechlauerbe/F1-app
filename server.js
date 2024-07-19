@@ -1,10 +1,12 @@
 const express = require('express');
+const ical = require('ical');
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 const app = express();
 const port = 3000;
 let startProcess = true;
 let lastLoading = 0;
+let lastLoadingCarData = [];
 
 const { getDrivers, getDriversByPositon, addDriver, updatePositions, updateGapToLeader, updateDriverLaps, updateDriverTyre } = require('./services/obj_drivers');
 const { getLocation, setLocation, updateActualLocationWeather } = require('./services/obj_location');
@@ -14,7 +16,8 @@ const { addLap, delLaps, getLastLap, getPreLastLap } = require('./services/obj_l
 const { getRacecontrol, addRacecontrol } = require('./services/obj_racecontrol');
 const { getTimeNowIsoString } = require('./services/service_time');
 const { getGpList, addGpList } = require('./services/obj_GP_list');
-const { updateCarData, getCarData } = require('./services/obj_cardata');
+const { updateCarData, getCarData, getLast100CarData } = require('./services/obj_cardata');
+const { addSchedule, getSchedule } = require('./services/obj_schedule');
 
 app.set('view engine', 'ejs');
 
@@ -58,6 +61,7 @@ loadLapsIsFetching = false;
 loadPositionsIsFetching = false;
 loadRaceControlIsFetching = false;
 loadTeamRadioIsFetching = false;
+loadCarDataIsFetching = false;
 
 // Function to start the regular updates
 
@@ -136,6 +140,16 @@ const startUpdateTeamRadio = (interval) => {
         await loadTeamRadio();
         loadTeamRadioIsFetching = false;
     }, interval);
+}
+
+const startUpdateCarData = (interval) => {
+    setInterval(async () => {
+        if (loadCarDataIsFetching) return;
+        loadCarDataIsFetching = true;
+
+        await loadCarData(2);
+        loadCarDataIsFetching = false;
+    }, interval)
 }
 
 async function loadDrivers(retryCount = 0, maxRetries = 5, delayMs = 3000, reload=false) {
@@ -428,7 +442,8 @@ async function loadTeamRadio(retryCount = 0, maxRetries = 5, delayMs = 3000, rel
 async function loadCarData(driverNumber, retryCount = 0, maxRetries = 5, delayMs = 3000, reload=false) {
     let response_err;
     try {
-        const response = await fetch('https://api.openf1.org/v1/car_data?session_key=latest&driver_number=' + driverNumber);
+        const apiString = 'https://api.openf1.org/v1/car_data?session_key=latest&driver_number=' + driverNumber;
+        const response = await fetch(apiString);
         response_err = response;
         const data = await response.json();
         data.forEach(element => {
@@ -453,16 +468,25 @@ async function loadCarData(driverNumber, retryCount = 0, maxRetries = 5, delayMs
     }
 }
 
-// app.get('/api/car_data', async (req, res) => {
-//     try {
-//         const response = await fetch('https://api.openf1.org/v1/car_data?session_key=latest');
-//         const data = await response.json();
-//         res.json(data);
-//     } catch (error) {
-//         console.error('Error fetching data (car_data):', error);
-//         res.status(500).json({ error: 'Internal Server Error' });
-//     }
-// });
+async function loadSchedule() {
+    try {
+        const response = await fetch('https://files-f1.motorsportcalendars.com/f1-calendar_p1_p2_p3_qualifying_sprint_gp.ics');
+        const icsText = await response.text();
+        const events = ical.parseICS(icsText);
+
+        for (const event of Object.values(events)) {
+            addSchedule(event.summary, event.categories[0], new Date(event.start), new Date (event.end), event.location, event.geo.lat, event.geo.lon);
+        }
+        if (startProcess) {
+            actualTime = new Date();
+            console.log((actualTime - lastLoading) + 'ms \tSchedule loaded');
+            lastLoading = actualTime;
+        }
+    } catch (error) {
+        console.error('Error fetching data (schedule):', error);
+    }
+
+}
 
 app.get('/api/driversbyposition', async (req, res) => {
     if (getDrivers().length > 0) {
@@ -492,12 +516,15 @@ app.get('/api/drivers', async (req, res) => {
 });
 
 app.get('/api/singledriver', async (req, res) => {
-    if (getCarData(1).length > 0) {
-        return res.json(getCarData(1));
+    const driverNumber = req.query.driverNumber;
+    if (driverNumber < 0 && driverNumber > 99)
+        return res.json(null);
+    if (getLast100CarData(driverNumber) && getLast100CarData(driverNumber).length > 0) {
+        return res.json(getLast100CarData(driverNumber));
     }
     try {
-        await loadCarData(1);
-        res.json(getCarData(1));
+        await loadCarData(driverNumber);
+        res.json(getLast100CarData(driverNumber));
     } catch (error) {
         console.error(getTimeNowIsoString() + ': Error fetching data (drivers):', error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -515,13 +542,26 @@ app.get('/api/pit', async (req, res) => {
     }
 });
 
-app.get('/api/gplist', async (req, res) => {
+app.get('/api/oldgplist', async (req, res) => {
     if (getGpList().length > 0) {
         return res.json(getGpList());
     }
     try {
         await loadMeetings();
         res.json(getGpList());
+    } catch (error) {
+        console.error(getTimeNowIsoString() + ': Error fetching data (drivers):', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+app.get('/api/schedule', async (req, res) => {
+    if (getSchedule().length > 0) {
+        return res.json(getSchedule());
+    }
+    try {
+        await loadSchedule();
+        res.json(getSchedule());
     } catch (error) {
         console.error(getTimeNowIsoString() + ': Error fetching data (drivers):', error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -581,17 +621,18 @@ async function serverStart() {
     await loadStints();
     await loadIntervals();
     await loadMeetings();
-    await loadCarData(1);
+    await loadSchedule();
+    await loadCarData(2);
 
     let endLoading = new Date();
     finishLoading = (endLoading - startLoading);
     console.error('\nLoading time: ' + finishLoading / 1000 + ' seconds\n');
-    startProcess = false;
     // Server is ready to listen:
     app.listen(port, () => {
         console.error(endLoading.toISOString() + `: Server running at http://localhost:${port}`);
     });
 
+    startProcess = false;
     // Set intervalls to synchronize with API:
     startUpdateLocation(15010);
     startUpdateStints(5030);
@@ -600,6 +641,7 @@ async function serverStart() {
     startUpdateIntervals(4870);
     startUpdateRaceControl(10050);
     startUpdateTeamRadio(13025);
+    // startUpdateCarData(7000);
 
     // Log the current time to stderr every 15 minutes
     setInterval(logTimeToStderr, 15 * 60 * 1000);

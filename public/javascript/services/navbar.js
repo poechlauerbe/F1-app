@@ -5,5 +5,4 @@ function toggleSubnav(subnavId) {
     } else {
         subnav.style.display = "none";
     }
-	console.log("Navbar test");
 }

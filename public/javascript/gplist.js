@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    fetch('/api/gplist')
+    fetch('/api/oldgplist')
         .then(response => response.json())
         .then(data => {
             const gpListBaseDiv = document.getElementById('gplist');
