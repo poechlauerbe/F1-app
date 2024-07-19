@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+const loadSite = () => {
 	fetch('/api/singledriver')
 	.then(response => response.json())
 	.then(data => {
@@ -14,4 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	.catch(error => {
 		console.error('Error fetching single driver infos:', error);
 	});
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadSite();
+    setInterval(loadSite, 3000);
 });

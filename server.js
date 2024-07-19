@@ -60,6 +60,7 @@ loadLapsIsFetching = false;
 loadPositionsIsFetching = false;
 loadRaceControlIsFetching = false;
 loadTeamRadioIsFetching = false;
+loadCarDataIsFetching = false;
 
 // Function to start the regular updates
 
@@ -138,6 +139,16 @@ const startUpdateTeamRadio = (interval) => {
         await loadTeamRadio();
         loadTeamRadioIsFetching = false;
     }, interval);
+}
+
+const startUpdateCarData = (interval) => {
+    setInterval(async () => {
+        if (loadCarDataIsFetching) return;
+        loadCarDataIsFetching = true;
+
+        await loadCarData(2);
+        loadCarDataIsFetching = false;
+    }, interval)
 }
 
 async function loadDrivers(retryCount = 0, maxRetries = 5, delayMs = 3000, reload=false) {
@@ -514,12 +525,12 @@ app.get('/api/drivers', async (req, res) => {
 });
 
 app.get('/api/singledriver', async (req, res) => {
-    if (getCarData(1).length > 0) {
-        return res.json(getCarData(1));
+    if (getCarData(2).length > 0) {
+        return res.json(getCarData(2));
     }
     try {
-        await loadCarData(1);
-        res.json(getCarData(1));
+        await loadCarData(2);
+        res.json(getCarData(2));
     } catch (error) {
         console.error(getTimeNowIsoString() + ': Error fetching data (drivers):', error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -617,17 +628,17 @@ async function serverStart() {
     await loadIntervals();
     await loadMeetings();
     await loadSchedule();
+    await loadCarData(2);
 
     let endLoading = new Date();
     finishLoading = (endLoading - startLoading);
     console.error('\nLoading time: ' + finishLoading / 1000 + ' seconds\n');
-    startProcess = false;
     // Server is ready to listen:
     app.listen(port, () => {
         console.error(endLoading.toISOString() + `: Server running at http://localhost:${port}`);
     });
 
-    loadCarData(1);
+    startProcess = false;
     // Set intervalls to synchronize with API:
     startUpdateLocation(15010);
     startUpdateStints(5030);
@@ -636,6 +647,7 @@ async function serverStart() {
     startUpdateIntervals(4870);
     startUpdateRaceControl(10050);
     startUpdateTeamRadio(13025);
+    startUpdateCarData(7000);
 
     // Log the current time to stderr every 15 minutes
     setInterval(logTimeToStderr, 15 * 60 * 1000);
