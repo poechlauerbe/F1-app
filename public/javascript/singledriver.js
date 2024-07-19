@@ -1,5 +1,5 @@
 const loadSite = () => {
-	fetch('/api/singledriver')
+	fetch('/api/singledriver?driverNumber=2')
 	.then(response => response.json())
 	.then(data => {
 		const driverDiv = document.getElementById('singledriver');

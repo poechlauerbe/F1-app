@@ -15,7 +15,7 @@ const { addLap, delLaps, getLastLap, getPreLastLap } = require('./services/obj_l
 const { getRacecontrol, addRacecontrol } = require('./services/obj_racecontrol');
 const { getTimeNowIsoString } = require('./services/service_time');
 const { getGpList, addGpList } = require('./services/obj_GP_list');
-const { updateCarData, getCarData } = require('./services/obj_cardata');
+const { updateCarData, getCarData, getLast100CarData } = require('./services/obj_cardata');
 const { addSchedule, getSchedule } = require('./services/obj_schedule');
 
 app.set('view engine', 'ejs');
@@ -486,17 +486,6 @@ async function loadSchedule() {
 
 }
 
-// app.get('/api/car_data', async (req, res) => {
-//     try {
-//         const response = await fetch('https://api.openf1.org/v1/car_data?session_key=latest');
-//         const data = await response.json();
-//         res.json(data);
-//     } catch (error) {
-//         console.error('Error fetching data (car_data):', error);
-//         res.status(500).json({ error: 'Internal Server Error' });
-//     }
-// });
-
 app.get('/api/driversbyposition', async (req, res) => {
     if (getDrivers().length > 0) {
         return res.json(getDriversByPositon());
@@ -525,12 +514,13 @@ app.get('/api/drivers', async (req, res) => {
 });
 
 app.get('/api/singledriver', async (req, res) => {
-    if (getCarData(2).length > 0) {
-        return res.json(getCarData(2));
+    const driverNumber = req.query.driverNumber;
+    if (getLast100CarData(driverNumber).length > 0) {
+        return res.json(getLast100CarData(driverNumber));
     }
     try {
-        await loadCarData(2);
-        res.json(getCarData(2));
+        await loadCarData(driverNumber);
+        res.json(getLast100CarData(driverNumber));
     } catch (error) {
         console.error(getTimeNowIsoString() + ': Error fetching data (drivers):', error);
         res.status(500).json({ error: 'Internal Server Error' });
