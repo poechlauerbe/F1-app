@@ -38,23 +38,23 @@ Working in progress...
 1. Starting with a simple curl calls of the API - to see what kind of data I get and how it looks
 2. simple JavaScript file with simple calls (see [f1-test.js](./z_old/f1-test.js))
 3. created my first node express app (suggested by ChatGPT)
-	- html files in public folder (each navbar was just copy/pasted in each file)
-	- simple css - to get basic navbar
-	- javascript: calculating everything in the browser and creating the dynamic page elements
-	- server.js: only catching from the API when request, (request from browser -> fetch from external api -> response to browser - for some calculations more then one request needed)
-	- change at some point: only one navbar to update - written in JavaScript - no copy paste in the HTML files
+- HTML files in public folder (each navbar was just copy/pasted in each file)
+- simple CSS - to get basic navbar
+- javascript: calculating everything in the browser and creating the dynamic page elements
+- server.js: only catching from the API when request, (request from browser -> fetch from external API -> response to browser - for some calculations more then one request needed)
+- change at some point: only one navbar to update - written in JavaScript - no copy paste in the HTML files
 4. improvement through EJS (embedded JavaScript)
-	- created partials: one partial for the navbar, one partial for the whole head tag
+- created partials: one partial for the navbar, one partial for the whole head tag
 5. Moved calculation from browser to server
-	- server:
-		- created startup process
-		- created different objects
-		- made update automatism
-		- error handling when no data is incoming
-	-css: added colors to different race control messages
+- server:
+  - created startup process
+  - created different objects
+  - made update automatism
+  - error handling when no data is incoming
+  - CSS: added colors to different race control messages
 6. Added new features, many tests during Silverstone GP weekend
-	- single Lap calculation
-	- pit stops page
+- single Lap calculation
+- pit stops page
 
 If you have any ideas - make a comment in the [discussions](https://github.com/poechlauerbe/F1-app/discussions) or create an [issue](https://github.com/poechlauerbe/F1-app/issues)
 

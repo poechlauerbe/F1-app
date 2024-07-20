@@ -1,9 +1,10 @@
 @import url('racecontrol.css');
 @import url('table.css');
+@import url('singledriver.css');
 
-* {
-	/* box-sizing: border-box; */
-}
+/* * {
+	box-sizing: border-box;
+} */
 
 body {
 	padding: 20px;
@@ -93,6 +94,7 @@ nav > ul > li {
     padding: 0;
     margin: 0;
     background-color: white; /* Adjust as needed */
+
     /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); Optional shadow for better visibility */
 }
 
