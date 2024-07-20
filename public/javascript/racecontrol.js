@@ -13,48 +13,61 @@ function loadSite() {
         const raceControlElement = document.createElement('p');
         const date = new Date(raceControl['date']);
         const timeString = date.toLocaleTimeString([], options);
-        if (raceControl['driver_number'] == null) {
+        if (raceControl.driver_number == null) {
           if (
-            raceControl['message'].includes('GREEN FLAG') ||
-            raceControl['message'].includes('OPEN') ||
-            raceControl['message'].includes('CLEAR')
-          )
+            raceControl.message.includes('GREEN FLAG') ||
+            raceControl.message.includes('OPEN') ||
+            raceControl.message.includes('CLEAR')
+          ) {
             raceControlElement.className = 'green-flag';
-          else if (raceControl['message'].includes('YELLOW'))
+          }
+          else if (raceControl.message.includes('YELLOW')) {
             raceControlElement.className = 'yellow-flag';
-          else if (raceControl['message'].includes('CHEQUERED FLAG'))
+          }
+          else if (raceControl.message.includes('CHEQUERED FLAG')) {
             raceControlElement.className = 'finish-flag';
+          }
           else if (
-            raceControl['message'].includes('RED FLAG') ||
-            raceControl['message'].includes('CLOSED')
-          )
+            raceControl.message.includes('RED FLAG') ||
+            raceControl.message.includes('CLOSED')
+          ) {
             raceControlElement.className = 'red-flag';
-          else if (raceControl['message'].includes('PENALTY'))
+          }
+          else if (raceControl.message.includes('PENALTY')) {
             raceControlElement.className = 'penalty';
-          else if (raceControl['message'].includes('BLACK FLAG'))
+          }
+          else if (raceControl.message.includes('BLACK FLAG')) {
             raceControlElement.className = 'black-flag';
-          else if (raceControl['message'].includes('SAFETY CAR'))
+          }
+          else if (raceControl.message.includes('SAFETY CAR')) {
             raceControlElement.className = 'safety-car';
-          else if (raceControl['message'].includes('DRS ENABLED'))
+          }
+          else if (raceControl.message.includes('DRS ENABLED')) {
             raceControlElement.className = 'drs-enabled';
-          else if (raceControl['message'].includes('DRS DISABLED'))
+          }
+          else if (raceControl.message.includes('DRS DISABLED')) {
             raceControlElement.className = 'drs-disabled';
-          else if (raceControl['message'].includes('FIA STEWARDS'))
+          }
+          else if (raceControl.message.includes('FIA STEWARDS')) {
             raceControlElement.className = 'fia-stewards';
-          else if (raceControl['message'].includes('NOTED'))
+          }
+          else if (raceControl.message.includes('NOTED')) {
             raceControlElement.className = 'noted';
-          else if (raceControl['message'].includes('TRACK LIMITS'))
+          }
+          else if (raceControl.message.includes('TRACK LIMITS')) {
             raceControlElement.className = 'track-limits';
-          if (!raceControl['message'].includes('WAVED BLUE FLAG'))
+          }
+          if (!raceControl.message.includes('WAVED BLUE FLAG')) {
             raceControlElement.textContent =
-              timeString + '	' + raceControl['message'];
+            timeString + '	' + raceControl.message;
+          }
         }
         if (
           blueFlag % 2 &&
-          raceControl['message'].includes('WAVED BLUE FLAG')
+          raceControl.message.includes('WAVED BLUE FLAG')
         ) {
           raceControlElement.textContent =
-            timeString + ` ${raceControl['message']}`;
+            timeString + ` ${raceControl.message}`;
           raceControlElement.className = 'blue-flag';
         }
         raceControlDiv.appendChild(raceControlElement);

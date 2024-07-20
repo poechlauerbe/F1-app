@@ -1,5 +1,5 @@
-function formatDate(date) {
-  newDate = new Date(date);
+export function formatDate (date) {
+  let newDate = new Date(date);
   const day = String(newDate.getDate());
   const month = String(newDate.getMonth() + 1); // Months are zero-indexed
   const year = newDate.getFullYear();
@@ -7,7 +7,7 @@ function formatDate(date) {
   return `${day}.${month}.${year}`;
 }
 
-export function formatTime(dateString) {
+export function formatTime (dateString) {
   const date = new Date(dateString);
 
   const options = {
@@ -23,13 +23,13 @@ export function formatTime(dateString) {
   return date.toLocaleTimeString([], options);
 }
 
-// export function formatTime(date) {
-// 	newDate = new Date(date);
-// 	const options = {
-// 		hour: '2-digit',
-// 		minute: '2-digit',
-// 		second: '2-digit',
-// 		hour12: false
-// 	};
-// 	return newDate.toLocaleTimeString([], options);
-// }
+export function formatTimeShort (date) {
+	newDate = new Date(date);
+	const options = {
+		hour: '2-digit',
+		minute: '2-digit',
+		second: '2-digit',
+		hour12: false
+	};
+	return newDate.toLocaleTimeString([], options);
+}

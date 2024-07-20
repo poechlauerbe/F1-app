@@ -19,8 +19,8 @@ const getDrivers = () => {
       driversSelect.appendChild(firstElement);
       data.forEach(driver => {
         const driverElement = document.createElement('option');
-        driverElement.text = `${driver['number']} - ${driver['name']}`;
-        driverElement.value = driver['number'];
+        driverElement.text = `${driver.number} - ${driver.name}`;
+        driverElement.value = driver.number;
         driversSelect.appendChild(driverElement);
         allDrivers.push(driver);
       });
@@ -31,7 +31,7 @@ const getDrivers = () => {
 };
 
 const loadSite = () => {
-  if (!actualDriver || actualDriver == '0') return;
+  if (!actualDriver || actualDriver === '0') return;
   let totalApiString = apiString + actualDriver;
   fetch(totalApiString)
     .then(response => response.json())
@@ -40,7 +40,7 @@ const loadSite = () => {
       driverDiv.innerHTML = '';
       data.forEach(driverinfo => {
         const driverElem = document.createElement('p');
-        driverElem.innerHTML = `Date: ${driverinfo['date']}: Number: ${driverinfo['number']}, gear: ${driverinfo['gear']}, speed: ${driverinfo['speed']}, throttle: ${driverinfo['throttle']}, brake: ${driverinfo['brake']}, drs: ${driverinfo['drs']}, rpm: ${driverinfo['rpm']}`;
+        driverElem.innerHTML = `Date: ${driverinfo.date}: Number: ${driverinfo.number}, gear: ${driverinfo.gear}, speed: ${driverinfo.speed}, throttle: ${driverinfo.throttle}, brake: ${driverinfo.brake}, drs: ${driverinfo.drs}, rpm: ${driverinfo.rpm}`;
         driverDiv.appendChild(driverElem);
       });
     })
