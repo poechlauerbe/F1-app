@@ -10,19 +10,19 @@ function loadSite() {
         const lapTimesDataElm1 = document.createElement('td');
         lapTimesDataElm1.textContent = driver['position'];
         lapTimesDataElm1.rowSpan = 3;
-        lapTimesDataElm1.className = 'bottomBorderThick';
+        lapTimesDataElm1.className = 'bottom-border-thick';
         lapTimesRowElm.appendChild(lapTimesDataElm1);
 
         const lapTimesDataElm2 = document.createElement('td');
         lapTimesDataElm2.textContent = driver['name'];
         lapTimesDataElm2.rowSpan = 3;
-        lapTimesDataElm2.className = 'bottomBorderThick';
+        lapTimesDataElm2.className = 'bottom-border-thick';
         lapTimesRowElm.appendChild(lapTimesDataElm2);
 
         const lapTimesDataNrElm = document.createElement('td');
         lapTimesDataNrElm.textContent = driver['number'];
         lapTimesDataNrElm.rowSpan = 3;
-        lapTimesDataNrElm.className = 'bottomBorderThick';
+        lapTimesDataNrElm.className = 'bottom-border-thick';
         lapTimesRowElm.appendChild(lapTimesDataNrElm);
 
         const header1Elm = document.createElement('td');
@@ -89,37 +89,37 @@ function loadSite() {
 
         const header3Elm = document.createElement('td');
         header3Elm.textContent = 'Fastest Lap';
-        header3Elm.className = 'bottomBorderThick';
+        header3Elm.className = 'bottom-border-thick';
         lapTimesRow3Elm.appendChild(header3Elm);
 
         const lapTimesData3Elm3 = document.createElement('td');
         lapTimesData3Elm3.textContent = driver['fastestLap']['lapNr'];
-        lapTimesData3Elm3.className = 'bottomBorderThick';
+        lapTimesData3Elm3.className = 'bottom-border-thick';
         lapTimesRow3Elm.appendChild(lapTimesData3Elm3);
 
         const lapTimesData3ElmS1 = document.createElement('td');
         lapTimesData3ElmS1.textContent = driver['fastestLap']['timeS1'];
-        lapTimesData3ElmS1.className = 'bottomBorderThick';
+        lapTimesData3ElmS1.className = 'bottom-border-thick';
         lapTimesRow3Elm.appendChild(lapTimesData3ElmS1);
 
         const lapTimesData3ElmS2 = document.createElement('td');
         lapTimesData3ElmS2.textContent = driver['fastestLap']['timeS2'];
-        lapTimesData3ElmS2.className = 'bottomBorderThick';
+        lapTimesData3ElmS2.className = 'bottom-border-thick';
         lapTimesRow3Elm.appendChild(lapTimesData3ElmS2);
 
         const lapTimesData3ElmS3 = document.createElement('td');
         lapTimesData3ElmS3.textContent = driver['fastestLap']['timeS3'];
-        lapTimesData3ElmS3.className = 'bottomBorderThick';
+        lapTimesData3ElmS3.className = 'bottom-border-thick';
         lapTimesRow3Elm.appendChild(lapTimesData3ElmS3);
 
         const lapTimesData3ElmTime = document.createElement('td');
         lapTimesData3ElmTime.textContent = driver['fastestLap']['lapTime'];
-        lapTimesData3ElmTime.className = 'bottomBorderThick';
+        lapTimesData3ElmTime.className = 'bottom-border-thick';
         lapTimesRow3Elm.appendChild(lapTimesData3ElmTime);
 
         const lapTimesData3TyreElm = document.createElement('td');
         lapTimesData3TyreElm.textContent = driver['tyre'];
-        lapTimesData3TyreElm.className = 'bottomBorderThick';
+        lapTimesData3TyreElm.className = 'bottom-border-thick';
         lapTimesRow3Elm.appendChild(lapTimesData3TyreElm);
         // lapTimesRowElm.textContent = `Name: ${driver['name']}, Number: ${driver['number']}, Team: ${driver['team']}, Country: ${driver['country']}`;
         // lapTimesDiv.appendChild(driverImage);

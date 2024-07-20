@@ -1,17 +1,18 @@
 table {
-	border: 3px solid black;
-	border-collapse: collapse;
+  border: 3px solid black;
+  border-collapse: collapse;
 }
 
 thead {
-	border: 3px solid black;
+  border: 3px solid black;
 }
 
-.bottomBorderThick {
-	border-bottom: 3px solid black;
+.bottom-border-thick {
+  border-bottom: 3px solid black;
 }
 
-td, th  {
-	border: 1px solid grey;
-	padding: 5px;
+td,
+th {
+  border: 1px solid grey;
+  padding: 5px;
 }
