@@ -36,7 +36,6 @@ const {
   deleteLaps,
   addLap,
   getLastLap,
-  getPreLastLap,
 } = require('./services/obj_laps');
 const {
   deleteRacecontrol,
@@ -48,7 +47,6 @@ const { getGpList, addGpList } = require('./services/obj_GP_list');
 const {
   deleteCarData,
   updateCarData,
-  getCarData,
   getLast100CarData,
 } = require('./services/obj_cardata');
 const { addSchedule, getSchedule } = require('./services/obj_schedule');
@@ -87,14 +85,14 @@ app.use('/singledriver', singleDriverRouter);
 app.use('/teamradio', teamradioRouter);
 app.use('/trackinfo', trackinfoRouter);
 
-loadIntervalsIsFetching = false;
-loadLocationIsFetching = false;
-loadStintsIsFetching = false;
-loadLapsIsFetching = false;
-loadPositionsIsFetching = false;
-loadRaceControlIsFetching = false;
-loadTeamRadioIsFetching = false;
-loadCarDataIsFetching = false;
+let loadIntervalsIsFetching = false;
+let loadLocationIsFetching = false;
+let loadStintsIsFetching = false;
+let loadLapsIsFetching = false;
+let loadPositionsIsFetching = false;
+let loadRaceControlIsFetching = false;
+let loadTeamRadioIsFetching = false;
+let loadCarDataIsFetching = false;
 
 let stintsInterval = 0;
 let lapsInterval = 0;
