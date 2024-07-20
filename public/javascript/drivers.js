@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const driverElement = document.createElement('p');
       driverElement.textContent = `Name: ${driver['name']}, Number: ${driver['number']}, Team: ${driver['team']}, Country: ${driver['country']}`;
       const driverImage = document.createElement('img');
-      driverImage.src = driver['photo_url'];
+      driverImage.src = driver.photo_url;
       driverImage.alt = 'not available';
       driversDiv.appendChild(driverElement);
       driversDiv.appendChild(driverImage);
