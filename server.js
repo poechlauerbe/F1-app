@@ -190,9 +190,12 @@ async function loadDrivers(retryCount = 0, maxRetries = 5, delayMs = 3000, reloa
     }
 }
 
+let loadLocationTimes = 0;
+
 async function loadLocation(retryCount = 0, maxRetries = 5, delayMs = 3000, reload=false) {
     let response_err;
     try {
+        console.log(loadLocationTimes + "..." + sessionId);
         const response = await fetch('https://api.openf1.org/v1/sessions?session_key=latest');
         response_err = response;
         const data = await response.json();
@@ -200,16 +203,19 @@ async function loadLocation(retryCount = 0, maxRetries = 5, delayMs = 3000, relo
             throw {};
         if (data[0]['session_key'] != sessionId) {
             setLocation(data[0]['session_key'], data[0]['session_name'], data[0]['session_type'], data[0]['location'], data[0]['country_name'], data[0]['date_start'], data[0]['date_end']);
+            console.log("old sessionID: " + sessionId);
             sessionId = data[0]['session_key'];
-            console.log(sessionId);
+            console.log("new sessionID: " + sessionId + " (change at: " + new Date() + ")");
             if (!startProcess) {
                 // stop update, delete objects, load new files, start update
+                console.log("\n\nChange detected, reloading data\n\n");
                 clearInterval(intervalsInterval);
                 clearInterval(lapsInterval);
                 clearInterval(stintsInterval);
                 clearInterval(positionsInterval);
                 clearInterval(teamradioInterval);
                 clearInterval(racecontrolInterval)
+                console.log("Intervals cleared");
 
                 deleteLaps();
                 deleteCarData();
@@ -217,6 +223,19 @@ async function loadLocation(retryCount = 0, maxRetries = 5, delayMs = 3000, relo
                 deleteRacecontrol();
                 deleteTeamradios();
                 deleteWeather();
+                console.log("Objects deleted");
+
+                startProcess = true;
+                await loadDrivers(); // no prerequesitary
+                await loadLaps();
+                await loadWeather();
+                await loadPositions();
+                await loadTeamRadio();
+                await loadRaceControl();
+                await loadStints();
+                await loadIntervals();
+                await loadCarData(2);
+                startProcess = false;
 
                 // check if function for this
                 startUpdateStints(5030);
@@ -225,8 +244,10 @@ async function loadLocation(retryCount = 0, maxRetries = 5, delayMs = 3000, relo
                 startUpdateIntervals(4870);
                 startUpdateRaceControl(10050);
                 startUpdateTeamRadio(13025);
+                console.log("Intervals restarted");
             }
         }
+        loadLocationTimes++;
         if (startProcess) {
             let actualTime = new Date();
             console.log((actualTime - lastLoading) + 'ms \tLocation loaded');
