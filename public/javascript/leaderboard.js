@@ -18,6 +18,8 @@ function loadSite() {
 					textString +=  ` +${driver['gapToLeader']} behind leader`;
 				else if (driver.gapToLeader)
 					textString +=  ` +${driver['gapToLeader']} seconds behind leader`;
+				else
+					console.log('error with:\n' + driver)
 				positionsElement.textContent = textString
 				positionsImg.src = driver['photo_url'];
 				positionsDiv.appendChild(positionsElement);
