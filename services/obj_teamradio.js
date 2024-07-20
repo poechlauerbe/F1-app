@@ -1,6 +1,6 @@
 const { getDriverName } = require('./obj_drivers');
 
-function Teamradio(date, driverNumber, driverName, recUrl) {
+function Teamradio (date, driverNumber, driverName, recUrl) {
   this.date = date;
   this.driverNumber = driverNumber;
   this.driverName = driverName;
@@ -34,5 +34,5 @@ module.exports = {
   addTeamradios,
   deleteTeamradios,
   getTeamradios,
-  getTeamradiosLength,
+  getTeamradiosLength
 };

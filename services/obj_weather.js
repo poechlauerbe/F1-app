@@ -1,4 +1,4 @@
-function Weather(
+function Weather (
   time,
   airTemp,
   trackTemp,
@@ -31,7 +31,7 @@ const addWeather = (
   rainfall
 ) => {
   const newWeather = weather.find(newWeather => newWeather.time === time);
-  if (!newWeather)
+  if (!newWeather) {
     weather.push(
       new Weather(
         time,
@@ -44,6 +44,7 @@ const addWeather = (
         rainfall
       )
     );
+  }
 };
 
 const getLastWeather = () => {
@@ -58,5 +59,5 @@ const deleteWeather = () => {
 module.exports = {
   addWeather,
   deleteWeather,
-  getLastWeather,
+  getLastWeather
 };

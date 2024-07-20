@@ -1,7 +1,7 @@
 const { formatDate, formatTime } = require('./service_time');
 const { getLastWeather } = require('./obj_weather');
 
-function Location(
+function Location (
   sessionId,
   sessionName,
   sessionType,
@@ -93,5 +93,5 @@ module.exports = {
   getLocation,
   setLocation,
   updateLocation,
-  updateActualLocationWeather,
+  updateActualLocationWeather
 };

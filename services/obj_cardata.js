@@ -1,9 +1,9 @@
-function CarData(
+function CarData (
   number,
   date,
   brake,
   drs,
-  meeting_key,
+  meetingKey,
   gear,
   rpm,
   session_key,
@@ -14,7 +14,7 @@ function CarData(
   this.date = date || '';
   this.brake = brake || 0;
   this.drs = drs || 0;
-  this.meeting_key = meeting_key || 0;
+  this.meetingKey = meetingKey || 0;
   this.gear = gear || 0;
   this.rpm = rpm || 0;
   this.session_key = session_key || 0;
@@ -32,9 +32,9 @@ const getCarData = driverNumber => {
 
 const getLast100CarData = driverNumber => {
   if (!cardata[driverNumber]) return;
-  let data = cardata[driverNumber].slice().reverse();
-  let last100 = [];
-  for (i = 0; i < 100; i++) {
+  const data = cardata[driverNumber].slice().reverse();
+  const last100 = [];
+  for (let i = 0; i < 100; i++) {
     if (!data[i]) break;
     last100.push(data[i]);
   }
@@ -46,7 +46,7 @@ const updateCarData = (
   date,
   brake,
   drs,
-  meeting_key,
+  meetingKey,
   gear,
   rpm,
   session_key,
@@ -64,7 +64,7 @@ const updateCarData = (
         date,
         brake,
         drs,
-        meeting_key,
+        meetingKey,
         gear,
         rpm,
         session_key,
@@ -83,5 +83,5 @@ module.exports = {
   deleteCarData,
   getCarData,
   getLast100CarData,
-  updateCarData,
+  updateCarData
 };

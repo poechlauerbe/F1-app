@@ -1,4 +1,4 @@
-function GpListElem(
+function GpListElem (
   meetingId,
   name,
   officialName,
@@ -14,7 +14,7 @@ function GpListElem(
   this.gmtOffset = gmtOffset || 0;
 }
 
-gpList = [];
+let gpList = [];
 
 const getGpList = () => {
   return gpList;
@@ -28,8 +28,8 @@ const addGpList = (
   dateStart,
   gmtOffset
 ) => {
-  meeting = gpList.find(gp => gp.meetingId === meetingId);
-  if (!meeting)
+  let meeting = gpList.find(gp => gp.meetingId === meetingId);
+  if (!meeting) {
     gpList.push(
       new GpListElem(
         meetingId,
@@ -40,6 +40,7 @@ const addGpList = (
         gmtOffset
       )
     );
+  }
 };
 
 module.exports = {

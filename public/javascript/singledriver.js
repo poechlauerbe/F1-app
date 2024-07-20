@@ -3,7 +3,7 @@ let allDrivers = [];
 let actualDriver = 0;
 
 // const driverImage = document.createElement('img');
-// driverImage.src = driver['photo_url'];
+// driverImage.src = driver['photoUrl'];
 // driversSelect.appendChild(driverImage);
 
 const getDrivers = () => {

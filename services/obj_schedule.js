@@ -1,4 +1,4 @@
-function RaceScheduleObj(name, category, start, end, location, lat, lon) {
+function RaceScheduleObj (name, category, start, end, location, lat, lon) {
   this.name = name || '';
   this.category = category || '';
   this.start = start || '';
@@ -8,15 +8,12 @@ function RaceScheduleObj(name, category, start, end, location, lat, lon) {
   this.lon = lon || '';
 }
 
-schedule = [];
+let schedule = [];
 
 const getSchedule = () => {
   return schedule;
 };
 
-// const addSchedule = (date, time, location, category, description) => {
-// 	schedule.push(new RaceScheduleObj(date, time, location, category, description));
-// }
 
 const addSchedule = (name, category, start, end, location, lat, lon) => {
   // add check if already existing
@@ -26,6 +23,6 @@ const addSchedule = (name, category, start, end, location, lat, lon) => {
 };
 
 module.exports = {
-  getSchedule,
   addSchedule,
+  getSchedule
 };

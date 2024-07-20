@@ -20,7 +20,7 @@ function loadSite () {
         }
 
         positionsElement.textContent = textString;
-        positionsImg.src = driver.photo_url;
+        positionsImg.src = driver.photoUrl;
         positionsDiv.appendChild(positionsElement);
         positionsDiv.appendChild(positionsImg);
       });

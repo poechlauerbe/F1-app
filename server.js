@@ -261,8 +261,9 @@ async function loadLocation (
     );
     responseError = response;
     const data = await response.json();
-    if (!data[0].session_key) throw {};
-    if (data[0].session_key != sessionId) {
+    if (!data[0].session_key) throw new Error("No session key found");
+
+    if (data[0].session_key !== sessionId) {
       setLocation(
         data[0].session_key,
         data[0].session_name,
@@ -321,7 +322,7 @@ async function loadLocation (
     }
     loadLocationTimes++;
     if (startProcess) {
-      let actualTime = new Date();
+      const actualTime = new Date();
       console.log(actualTime - lastLoading + 'ms \tLocation loaded');
       lastLoading = actualTime;
     }
@@ -333,7 +334,7 @@ async function loadLocation (
     if (retryCount < maxRetries) {
       console.error('Response error loadLocation:\n' + responseError);
       console.error(
-        `\n` +
+        '\n' +
           getTimeNowIsoString() +
           `: loadLocation: Retrying... (${retryCount + 1}/${maxRetries})`
       );
@@ -372,7 +373,7 @@ async function loadWeather (
     });
     updateActualLocationWeather();
     if (startProcess) {
-      let actualTime = new Date();
+      const actualTime = new Date();
       console.log(actualTime - lastLoading + 'ms \tWeather loaded');
       lastLoading = actualTime;
     }
@@ -412,7 +413,7 @@ async function loadIntervals (
       updateGapToLeader(element.driver_number, element.gap_to_leader);
     });
     if (startProcess) {
-      let actualTime = new Date();
+      const actualTime = new Date();
       console.log(actualTime - lastLoading + 'ms \tIntervals loaded');
       lastLoading = actualTime;
     }
@@ -465,7 +466,7 @@ async function loadLaps (
       );
     });
     if (startProcess) {
-      let actualTime = new Date();
+      const actualTime = new Date();
       console.log(actualTime - lastLoading + 'ms \tLaps loaded');
       lastLoading = actualTime;
     }
@@ -509,7 +510,7 @@ async function loadMeetings (
       );
     });
     if (startProcess) {
-      let actualTime = new Date();
+      const actualTime = new Date();
       console.log(actualTime - lastLoading + 'ms \tMeetings loaded');
       lastLoading = actualTime;
     }
@@ -548,7 +549,7 @@ async function loadPositions (
       updatePositions(element.driver_number, element.position);
     });
     if (startProcess) {
-      let actualTime = new Date();
+      const actualTime = new Date();
       console.log(actualTime - lastLoading + 'ms \tPositions loaded');
       lastLoading = actualTime;
     }
@@ -598,7 +599,7 @@ async function loadRaceControl (
       );
     });
     if (startProcess) {
-      actualTime = new Date();
+      const actualTime = new Date();
       console.log(actualTime - lastLoading + 'ms \tRacecontrol loaded');
       lastLoading = actualTime;
     }
@@ -639,7 +640,7 @@ async function loadStints (
       updateDriverTyre(elem.driver_number, elem.compound);
     });
     if (startProcess) {
-      actualTime = new Date();
+      const actualTime = new Date();
       console.log(actualTime - lastLoading + 'ms \tStints loaded');
       lastLoading = actualTime;
     }
@@ -682,7 +683,7 @@ async function loadTeamRadio (
       );
     });
     if (startProcess) {
-      actualTime = new Date();
+      const actualTime = new Date();
       console.log(actualTime - lastLoading + 'ms \tTeamRadio loaded');
       lastLoading = actualTime;
     }
@@ -736,7 +737,7 @@ async function loadCarData (
       );
     });
     if (startProcess) {
-      actualTime = new Date();
+      const actualTime = new Date();
       console.log(actualTime - lastLoading + 'ms \tCarData loaded');
       lastLoading = actualTime;
     }
@@ -791,7 +792,7 @@ async function loadSchedule () {
       );
     }
     if (startProcess) {
-      actualTime = new Date();
+      const actualTime = new Date();
       console.log(actualTime - lastLoading + 'ms \tSchedule loaded');
       lastLoading = actualTime;
     }
@@ -946,7 +947,7 @@ app.get('/api/teamradio', async (req, res) => {
   }
 });
 
-let startLoading = new Date();
+const startLoading = new Date();
 console.error(startLoading.toISOString() + ': Server loading ...\n');
 
 async function serverStart() {
@@ -963,8 +964,8 @@ async function serverStart() {
   await loadSchedule();
   await loadCarData(2);
 
-  let endLoading = new Date();
-  finishLoading = endLoading - startLoading;
+  const endLoading = new Date();
+  const finishLoading = endLoading - startLoading;
   console.error('\nLoading time: ' + finishLoading / 1000 + ' seconds\n');
   // Server is ready to listen:
   app.listen(port, () => {
@@ -992,7 +993,7 @@ async function serverStart() {
 serverStart();
 
 // move to services?
-function logTimeToStderr() {
+function logTimeToStderr () {
   const currentTime = new Date().toISOString();
   console.error(currentTime + ': Status OK');
 }

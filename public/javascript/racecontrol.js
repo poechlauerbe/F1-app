@@ -47,7 +47,7 @@ function loadSite () {
             raceControlElement.className = 'track-limits';
           }
           if (!raceControl.message.includes('WAVED BLUE FLAG')) {
-            raceControlElement.textContent = timeString + '	' + raceControl.message;
+            raceControlElement.textContent = timeString + ' ' + raceControl.message;
           }
         }
         if (

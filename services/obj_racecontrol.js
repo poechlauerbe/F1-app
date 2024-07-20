@@ -1,4 +1,4 @@
-function Racecontrol(
+function Racecontrol (
   category,
   date,
   driverNumber,
@@ -38,7 +38,7 @@ const addRacecontrol = (
     newRacecontrol =>
       newRacecontrol.date === date && newRacecontrol.message === message
   );
-  if (!newRacecontrol)
+  if (!newRacecontrol) {
     racecontrol.push(
       new Racecontrol(
         category,
@@ -51,6 +51,7 @@ const addRacecontrol = (
         sector
       )
     );
+  }
 };
 
 const deleteRacecontrol = () => {
@@ -60,5 +61,5 @@ const deleteRacecontrol = () => {
 module.exports = {
   addRacecontrol,
   deleteRacecontrol,
-  getRacecontrol,
+  getRacecontrol
 };

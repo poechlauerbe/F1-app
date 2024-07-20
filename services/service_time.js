@@ -1,5 +1,5 @@
-function formatDate(date) {
-  newDate = new Date(date);
+function formatDate (date) {
+  const newDate = new Date(date);
   const day = String(newDate.getDate());
   const month = String(newDate.getMonth() + 1); // Months are zero-indexed
   const year = newDate.getFullYear();
@@ -7,18 +7,18 @@ function formatDate(date) {
   return `${day}.${month}.${year}`;
 }
 
-function formatTime(date) {
-  newDate = new Date(date);
+function formatTime (date) {
+  const newDate = new Date(date);
   const options = {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
-    hour12: false,
+    hour12: false
   };
   return newDate.toLocaleTimeString([], options);
 }
 
-function getTimeNowIsoString() {
+function getTimeNowIsoString () {
   const date = new Date();
   return date.toISOString();
 }
@@ -26,5 +26,5 @@ function getTimeNowIsoString() {
 module.exports = {
   formatDate,
   formatTime,
-  getTimeNowIsoString,
+  getTimeNowIsoString
 };
