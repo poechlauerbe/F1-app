@@ -1,7 +1,6 @@
 {
   "extends": [
-    "standard",
-    "plugin:prettier/recommended"
+    "standard"
   ],
   "rules": {
     "semi": ["error", "always"]

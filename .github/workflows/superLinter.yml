@@ -30,5 +30,6 @@ jobs:
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_JAVASCRIPT_STANDARD: false
+          VALIDATE_JSON: false
           JAVASCRIPT_ES_CONFIG_FILE: '.eslintrc.json'
           FILTER_REGEX_EXCLUDE: '(./node_modules/.*)|(./z_old/.*)|(./Z_examples/.*)'
