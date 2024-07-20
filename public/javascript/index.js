@@ -1,13 +1,13 @@
-import { options, options2 } from './services/mod_options.js';
+import { options2 } from './services/mod_options.js';
 
-let first_item = '';
+let firstItem = '';
 
 const countdown = () => {
-  let countdownDiv = document.getElementById('countdown');
+  const countdownDiv = document.getElementById('countdown');
   countdownDiv.innerHTML = '';
-  let startTime = new Date(first_item['start']);
-  let actualTime = new Date();
-  let rest = startTime - actualTime;
+  const startTime = new Date(firstItem.start);
+  const actualTime = new Date();
+  const rest = startTime - actualTime;
 
   const days = Math.floor(rest / (24 * 60 * 60 * 1000));
   const hours = Math.floor((rest % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
@@ -25,7 +25,7 @@ const countdown = () => {
   timeString += seconds;
   if (rest < 0) timeString = '00:00:00';
 
-  let countdownElem = document.createElement('p');
+  const countdownElem = document.createElement('p');
   countdownElem.textContent = timeString;
   countdownDiv.appendChild(countdownElem);
 };
@@ -42,10 +42,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       data.forEach(event => {
         if (new Date().toISOString() < event.end && i < 10) {
-          if (i === 0) first_item = event;
-          if (event.location !== first_item.location) return;
+          if (i === 0) firstItem = event;
+          if (event.location !== firstItem.location) return;
           const pitElem = document.createElement('li');
-          const date = new Date(event['start']);
+          const date = new Date(event.start);
           const timeString = date.toLocaleTimeString([], options2);
           pitElem.innerHTML = `${timeString}: ${event.name} - ${event.location} - ${event.category}`;
           pitElem.className = 'line-height-2';

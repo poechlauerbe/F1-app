@@ -7,7 +7,7 @@ const app = express();
 const port = 3000;
 let startProcess = true;
 let lastLoading = 0;
-let lastLoadingCarData = [];
+// let lastLoadingCarData = [];
 let sessionId = 0;
 
 const {
@@ -20,35 +20,43 @@ const {
   updateDriverLaps,
   updateDriverTyre,
 } = require('./services/obj_drivers');
+
 const {
   getLocation,
   setLocation,
   updateActualLocationWeather,
 } = require('./services/obj_location');
+
 const { deleteWeather, addWeather } = require('./services/obj_weather');
+
 const {
   deleteTeamradios,
   addTeamradios,
   getTeamradios,
   getTeamradiosLength,
 } = require('./services/obj_teamradio');
+
 const {
   deleteLaps,
   addLap,
   getLastLap,
 } = require('./services/obj_laps');
+
 const {
   deleteRacecontrol,
   getRacecontrol,
   addRacecontrol,
 } = require('./services/obj_racecontrol');
+
 const { getTimeNowIsoString } = require('./services/service_time');
 const { getGpList, addGpList } = require('./services/obj_GP_list');
+
 const {
   deleteCarData,
   updateCarData,
   getLast100CarData,
 } = require('./services/obj_cardata');
+
 const { addSchedule, getSchedule } = require('./services/obj_schedule');
 
 app.set('view engine', 'ejs');
