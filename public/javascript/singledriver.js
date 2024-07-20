@@ -74,8 +74,8 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function adjustTime(direction) {
-  const timeInput = document.getElementById('timeInput');
-  let [minutes, seconds] = timeInput.value.split(':');
+  const timeInput = document.getElementById('time-input');
+  let [minutes, seconds] = time-input.value.split(':');
   let [sec, millis] = seconds.split('.');
 
   minutes = parseInt(minutes);

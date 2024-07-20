@@ -1,24 +1,22 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<%- include('partials/head') %>
-<body>
+  <%- include('partials/head') %>
+  <body>
     <header>
-        <nav>
-            <%- include('partials/nav') %>
-        </nav>
+      <nav><%- include('partials/nav') %></nav>
     </header>
     <h1><%= headline %></h1>
     <p>For testing only one driver available</p>
     <div class="time-input-container">
-        <input type="text" id="timeInput" value="00:07.000">
-        <div class="timebuttons">
-            <button class="arrow-buttons" data-direction="up">▲</button>
-            <button class="arrow-buttons" data-direction="down">▼</button>
-        </div>
+      <input type="text" id="time-input" value="00:07.000" />
+      <div class="timebuttons">
+        <button class="arrow-buttons" data-direction="up">▲</button>
+        <button class="arrow-buttons" data-direction="down">▼</button>
+      </div>
     </div>
     <select id="drivers"></select>
     <div id="<%- id %>"></div>
-    <script defer type="module" src="<%= script %>" ></script>
-    <script defer src="javascript/services/navbar.js" ></script>
-</body>
+    <script defer type="module" src="<%= script %>"></script>
+    <script defer src="javascript/services/navbar.js"></script>
+  </body>
 </html>

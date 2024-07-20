@@ -1,0 +1,10 @@
+---
+# List of linters you want to enable or disable
+VALIDATE_JAVASCRIPT: true
+DISABLE_ERRORS: false
+DEFAULT_BRANCH: main
+# You can add more configurations for other languages here
+
+# Example to run only specific linters
+# VALIDATE_ALL_CODEBASE: false
+# VALIDATE_JSX: true

@@ -1,39 +1,39 @@
 .time-input-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 50px;
 }
 
-#timeInput {
-    width: 100px;
-    text-align: center;
-    font-size: 1.2em;
+#time-input {
+  width: 100px;
+  text-align: center;
+  font-size: 1.2em;
 }
 
 .timebuttons {
-    display: flex;
-    flex-direction: column;
-    margin-left: 10px;
-    align-items: center; /* Center the buttons horizontally */
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+  align-items: center; /* Center the buttons horizontally */
 }
 
 /* Specific styling for arrow buttons */
 .arrow-buttons {
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    width: 30px;
-    height: 30px;
-    font-size: 1.2em;
-    text-align: center;
-    cursor: pointer;
-    margin: 5px; /* Reduced margin to balance the spacing */
-    display: flex;
-    align-items: center; /* Center text vertically */
-    justify-content: center; /* Center text horizontally */
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  width: 30px;
+  height: 30px;
+  font-size: 1.2em;
+  text-align: center;
+  cursor: pointer;
+  margin: 5px; /* Reduced margin to balance the spacing */
+  display: flex;
+  align-items: center; /* Center text vertically */
+  justify-content: center; /* Center text horizontally */
 }
 
 select {
-	font-size: 1.2em;
-	margin-left: 10px;
+  font-size: 1.2em;
+  margin-left: 10px;
 }
