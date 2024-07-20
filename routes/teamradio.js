@@ -6,7 +6,7 @@ router.get('/', (req, res) => {
     title: 'Team Radio',
     headline: 'Team Radio',
     id: 'teamradio',
-    script: 'javascript/teamradio.js',
+    script: 'javascript/teamradio.js'
   });
 });
 

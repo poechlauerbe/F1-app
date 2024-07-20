@@ -5,7 +5,7 @@ router.get('/', (req, res) => {
   res.render('laptimes', {
     title: 'Lap times',
     headline: 'Laptimes',
-    script: 'javascript/laptimes.js',
+    script: 'javascript/laptimes.js'
   });
 });
 

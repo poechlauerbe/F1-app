@@ -6,7 +6,7 @@ router.get('/', (req, res) => {
     title: 'Drivers',
     headline: 'Drivers',
     id: 'drivers',
-    script: 'javascript/drivers.js',
+    script: 'javascript/drivers.js'
   });
 });
 

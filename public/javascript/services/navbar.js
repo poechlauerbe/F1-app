@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 function toggleSubnav (subnavId) {
   const subnav = document.getElementById(subnavId);
   if (subnav.style.display === 'none' || subnav.style.display === '') {
@@ -5,4 +7,6 @@ function toggleSubnav (subnavId) {
   } else {
     subnav.style.display = 'none';
   }
-} // eslint-disable-line no-unused-vars
+}
+
+/* eslint-enable no-unused-vars */

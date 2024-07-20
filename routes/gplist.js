@@ -6,7 +6,7 @@ router.get('/', (req, res) => {
     title: 'GP List',
     headline: 'Grand Prix List',
     id: 'gplist',
-    script: 'javascript/gplist.js',
+    script: 'javascript/gplist.js'
   });
 });
 

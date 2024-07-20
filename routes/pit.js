@@ -6,7 +6,7 @@ router.get('/', (req, res) => {
     title: 'Pit',
     headline: 'Pit Stops',
     id: 'pit',
-    script: 'javascript/pit.js',
+    script: 'javascript/pit.js'
   });
 });
 

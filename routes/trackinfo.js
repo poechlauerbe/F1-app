@@ -6,7 +6,7 @@ router.get('/', (req, res) => {
     title: 'Track Info',
     headline: 'Track Info',
     id: 'trackinfo',
-    script: 'javascript/trackinfo.js',
+    script: 'javascript/trackinfo.js'
   });
 });
 

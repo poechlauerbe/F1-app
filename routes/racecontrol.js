@@ -6,7 +6,7 @@ router.get('/', (req, res) => {
     title: 'Race Control',
     headline: 'Race Control',
     id: 'race-control',
-    script: 'javascript/racecontrol.js',
+    script: 'javascript/racecontrol.js'
   });
 });
 
