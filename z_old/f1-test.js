@@ -1,12 +1,11 @@
 const fs = require('fs');
 
-function driver(num) {
+function driver (num) {
   if (num === 0) {
     fetch('https://api.openf1.org/v1/drivers?session_key=latest')
       .then(response => response.json())
       .then(jsonContent => {
-
-        // console.log(jsonContent)
+        console.log(jsonContent)
         fs.writeFile(
           './temp/driver.json',
           JSON.stringify(jsonContent),
@@ -38,3 +37,4 @@ function position () {
 // console.log(driver(0));
 
 position();
+driver(1);

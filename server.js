@@ -261,7 +261,7 @@ async function loadLocation (
     );
     responseError = response;
     const data = await response.json();
-    if (!data[0].session_key) throw new Error("No session key found");
+    if (!data[0].session_key) throw new Error('No session key found');
 
     if (data[0].session_key !== sessionId) {
       setLocation(
@@ -950,7 +950,7 @@ app.get('/api/teamradio', async (req, res) => {
 const startLoading = new Date();
 console.error(startLoading.toISOString() + ': Server loading ...\n');
 
-async function serverStart() {
+async function serverStart () {
   await loadDrivers(); // no prerequesitary
   await loadLocation(); // no prerequesitary
   await loadLaps();
@@ -984,7 +984,7 @@ async function serverStart() {
   startUpdateIntervals(4870);
   startUpdateRaceControl(10050);
   startUpdateTeamRadio(13025);
-  // startUpdateCarData(7000);
+  startUpdateCarData(7000);
 
   // Log the current time to stderr every 15 minutes
   setInterval(logTimeToStderr, 15 * 60 * 1000);

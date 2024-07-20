@@ -8,12 +8,11 @@ function RaceScheduleObj (name, category, start, end, location, lat, lon) {
   this.lon = lon || '';
 }
 
-let schedule = [];
+const schedule = [];
 
 const getSchedule = () => {
   return schedule;
 };
-
 
 const addSchedule = (name, category, start, end, location, lat, lon) => {
   // add check if already existing

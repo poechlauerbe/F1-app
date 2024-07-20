@@ -14,7 +14,7 @@ function GpListElem (
   this.gmtOffset = gmtOffset || 0;
 }
 
-let gpList = [];
+const gpList = [];
 
 const getGpList = () => {
   return gpList;
@@ -28,7 +28,7 @@ const addGpList = (
   dateStart,
   gmtOffset
 ) => {
-  let meeting = gpList.find(gp => gp.meetingId === meetingId);
+  const meeting = gpList.find(gp => gp.meetingId === meetingId);
   if (!meeting) {
     gpList.push(
       new GpListElem(
@@ -44,6 +44,6 @@ const addGpList = (
 };
 
 module.exports = {
-  getGpList,
   addGpList,
+  getGpList
 };

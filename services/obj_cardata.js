@@ -6,7 +6,7 @@ function CarData (
   meetingKey,
   gear,
   rpm,
-  session_key,
+  sessionKey,
   speed,
   throttle
 ) {
@@ -17,7 +17,7 @@ function CarData (
   this.meetingKey = meetingKey || 0;
   this.gear = gear || 0;
   this.rpm = rpm || 0;
-  this.session_key = session_key || 0;
+  this.sessionKey = sessionKey || 0;
   this.speed = speed || 0;
   this.throttle = throttle || 0;
 }
