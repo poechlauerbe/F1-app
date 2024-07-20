@@ -261,7 +261,7 @@ async function loadLocation (
     );
     responseError = response;
     const data = await response.json();
-    if (!data[0].session_key) throw new Error('No session key found');
+    // if (!data[0].session_key) throw new Error('No session key found');
 
     if (data[0].session_key !== sessionId) {
       setLocation(

@@ -5,8 +5,7 @@ router.get('/', (req, res) => {
   res.render('singledriver', {
     title: 'Single Driver',
     headline: 'Single Driver',
-    id: 'singledriver',
-    script: './javascript/singledriver.js'
+    id: 'singledriver'
   });
 });
 
