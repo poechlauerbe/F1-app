@@ -31,6 +31,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JAVASCRIPT_ES_CONFIG_FILE: .eslintrc.yml
           FILTER_REGEX_EXCLUDE: './node_modules/.*'
-          VALIDATE_JAVASCRIPT: true
-          DISABLE_ERRORS: false
 ...
