@@ -62,3 +62,49 @@ document.getElementById('drivers').addEventListener('change', function() {
 	driverDiv.innerHTML = '';
 	loadSite();
 })
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const arrowButtons = document.querySelectorAll('.arrow-buttons');
+
+    arrowButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const direction = this.getAttribute('data-direction');
+            adjustTime(direction);
+        });
+    });
+});
+
+function adjustTime(direction) {
+    const timeInput = document.getElementById('timeInput');
+    let [minutes, seconds] = timeInput.value.split(':');
+    let [sec, millis] = seconds.split('.');
+
+    minutes = parseInt(minutes);
+    sec = parseInt(sec);
+    millis = parseInt(millis);
+
+    if (direction === 'up') {
+        millis += 100;
+        if (millis >= 1000) {
+            millis -= 1000;
+            sec += 1;
+        }
+        if (sec >= 60) {
+            sec -= 60;
+            minutes += 1;
+        }
+    } else if (direction === 'down') {
+        millis -= 100;
+        if (millis < 0) {
+            millis += 1000;
+            sec -= 1;
+        }
+        if (sec < 0) {
+            sec += 60;
+            minutes -= 1;
+        }
+    }
+
+    timeInput.value = `${String(minutes).padStart(2, '0')}:${String(sec).padStart(2, '0')}.${String(millis).padStart(3, '0')}`;
+}

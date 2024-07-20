@@ -9,6 +9,13 @@
     </header>
     <h1><%= headline %></h1>
     <p>For testing only one driver available</p>
+    <div class="time-input-container">
+        <input type="text" id="timeInput" value="00:07.000">
+        <div class="timebuttons">
+            <button class="arrow-buttons" data-direction="up">▲</button>
+            <button class="arrow-buttons" data-direction="down">▼</button>
+        </div>
+    </div>
     <select id="drivers"></select>
     <div id="<%- id %>"></div>
     <script defer type="module" src="<%= script %>" ></script>
