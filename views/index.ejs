@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-<%- include('partials/head') %>
-<body>
+  <%- include('partials/head') %>
+  <body>
     <%- include('partials/nav') %>
     <main>
-        <h1 class="text-center">Welcome to the world of formula 1</h1>
-        <p>The idea of this project is to create some application where you can find live data during a race-weekend</p>
-        <h2>Next race weekend:</h2>
-        <div id="countdown"></div>
-        <div id="next-event"></div>
-        <p>These are the pages until now:</p>
-        <ul class="line-height-2">
-            <%- include('partials/pages_list') %>
-        </ul>
-        <p>Have fun!</p>
+      <h1 class="text-center">Welcome to the world of formula 1</h1>
+      <p>
+        The idea of this project is to create some application where you can
+        find live data during a race-weekend
+      </p>
+      <h2>Next race weekend:</h2>
+      <div id="countdown"></div>
+      <div id="next-event"></div>
+      <p>These are the pages until now:</p>
+      <ul class="line-height-2">
+        <%- include('partials/pages_list') %>
+      </ul>
+      <p>Have fun!</p>
     </main>
-    <script defer type="module" src="javascript/index.js" ></script>
-    <script defer src="javascript/services/navbar.js" ></script>
-</body>
+    <script defer type="module" src="javascript/index.js"></script>
+    <script defer src="javascript/services/navbar.js"></script>
+  </body>
 </html>

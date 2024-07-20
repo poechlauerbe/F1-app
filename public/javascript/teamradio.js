@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         teamradioheadline.textContent =
           timeString +
-          '	' +
+          ' ' +
           teamradio.driverName +
           ' - ' +
           teamradio.driverNumber +

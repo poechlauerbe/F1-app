@@ -32,7 +32,7 @@ const getDrivers = () => {
 
 const loadSite = () => {
   if (!actualDriver || actualDriver === '0') return;
-  let totalApiString = apiString + actualDriver;
+  const totalApiString = apiString + actualDriver;
   fetch(totalApiString)
     .then(response => response.json())
     .then(data => {
@@ -73,9 +73,9 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
-function adjustTime(direction) {
+function adjustTime (direction) {
   const timeInput = document.getElementById('time-input');
-  let [minutes, seconds] = time-input.value.split(':');
+  let [minutes, seconds] = timeInput.value.split(':');
   let [sec, millis] = seconds.split('.');
 
   minutes = parseInt(minutes);

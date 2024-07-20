@@ -11,12 +11,11 @@ function loadSite () {
         const positionsElement = document.createElement('p');
         const positionsImg = document.createElement('img');
         // make textstring and then put it into textContent
-        if (driver['position'] === 1) {
+        if (driver.position === 1) {
           textString += ' - Leader';
         } else if (driver.gapToLeader[1] === 'L') {
           textString += ` +${driver.gapToLeader} behind leader`;
-        }
-        else if (driver.gapToLeader) {
+        } else if (driver.gapToLeader) {
           textString += ` +${driver.gapToLeader} seconds behind leader`;
         }
 
