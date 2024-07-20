@@ -32,32 +32,36 @@ const countdown = () => {
 
 document.addEventListener('DOMContentLoaded', () => {
   fetch('/api/schedule')
-    .then(response => response.json())
-    .then(data => {
-      let i = 0;
-      const gpListBaseDiv = document.getElementById('next-event');
-      gpListBaseDiv.innerHTML = '';
-      const gpListDiv = document.createElement('ul');
-      gpListBaseDiv.appendChild(gpListDiv);
+  .then(response => response.json())
+  .then(data => {
+    let i = 0;
+    const gpListBaseDiv = document.getElementById('next-event');
+    
+    gpListBaseDiv.innerHTML = '';
+    const gpListDiv = document.createElement('ul');
+    gpListBaseDiv.appendChild(gpListDiv);
 
-      data.forEach(event => {
-        if (new Date().toISOString() < event.end && i < 10) {
-          if (i === 0) firstItem = event;
-          if (event.location !== firstItem.location) return;
-          const pitElem = document.createElement('li');
-          const date = new Date(event.start);
-          const timeString = date.toLocaleTimeString([], options2);
-          pitElem.innerHTML = `${timeString}: ${event.name} - ${event.location} - ${event.category}`;
-          pitElem.className = 'line-height-2';
-          gpListDiv.appendChild(pitElem);
-          i++;
-        }
-      });
+    data.forEach(event => {
+      if (new Date().toISOString() < event.end && i < 10) {
+        if (i === 0) firstItem = event;
 
-      setInterval(countdown, 1000);
-      countdown();
-    })
-    .catch(error => {
-      console.error('Error fetching pit infos:', error);
+        if (event.location !== firstItem.location) return;
+
+        const pitElem = document.createElement('li');
+        const date = new Date(event.start);
+        const timeString = date.toLocaleTimeString([], options2);
+
+        pitElem.innerHTML = `${timeString}: ${event.name} - ${event.location} - ${event.category}`;
+        pitElem.className = 'line-height-2';
+        gpListDiv.appendChild(pitElem);
+        i++;
+      }
     });
+
+    setInterval(countdown, 1000);
+    countdown();
+  })
+  .catch(error => {
+    console.error('Error fetching pit infos:', error);
+  });
 });
