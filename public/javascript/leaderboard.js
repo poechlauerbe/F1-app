@@ -13,7 +13,7 @@ function loadSite () {
         // make textstring and then put it into textContent
         if (driver.position === 1) {
           textString += ' - Leader';
-        } else if (driver.gapToLeader[1] === 'L') {
+        } else if (driver.gapToLeader && driver.gapToLeader[1] === 'L') {
           textString += ` +${driver.gapToLeader} behind leader`;
         } else if (driver.gapToLeader) {
           textString += ` +${driver.gapToLeader} seconds behind leader`;

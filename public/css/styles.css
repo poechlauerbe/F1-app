@@ -6,8 +6,14 @@
 /* * {
 	box-sizing: border-box;
 } */
- 
+
 /* background-image: linear-gradient(var(--white), var(--vibrant-red)); */
+
+html {
+    background-image: url('../img/f1_cars3_1080x1080.jpg');
+    background-repeat: repeat-x;
+    background-attachment: fixed;
+}
 
 body {
 	padding: 20px;
@@ -15,6 +21,8 @@ body {
 	max-width: 800px;
 	margin: 0 auto;
     color: var(--deep-blue);
+    background-color: var(--light-gray);
+    opacity: 0.9;
 }
 
 @media (width <= 799px) {
