@@ -45,7 +45,7 @@ const getLastCarDataTime = driverNumber => {
   if (!cardata[driverNumber]) return;
   const data = cardata[driverNumber].slice().reverse();
   return data[0].date;
-}
+};
 
 const updateCarData = (
   number,
