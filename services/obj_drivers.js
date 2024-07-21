@@ -62,6 +62,14 @@ const getDrivers = () => {
   return drivers;
 };
 
+const getDriverNumbers = () => {
+  const driverNumbers = [];
+  drivers.forEach(element => {
+    driverNumbers.push(element.number);
+  })
+  return driverNumbers;
+}
+
 const getDriversByPositon = () => {
   const driversSorted = [];
   for (let i = 1; i <= drivers.length; i++) {
@@ -174,6 +182,7 @@ module.exports = {
   getDriverGapToLeader,
   getDriverLastLap,
   getDriverName,
+  getDriverNumbers,
   getDriverPits,
   getDrivers,
   getDriversByPositon,
