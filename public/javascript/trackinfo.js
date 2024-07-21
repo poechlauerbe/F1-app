@@ -1,4 +1,4 @@
-// import { formatTime } from './services/service_time.js';
+import { formatTimeShort, formatDate } from './services/service_time.js';
 const trackinfoDiv = document.getElementById('trackinfo');
 
 let startTime = '';
@@ -39,14 +39,14 @@ function loadSite () {
       trackinfoDiv.appendChild(sessionElement);
 
       const dateElement = document.createElement('p');
-      dateElement.textContent = `Date: ${data.date} \nStart*: ${data.start} \nEnd*: ${data.end}\n * your local time `;
+      dateElement.textContent = `Date: ${formatDate(data.start)} \nStart*: ${formatTimeShort(data.start)} \nEnd*: ${formatTimeShort(data.end)}\n * your local time `;
       trackinfoDiv.appendChild(dateElement);
       const weatherHeading = document.createElement('h2');
       weatherHeading.textContent = 'Weather';
       trackinfoDiv.appendChild(weatherHeading);
       const weatherElement = document.createElement('p');
       const pressure = data.weather.pressure / 1000;
-      weatherElement.textContent = `date/time: ${data.weather.time} \nAir temperature: ${data.weather.airTemp}°C\nTrack temperature: ${data.weather.trackTemp}°C\nHumidity: ${data.weather.humidity}%\npressure: ${pressure} bar\nWind speed: ${data.weather.windSpeed} m/s\nWind direction: ${data.weather.windDirection}°\nRainfall: ${data.weather.rainfall}\nSession ID: ${data.sessionId}`;
+      weatherElement.textContent = `date: ${formatDate(data.weather.time)}\ntime: ${formatTimeShort(data.weather.time)}\nAir temperature: ${data.weather.airTemp}°C\nTrack temperature: ${data.weather.trackTemp}°C\nHumidity: ${data.weather.humidity}%\npressure: ${pressure} bar\nWind speed: ${data.weather.windSpeed} m/s\nWind direction: ${data.weather.windDirection}°\nRainfall: ${data.weather.rainfall}\nSession ID: ${data.sessionId}`;
       trackinfoDiv.appendChild(weatherElement);
       startTime = data.isoDate;
       loadSchedule();
