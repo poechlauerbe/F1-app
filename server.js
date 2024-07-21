@@ -691,10 +691,10 @@ async function loadCarData (
     let apiString =
     'https://api.openf1.org/v1/car_data?session_key=latest&driver_number=' +
     driverNumber;
-    let lastFetchedDate = new Date (getLastCarDataTime(driverNumber));
+    const lastFetchedDate = new Date(getLastCarDataTime(driverNumber));
     if (getLastCarDataTime(driverNumber)) {
       lastFetchedDate.setMinutes(lastFetchedDate.getMinutes() - 1);
-      apiString += '&date>'
+      apiString += '&date>';
       apiString += lastFetchedDate.toISOString();
     }
     const response = await fetch(apiString);
