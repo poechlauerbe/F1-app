@@ -66,9 +66,9 @@ const getDriverNumbers = () => {
   const driverNumbers = [];
   drivers.forEach(element => {
     driverNumbers.push(element.number);
-  })
+  });
   return driverNumbers;
-}
+};
 
 const getDriversByPositon = () => {
   const driversSorted = [];

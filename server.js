@@ -779,10 +779,8 @@ async function loadAllCarData () {
 
   driverNumbers.forEach(element => {
     loadCarData(element);
-  })
+  });
 }
-
-
 
 async function loadSchedule () {
   try {
