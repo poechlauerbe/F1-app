@@ -1,3 +1,4 @@
+@import url('colorscheme.css');
 @import url('racecontrol.css');
 @import url('table.css');
 @import url('singledriver.css');
@@ -8,9 +9,11 @@
 
 body {
 	padding: 20px;
+    /* background-image: linear-gradient(var(--white), var(--vibrant-red)); */
 	font-family: Arial, Helvetica, sans-serif;
 	max-width: 800px;
 	margin: 0 auto;
+    color: var(--deep-blue);
 }
 
 @media (width <= 799px) {
@@ -39,6 +42,7 @@ p {
 button {
 	background-color: white;
 	color: black;
+    font-weight: bold;
 	padding: 10px;
 	width: 130px;
 	border: 1px solid black;
@@ -66,16 +70,21 @@ nav > ul {
 }
 
 nav a {
-    background-color: white;
-    color: black;
+    background-color: var(--light-gray);
+    color: var(--deep-blue);
     padding: 10px;
     margin: 10px 20px;
     border: 1px solid black;
     border-radius: 10px;
     text-decoration: none;
     text-align: center;
+    font-weight: bold;
     display: flex;
     flex-wrap: wrap;
+}
+
+nav a:hover {
+    background-color: var(--bright-yellow);
 }
 
 /* Style the main li elements */
@@ -93,7 +102,7 @@ nav > ul > li {
     list-style-type: none;
     padding: 0;
     margin: 0;
-    background-color: white; /* Adjust as needed */
+    background-color: var(--white);
 
     /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); Optional shadow for better visibility */
 }
@@ -111,9 +120,11 @@ nav > ul > li {
 
 .subnav li a {
     text-decoration: none;
-    color: black; /* Adjust text color as needed */
+    color: var(--deep-blue);
+    justify-content: center;
+    align-items: center;
 }
 
 .subnav li a:hover {
-    background-color: #f0f0f0; /* Adjust hover background color as needed */
+    background-color: var(--bright-yellow); /* Adjust hover background color as needed */
 }
