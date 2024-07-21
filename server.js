@@ -190,12 +190,15 @@ const startUpdateTeamRadio = interval => {
   }, interval);
 };
 
+let iCarData = 0;
+
 const startUpdateAllCarData = interval => {
   setInterval(async () => {
-    if (loadCarDataIsFetching) return;
+    if (iCarData) return;
     loadCarDataIsFetching = true;
 
     await loadAllCarData();
+
     loadCarDataIsFetching = false;
   }, interval);
 };
@@ -240,6 +243,7 @@ async function loadDrivers (
       await loadDrivers(retryCount + 1, maxRetries, delayMs, true);
     } else {
       console.error('Max retries reached. Unable to fetch driver data.');
+      iCarData--;
     }
   }
 }
@@ -728,6 +732,7 @@ async function loadCarData (
         ')'
       );
     }
+    iCarData--;
   } catch (error) {
     if (retryCount < maxRetries) {
       console.error(
@@ -751,6 +756,7 @@ async function loadCarData (
 async function loadAllCarData () {
   const driverNumbers = getDriverNumbers();
 
+  iCarData = driverNumbers.length;
   driverNumbers.forEach(element => {
     loadCarData(element);
   });
