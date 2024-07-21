@@ -41,6 +41,12 @@ const getLast100CarData = driverNumber => {
   return last100;
 };
 
+const getLastCarDataTime = driverNumber => {
+  if (!cardata[driverNumber]) return;
+  const data = cardata[driverNumber].slice().reverse();
+  return data[0].date;
+}
+
 const updateCarData = (
   number,
   date,
@@ -83,5 +89,6 @@ module.exports = {
   deleteCarData,
   getCarData,
   getLast100CarData,
+  getLastCarDataTime,
   updateCarData
 };
