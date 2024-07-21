@@ -195,7 +195,6 @@ const startUpdateAllCarData = interval => {
   setInterval(async () => {
     if (iCarData) return;
     await loadAllCarData();
-
   }, interval);
 };
 
