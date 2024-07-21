@@ -194,7 +194,6 @@ let iCarData = 0;
 const startUpdateAllCarData = interval => {
   setInterval(async () => {
     if (iCarData) return;
-
     await loadAllCarData();
 
   }, interval);
@@ -227,7 +226,7 @@ async function loadDrivers (
       lastLoading = actualTime;
     }
     if (reload && !startProcess) {
-      console.log(actualTime + ': loadDrivers: retry done (' + retryCount + '/' + maxRetries + ')');
+      console.log(getTimeNowIsoString() + ': loadDrivers: retry done (' + retryCount + '/' + maxRetries + ')');
     }
   } catch (error) {
     // console.error(new Date().toISOString() + ': Error fetching data (drivers):', error);
@@ -245,8 +244,6 @@ async function loadDrivers (
   }
 }
 
-let loadLocationTimes = 0;
-
 async function loadLocation (
   retryCount = 0,
   maxRetries = 5,
@@ -254,7 +251,6 @@ async function loadLocation (
   reload = false
 ) {
   try {
-    console.log(loadLocationTimes + '...' + sessionId);
     const response = await fetch(
       'https://api.openf1.org/v1/sessions?session_key=latest'
     );
@@ -271,12 +267,13 @@ async function loadLocation (
         data[0].date_start,
         data[0].date_end
       );
-      console.log('old sessionID: ' + sessionId);
-      sessionId = data[0].session_key;
-      console.log(
-        'new sessionID: ' + sessionId + ' (change at: ' + new Date() + ')'
-      );
       if (!startProcess) {
+        console.log('old sessionID: ' + sessionId);
+        sessionId = data[0].session_key;
+        console.log(
+          'new sessionID: ' + sessionId + ' (change at: ' + new Date() + ')'
+        );
+
         // stop update, delete objects, load new files, start update
         console.log('\n\nChange detected, reloading data\n\n');
         clearInterval(intervalsInterval);
@@ -317,16 +314,17 @@ async function loadLocation (
         startUpdateTeamRadio(13025);
         startUpdateAllCarData(7000);
         console.log('Intervals restarted');
+      } else {
+        sessionId = data[0].session_key;
       }
     }
-    loadLocationTimes++;
     const actualTime = new Date();
     if (startProcess) {
       console.log(actualTime - lastLoading + 'ms \tLocation loaded');
       lastLoading = actualTime;
     }
     if (reload && !startProcess) {
-      console.log(actualTime + ': loadLocation: retry done (' + retryCount + '/' + maxRetries + ')');
+      console.log(getTimeNowIsoString() + ': loadLocation: retry done (' + retryCount + '/' + maxRetries + ')');
     }
   } catch (error) {
     // console.error(new Date().toISOString() + ': Error fetching data (sessions):', error);
@@ -374,7 +372,7 @@ async function loadWeather (
       lastLoading = actualTime;
     }
     if (reload && !startProcess) {
-      console.log(actualTime + ': loadWeather: retry done (' + retryCount + '/' + maxRetries + ')');
+      console.log(getTimeNowIsoString() + ': loadWeather: retry done (' + retryCount + '/' + maxRetries + ')');
     }
   } catch (error) {
     if (retryCount < maxRetries) {
@@ -411,7 +409,7 @@ async function loadIntervals (
       lastLoading = actualTime;
     }
     if (reload && !startProcess) {
-      console.log(actualTime +
+      console.log(getTimeNowIsoString() +
         ': loadIntervals: retry done (' + retryCount + '/' + maxRetries + ')'
       );
     }
@@ -461,7 +459,7 @@ async function loadLaps (
       lastLoading = actualTime;
     }
     if (reload && !startProcess) {
-      console.log(actualTime + ': loadLaps: retry done (' + retryCount + '/' + maxRetries + ')');
+      console.log(getTimeNowIsoString() + ': loadLaps: retry done (' + retryCount + '/' + maxRetries + ')');
     }
   } catch (error) {
     if (retryCount < maxRetries) {
@@ -502,7 +500,7 @@ async function loadMeetings (
       lastLoading = actualTime;
     }
     if (reload) {
-      console.log(actualTime + ': loadMeetings: retry done (' + retryCount + '/' + maxRetries + ')');
+      console.log(getTimeNowIsoString() + ': loadMeetings: retry done (' + retryCount + '/' + maxRetries + ')');
     }
   } catch (error) {
     if (retryCount < maxRetries) {
@@ -538,7 +536,7 @@ async function loadPositions (
       lastLoading = actualTime;
     }
     if (reload && !startProcess) {
-      console.log( actualTime +
+      console.log(getTimeNowIsoString() +
         ': loadPositions: retry done (' + retryCount + '/' + maxRetries + ')'
       );
     }
@@ -585,7 +583,7 @@ async function loadRaceControl (
       lastLoading = actualTime;
     }
     if (reload && !startProcess) {
-      console.log(actualTime +
+      console.log(getTimeNowIsoString() +
         ': loadRaceControl: retry done (' + retryCount + '/' + maxRetries + ')'
       );
     }
@@ -623,7 +621,7 @@ async function loadStints (
       lastLoading = actualTime;
     }
     if (reload && !startProcess) {
-      console.log(actualTime + ': loadStints: retry done (' + retryCount + '/' + maxRetries + ')');
+      console.log(getTimeNowIsoString() + ': loadStints: retry done (' + retryCount + '/' + maxRetries + ')');
     }
   } catch (error) {
     if (retryCount < maxRetries) {
@@ -663,7 +661,7 @@ async function loadTeamRadio (
       lastLoading = actualTime;
     }
     if (reload && !startProcess) {
-      console.log(actualTime +
+      console.log(getTimeNowIsoString() +
         ': loadTeamradio: retry done (' + retryCount + '/' + maxRetries + ')'
       );
     }
@@ -714,14 +712,14 @@ async function loadCarData (
         element.throttle
       );
     });
-    const actualTime = new Date();
     if (startProcess) {
+      const actualTime = new Date();
       console.log(actualTime - lastLoading + 'ms \tCarData loaded');
       lastLoading = actualTime;
     }
     if (reload && !startProcess) {
       console.log(
-        actualTime +
+        getTimeNowIsoString() +
         `: loadCarData (car ${driverNumber}): retry done (` +
         retryCount +
         '/' +
