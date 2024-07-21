@@ -12,10 +12,11 @@ let lastLoading = 0;
 let sessionId = 0;
 
 const {
+  addDriver,
   deleteDrivers,
+  getDriverNumbers,
   getDrivers,
   getDriversByPositon,
-  addDriver,
   updatePositions,
   updateGapToLeader,
   updateDriverLaps,
@@ -188,12 +189,12 @@ const startUpdateTeamRadio = interval => {
   }, interval);
 };
 
-const startUpdateCarData = interval => {
+const startUpdateAllCarData = interval => {
   setInterval(async () => {
     if (loadCarDataIsFetching) return;
     loadCarDataIsFetching = true;
 
-    await loadCarData(2);
+    await loadAllCarData();
     loadCarDataIsFetching = false;
   }, interval);
 };
@@ -306,7 +307,7 @@ async function loadLocation (
         await loadRaceControl();
         await loadStints();
         await loadIntervals();
-        await loadCarData(2);
+        await loadAllCarData();
         startProcess = false;
         console.log('Objects reloaded');
 
@@ -317,6 +318,7 @@ async function loadLocation (
         startUpdateIntervals(4870);
         startUpdateRaceControl(10050);
         startUpdateTeamRadio(13025);
+        startUpdateAllCarData(7000);
         console.log('Intervals restarted');
       }
     }
@@ -772,6 +774,16 @@ async function loadCarData (
   }
 }
 
+async function loadAllCarData () {
+  const driverNumbers = getDriverNumbers();
+
+  driverNumbers.forEach(element => {
+    loadCarData(element);
+  })
+}
+
+
+
 async function loadSchedule () {
   try {
     const response = await fetch(
@@ -835,7 +847,9 @@ app.get('/api/drivers', async (req, res) => {
 
 app.get('/api/singledriver', async (req, res) => {
   const driverNumber = req.query.driverNumber;
-  if (driverNumber < 0 && driverNumber > 99) return res.json(null);
+  const driverNumbers = getDriverNumbers();
+  const checkInput = driverNumbers.find(one => one === Number(driverNumber));
+  if (!checkInput) return res.json(null);
   if (
     getLast100CarData(driverNumber) &&
     getLast100CarData(driverNumber).length > 0
@@ -962,17 +976,20 @@ async function serverStart () {
   await loadIntervals();
   await loadMeetings();
   await loadSchedule();
-  await loadCarData(2);
 
   const endLoading = new Date();
   const finishLoading = endLoading - startLoading;
   console.error('\nLoading time: ' + finishLoading / 1000 + ' seconds\n');
+
   // Server is ready to listen:
   app.listen(port, () => {
     console.error(
       endLoading.toISOString() + `: Server running at http://localhost:${port}`
     );
   });
+
+  // CarData loading after opening port:
+  // await loadAllCarData();
 
   startProcess = false;
   // Set intervalls to synchronize with API:
@@ -984,7 +1001,7 @@ async function serverStart () {
   startUpdateIntervals(4870);
   startUpdateRaceControl(10050);
   startUpdateTeamRadio(13025);
-  startUpdateCarData(7000);
+  // startUpdateAllCarData(7000);
 
   // Log the current time to stderr every 15 minutes
   setInterval(logTimeToStderr, 15 * 60 * 1000);
