@@ -9,13 +9,13 @@ let pitStops = [];
 const addPitStop = (driverNumber, lap, pitStopTime) => {
   const pit = pitStops.find(elem => elem.lap === lap);
   if (!pit) {
-    pitStops.push(new Pits(driverNumber, lap, pitStopTime))
+    pitStops.push(new Pits(driverNumber, lap, pitStopTime));
   }
 };
 
 const deletePitStops = () => {
   pitStops = [];
-}
+};
 
 const getPitStops = () => {
   return pitStops;
