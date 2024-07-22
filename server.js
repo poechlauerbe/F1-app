@@ -62,7 +62,7 @@ const {
 
 const { addSchedule, getSchedule } = require('./services/obj_schedule');
 
-const { getPitStops, addPitStop, deletePitStops } = require('./services/obj_pits')
+const { getPitStops, addPitStop, deletePitStops } = require('./services/obj_pits');
 
 app.set('view engine', 'ejs');
 
@@ -297,6 +297,7 @@ async function loadLocation (
         clearInterval(teamradioInterval);
         clearInterval(racecontrolInterval);
         clearInterval(pitStopInterval);
+        clearInterval(carDataInterval);
         console.log('Intervals cleared');
 
         deleteLaps();
@@ -544,8 +545,8 @@ async function loadPitStops (
     );
     const data = await response.json();
     data.forEach(element => {
-      addPitStop(element.driver_number, element.lap_number, element.pit_duration)
-    })
+      addPitStop(element.driver_number, element.lap_number, element.pit_duration);
+    });
     if (startProcess) {
       const actualTime = new Date();
       console.log(actualTime - lastLoading + 'ms \tPitstops loaded');
@@ -895,10 +896,11 @@ app.get('/api/singledriver', async (req, res) => {
 
 app.get('/api/pit', async (req, res) => {
   try {
-    if (getPitStops().length > 0)
+    if (getPitStops().length > 0) {
       return res.json(getPitStops());
+    }
     await loadPitStops();
-    res.json(getPitStops())
+    res.json(getPitStops());
   } catch (error) {
     console.error(
       new Date().toISOString() + ': Error fetching data (pit):',

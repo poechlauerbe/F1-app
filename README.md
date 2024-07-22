@@ -15,11 +15,11 @@ Next tests possible during the upcoming race weekend starting on Fr 5.7.2024
 1. Node
 2. additionally npm to:
 - start the server with logfiles:
-```
+```bash
 npm start
 ```
 - start the server with logfiles and nodemon (restarts server when there is a change of code):
-```
+```bash
 npm run dev
 ```
 
