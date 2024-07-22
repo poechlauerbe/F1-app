@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+function loadSite () {
   fetch('/api/pit')
     .then(response => response.json())
     .then(data => {
@@ -13,4 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
     .catch(error => {
       console.error('Error fetching pit infos:', error);
     });
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadSite();
+  setInterval(loadSite, 10000);
 });
