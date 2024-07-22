@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
       pitDiv.innerHTML = '';
       data.forEach(pitinfo => {
         const pitElem = document.createElement('p');
-        pitElem.innerHTML = `Number: ${pitinfo.driver_number} | Lap: ${pitinfo.lap_number} | Time: ${pitinfo.pit_duration}`;
+        pitElem.innerHTML = `Number: ${pitinfo.driverNumber} | Lap: ${pitinfo.pitStopLap} | Pitstop duration: ${pitinfo.pitStopTime}`;
         pitDiv.appendChild(pitElem);
       });
     })

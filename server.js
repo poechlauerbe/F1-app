@@ -544,7 +544,7 @@ async function loadPitStops (
     );
     const data = await response.json();
     data.forEach(element => {
-
+      addPitStop(element.driver_number, element.lap_number, element.pit_duration)
     })
     if (startProcess) {
       const actualTime = new Date();
@@ -895,11 +895,10 @@ app.get('/api/singledriver', async (req, res) => {
 
 app.get('/api/pit', async (req, res) => {
   try {
-    const response = await fetch(
-      'https://api.openf1.org/v1/pit?session_key=latest'
-    );
-    const data = await response.json();
-    res.json(data);
+    if (getPitStops().length > 0)
+      return res.json(getPitStops());
+    await loadPitStops();
+    res.json(getPitStops())
   } catch (error) {
     console.error(
       new Date().toISOString() + ': Error fetching data (pit):',

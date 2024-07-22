@@ -1,15 +1,15 @@
-function Pits (driverNumber, lap, pitStopTime) {
+function Pits (driverNumber, pitStopLap, pitStopTime) {
   this.driverNumber = driverNumber;
-  this.lap = lap;
+  this.pitStopLap = pitStopLap;
   this.pitStopTime = pitStopTime;
 }
 
 let pitStops = [];
 
-const addPitStop = (driverNumber, lap, pitStopTime) => {
-  const pit = pitStops.find(elem => elem.lap === lap);
+const addPitStop = (driverNumber, pitStopLap, pitStopTime) => {
+  const pit = pitStops.find(elem => elem.pitStopLap === pitStopLap);
   if (!pit) {
-    pitStops.push(new Pits(driverNumber, lap, pitStopTime));
+    pitStops.push(new Pits(driverNumber, pitStopLap, pitStopTime));
   }
 };
 
@@ -18,7 +18,7 @@ const deletePitStops = () => {
 };
 
 const getPitStops = () => {
-  return pitStops;
+  return pitStops.slice().reverse();
 };
 
 module.exports = {
