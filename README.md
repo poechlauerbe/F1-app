@@ -60,6 +60,8 @@ If you have any ideas - make a comment in the [discussions](https://github.com/p
 
 [My actual board of ideas/things I want to add](https://github.com/users/poechlauerbe/projects/4)
 
+[Overview of Release Notes](https://github.com/poechlauerbe/F1-app/releases)
+
 ## Nice stuff for formula1 fans - found during research
 - [FastF1](https://github.com/theOehrly/Fast-F1)
 - [F1 Tracks](https://github.com/bacinger/f1-circuits/tree/master)
