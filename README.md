@@ -11,11 +11,23 @@ Next tests possible during the upcoming race weekend starting on Fr 5.7.2024
 
 [Open Points list](OpenPoints.md)
 
+## Prerequisites
+1. Node
+2. additionally npm to:
+- start the server with logfiles:
+```bash
+npm start
+```
+- start the server with logfiles and nodemon (restarts server when there is a change of code):
+```bash
+npm run dev
+```
+
 ## How to use
 1. Clone repository:
 ```bash
-git clone git@github.com:poechlauerbe/F1-api.git
-cd F1-api
+git clone git@github.com:poechlauerbe/F1-app.git
+cd F1-app
 ```
 2. Start server in shell:
 ```bash
@@ -52,7 +64,7 @@ Working in progress...
   - made update automatism
   - error handling when no data is incoming
   - CSS: added colors to different race control messages
-6. Added new features, many tests during Silverstone GP weekend
+6. Added new features, many tests during Silverstone GP & Hungaro GP weekend
 - single Lap calculation
 - pit stops page
 

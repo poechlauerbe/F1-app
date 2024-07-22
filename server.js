@@ -62,6 +62,8 @@ const {
 
 const { addSchedule, getSchedule } = require('./services/obj_schedule');
 
+const { getPitStops, addPitStop, deletePitStops } = require('./services/obj_pits');
+
 app.set('view engine', 'ejs');
 
 // Use the routes defined in the route files
@@ -103,6 +105,7 @@ let loadLapsIsFetching = false;
 let loadPositionsIsFetching = false;
 let loadRaceControlIsFetching = false;
 let loadTeamRadioIsFetching = false;
+let loadPitStopsIsFetching = false;
 
 let stintsInterval = 0;
 let lapsInterval = 0;
@@ -110,6 +113,8 @@ let positionsInterval = 0;
 let intervalsInterval = 0;
 let racecontrolInterval = 0;
 let teamradioInterval = 0;
+let pitStopInterval = 0;
+let carDataInterval = 0;
 
 // Function to start the regular updates
 
@@ -144,6 +149,16 @@ const startUpdateLocation = interval => {
     await loadWeather();
 
     loadLocationIsFetching = false;
+  }, interval);
+};
+
+const startUpdatePitStops = interval => {
+  pitStopInterval = setInterval(async () => {
+    if (loadPitStopsIsFetching) return;
+    loadPitStopsIsFetching = true;
+
+    await loadPitStops();
+    loadPitStopsIsFetching = false;
   }, interval);
 };
 
@@ -192,7 +207,7 @@ const startUpdateTeamRadio = interval => {
 let iCarData = 0;
 
 const startUpdateAllCarData = interval => {
-  setInterval(async () => {
+  carDataInterval = setInterval(async () => {
     if (iCarData) return;
     await loadAllCarData();
   }, interval);
@@ -281,6 +296,8 @@ async function loadLocation (
         clearInterval(positionsInterval);
         clearInterval(teamradioInterval);
         clearInterval(racecontrolInterval);
+        clearInterval(pitStopInterval);
+        clearInterval(carDataInterval);
         console.log('Intervals cleared');
 
         deleteLaps();
@@ -289,6 +306,7 @@ async function loadLocation (
         deleteRacecontrol();
         deleteTeamradios();
         deleteWeather();
+        deletePitStops();
         console.log('Objects deleted');
 
         startProcess = true;
@@ -511,6 +529,42 @@ async function loadMeetings (
       await loadMeetings(retryCount + 1, maxRetries, delayMs, true);
     } else {
       console.error('Max retries reached. Unable to fetch driver data.');
+    }
+  }
+}
+
+async function loadPitStops (
+  retryCount = 0,
+  maxRetries = 5,
+  delayMs = 3000,
+  reload = false
+) {
+  try {
+    const response = await fetch(
+      'https://api.openf1.org/v1/pit?session_key=latest'
+    );
+    const data = await response.json();
+    data.forEach(element => {
+      addPitStop(element.driver_number, element.lap_number, element.pit_duration);
+    });
+    if (startProcess) {
+      const actualTime = new Date();
+      console.log(actualTime - lastLoading + 'ms \tPitstops loaded');
+      lastLoading = actualTime;
+    }
+    if (reload) {
+      console.log(getTimeNowIsoString() + ': loadPitStops: retry done (' + retryCount + '/' + maxRetries + ')');
+    }
+  } catch (error) {
+    if (retryCount < maxRetries) {
+      console.error(
+        getTimeNowIsoString() +
+          `: loadPitStops: Retrying... (${retryCount + 1}/${maxRetries})`
+      );
+      await new Promise(resolve => setTimeout(resolve, delayMs));
+      await loadPitStops(retryCount + 1, maxRetries, delayMs, true);
+    } else {
+      console.error('Max retries reached. Unable to fetch pit data.');
     }
   }
 }
@@ -842,11 +896,11 @@ app.get('/api/singledriver', async (req, res) => {
 
 app.get('/api/pit', async (req, res) => {
   try {
-    const response = await fetch(
-      'https://api.openf1.org/v1/pit?session_key=latest'
-    );
-    const data = await response.json();
-    res.json(data);
+    if (getPitStops().length > 0) {
+      return res.json(getPitStops());
+    }
+    await loadPitStops();
+    res.json(getPitStops());
   } catch (error) {
     console.error(
       new Date().toISOString() + ': Error fetching data (pit):',
@@ -945,6 +999,7 @@ async function serverStart () {
   await loadTeamRadio();
   await loadRaceControl();
   await loadStints();
+  await loadPitStops();
   await loadIntervals();
   await loadMeetings();
   await loadSchedule();
@@ -968,6 +1023,7 @@ async function serverStart () {
 
   startUpdateLocation(15010);
   startUpdateStints(5030);
+  startUpdatePitStops(7030);
   startUpdateLaps(5010);
   startUpdatePositions(4980);
   startUpdateIntervals(4870);
