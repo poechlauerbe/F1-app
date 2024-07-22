@@ -7,22 +7,22 @@ function Pits (driverNumber, lap, pitStopTime) {
 let pitStops = [];
 
 const addPitStop = (driverNumber, lap, pitStopTime) => {
-	const pit = pitStops.find(elem => elem.lap === lap);
-	if (!pit) {
-		pitStops.push(new Pits(driverNumber, lap, pitStopTime))
-	}
+  const pit = pitStops.find(elem => elem.lap === lap);
+  if (!pit) {
+    pitStops.push(new Pits(driverNumber, lap, pitStopTime))
+  }
 };
 
 const deletePitStops = () => {
-	pitStops = [];
+  pitStops = [];
 }
 
 const getPitStops = () => {
-	return pitStops;
+  return pitStops;
 };
 
 module.exports = {
-	addPitStop,
-	deletePitStops,
-	getPitStops
+  addPitStop,
+  deletePitStops,
+  getPitStops
 };
