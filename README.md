@@ -12,13 +12,13 @@ Next tests possible during the upcoming race weekend starting on Fr 5.7.2024
 [Open Points list](OpenPoints.md)
 
 ## Prerequisites
-- Node
-- additionally npm to:
- - start the server with logfiles:
+1. Node
+2. additionally npm to:
+- start the server with logfiles:
 ```
 npm start
 ```
- - start the server with logfiles and nodemon (restarts server when there is a change of code):
+- start the server with logfiles and nodemon (restarts server when there is a change of code):
 ```
 npm run dev
 ```
