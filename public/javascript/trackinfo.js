@@ -7,29 +7,28 @@ let sessionName = '';
 
 function loadSchedule () {
   fetch('/api/schedule')
-  .then(response => response.json())
-  .then(data => {
-    for (let i = 0; i < data.length; i++) {
-      if (data[i].start === startTime) {
-        if (map && sessionName !== data[i].name) {
-          map.remove();
-          map = null;
-        }
-        if (!map) {
-          map = L.map('map').setView([data[i].lat, data[i].lon], 15);
-
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    .then(response => response.json())
+    .then(data => {
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].start === startTime) {
+          if (map && sessionName !== data[i].name) {
+            map.remove();
+            map = null;
+          }
+          if (!map) {
+            map = L.map('map').setView([data[i].lat, data[i].lon], 15);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
               attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          }).addTo(map);
+            }).addTo(map);
+          }
+          sessionName = data[i].name;
+          break;
         }
-        sessionName = data[i].name;
-        break ;
       }
-    }
-  })
-  .catch(error => {
-    console.error('Error fetching schedule:', error);
-  });
+    })
+    .catch(error => {
+      console.error('Error fetching schedule:', error);
+    });
 }
 
 function loadSite () {

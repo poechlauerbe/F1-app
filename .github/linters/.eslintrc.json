@@ -4,5 +4,8 @@
   ],
   "rules": {
     "semi": ["error", "always"]
-  }
+  },
+  "globals": {
+    "L": "readonly"
+  },
 }
