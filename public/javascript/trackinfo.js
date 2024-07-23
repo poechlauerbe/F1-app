@@ -2,18 +2,29 @@ import { formatTimeShort, formatDate } from './services/service_time.js';
 const trackinfoDiv = document.getElementById('trackinfo');
 
 let startTime = '';
+let map = null;
+let sessionName = '';
 
 function loadSchedule () {
   fetch('/api/schedule')
     .then(response => response.json())
     .then(data => {
-      data.forEach(event => {
-        if (event.start === startTime) {
-          const sessionElement = document.createElement('p');
-          sessionElement.textContent = `Test - combining data: ${event.name} - ${event.location} - ${event.category} - ${event.start}`;
-          trackinfoDiv.appendChild(sessionElement);
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].start === startTime) {
+          if (map && sessionName !== data[i].name) {
+            map.remove();
+            map = null;
+          }
+          if (!map) {
+            map = L.map('map').setView([data[i].lat, data[i].lon], 15);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+          }
+          sessionName = data[i].name;
+          break;
         }
-      });
+      }
     })
     .catch(error => {
       console.error('Error fetching schedule:', error);
@@ -57,6 +68,7 @@ function loadSite () {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // loadScript('https://unpkg.com/leaflet/dist/leaflet.js')
   loadSite();
   setInterval(loadSite, 30000);
 });

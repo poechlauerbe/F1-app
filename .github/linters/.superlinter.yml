@@ -1,5 +1,0 @@
-# .superlinter.yml
-exclude:
-  - node_modules/
-  - z_old/
-  - Z_examples/
