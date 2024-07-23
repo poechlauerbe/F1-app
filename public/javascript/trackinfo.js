@@ -7,13 +7,15 @@ function loadSchedule () {
   fetch('/api/schedule')
     .then(response => response.json())
     .then(data => {
-      data.forEach(event => {
-        if (event.start === startTime) {
-          const sessionElement = document.createElement('p');
-          sessionElement.textContent = `Test - combining data: ${event.name} - ${event.location} - ${event.category} - ${event.start}`;
-          trackinfoDiv.appendChild(sessionElement);
+        for(let i = 0; i < data.length; i++) {
+          if (data[i].start === startTime) {
+            const sessionElement = document.createElement('p');
+            sessionElement.textContent = `Test - combining data: ${data[i].name} - ${data[i].location} - ${data[i].category} - ${data[i].start}`;
+            trackinfoDiv.appendChild(sessionElement);
+            break ;
         }
-      });
+
+      }
     })
     .catch(error => {
       console.error('Error fetching schedule:', error);
