@@ -6,6 +6,7 @@ router.get('/', (req, res) => {
     title: 'Drivers',
     headline: 'Drivers',
     id: 'drivers',
+    preScript: '',
     script: 'javascript/drivers.js'
   });
 });

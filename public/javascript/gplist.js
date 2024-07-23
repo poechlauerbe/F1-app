@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
         pitElem.className = 'line-height-2';
         gpListDiv.appendChild(pitElem);
       });
-      console.log(data);
     })
     .catch(error => {
       console.error('Error fetching pit infos:', error);
