@@ -67,6 +67,7 @@ Working in progress...
 6. Added new features, many tests during Silverstone GP & Hungaro GP weekend
 - single Lap calculation
 - pit stops page
+- single driver page
 
 If you have any ideas - make a comment in the [discussions](https://github.com/poechlauerbe/F1-app/discussions) or create an [issue](https://github.com/poechlauerbe/F1-app/issues)
 
