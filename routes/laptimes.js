@@ -3,8 +3,8 @@ const router = express.Router();
 
 router.get('/', (req, res) => {
   res.render('laptimes', {
-    title: 'Lap times',
-    headline: 'Laptimes',
+    title: 'Lap Times',
+    headline: 'Lap Times',
     script: 'javascript/laptimes.js'
   });
 });

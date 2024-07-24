@@ -3,3 +3,4 @@ temp
 stderr*.log
 log
 test
+test-results
