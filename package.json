@@ -18,13 +18,16 @@
   "author": "poechlauerbe",
   "license": "MIT",
   "dependencies": {
+    "chai": "^5.1.1",
     "ejs": "^3.1.10",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "express": "^4.19.2",
     "ical": "^0.8.0",
+    "mocha": "^10.7.0",
     "node-fetch": "^3.3.2",
-    "prettier": "^3.3.3"
+    "prettier": "^3.3.3",
+    "supertest": "^7.0.0"
   },
   "devDependencies": {
     "eslint": "^8.57.0",
