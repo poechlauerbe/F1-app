@@ -6,6 +6,6 @@ module.exports = defineConfig({
   use: {
     headless: true, // Run tests in headless mode
     baseURL: 'http://localhost:3000', // Base URL for your app
-    browserName: 'chromium', // Browser for running tests (chromium, firefox, or webkit)
-  },
+    browserName: 'chromium' // Browser for running tests (chromium, firefox, or webkit)
+  }
 });
