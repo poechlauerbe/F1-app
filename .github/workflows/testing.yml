@@ -52,7 +52,7 @@ jobs:
 
       - name: Stop server
         run: |
-          kill $(cat server.pid)
+          kill "$(cat server.pid)"
           rm server.pid
 
       - name: Upload server log
