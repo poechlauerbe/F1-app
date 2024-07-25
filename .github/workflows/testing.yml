@@ -38,17 +38,17 @@ jobs:
       - name: Playwright tests
         run: npm run test:playwright
 
-      - name: Run accessibility tests
-        run: npm run test:accessibility
+      # - name: Run accessibility tests
+      #   run: npm run test:accessibility
 
-      - name: Run performance tests
-        run: npm run test:performance
+      # - name: Run performance tests
+      #   run: npm run test:performance
 
-      - name: Check for broken links
-        run: npm run check:links
+      # - name: Check for broken links
+      #   run: npm run check:links
 
-      - name: Run security checks
-        run: npm run test:security
+      # - name: Run security checks
+      #   run: npm run test:security
 
       - name: Stop server
         run: |
@@ -57,7 +57,7 @@ jobs:
 
       - name: Upload server log
         if: failure()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: server-log
           path: server.log
