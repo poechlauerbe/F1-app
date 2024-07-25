@@ -81,9 +81,13 @@ function changeDriverinfo () {
     return;
   }
   const driverElem = document.createElement('p');
+  const driverImage = document.createElement('img');
   const driver = allDrivers.find(driver => driver.number === parseInt(actualDriver));
   driverElem.textContent = `Driver: ${driver.name}`;
+  driverImage.src = driver.photoUrl;
+  driverImage.alt = 'not available';
   driverinfo.appendChild(driverElem);
+  driverinfo.appendChild(driverImage);
 }
 
 function adjustTime (direction) {
