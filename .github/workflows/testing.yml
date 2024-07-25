@@ -19,4 +19,6 @@ jobs:
           node-version: 'latest'
 
       - run: npm install
+      - run: npx playwright install
+
       - run: npm run test:playwright
