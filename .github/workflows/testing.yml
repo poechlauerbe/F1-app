@@ -1,0 +1,30 @@
+---
+name: Testing
+on: [push, pull_request, workflow_dispatch]
+
+permissions: { }
+
+jobs:
+  build:
+    name: Testing
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'latest'
+
+      - run: npm install
+      - run: npx playwright install
+
+      - name: Start server in background (without logs)
+        run: nohup node server.js > server.log 2>&1 &
+
+      - name: Wait for server to be started
+        run: npx wait-on http://localhost:3000
+
+      - run: npm run test:playwright
