@@ -3,7 +3,7 @@ const router = express.Router();
 
 router.get('/', (req, res) => {
   res.render('page01', {
-    title: 'Pit',
+    title: 'Pit Stops',
     headline: 'Pit Stops',
     id: 'pit',
     preScript: '',

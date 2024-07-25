@@ -1,5 +1,7 @@
 temp
+server.log
 .env
 stderr*.log
 log
 test
+test-results
