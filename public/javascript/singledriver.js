@@ -59,6 +59,7 @@ document.getElementById('drivers').addEventListener('change', function () {
   actualDriver = this.value;
   const driverDiv = document.getElementById('singledriver');
   driverDiv.innerHTML = '';
+  changeDriverinfo();
   loadSite();
 });
 
@@ -73,6 +74,18 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 
+function changeDriverinfo () {
+  const driverinfo = document.getElementById('driverinfo');
+  driverinfo.innerHTML = '';
+  if (actualDriver === 0) {
+    return;
+  }
+  const driverElem = document.createElement('p');
+  const driver = allDrivers.find(driver => driver.number === parseInt(actualDriver));
+  driverElem.textContent = `Driver: ${driver.name}`;
+  driverinfo.appendChild(driverElem);
+}
+
 function adjustTime (direction) {
   const timeInput = document.getElementById('time-input');
   let [minutes, seconds] = timeInput.value.split(':');
@@ -83,7 +96,7 @@ function adjustTime (direction) {
   millis = parseInt(millis);
 
   if (direction === 'up') {
-    millis += 100;
+    millis += 500;
     if (millis >= 1000) {
       millis -= 1000;
       sec += 1;
