@@ -18,13 +18,46 @@ jobs:
         with:
           node-version: 'latest'
 
-      - run: npm install
-      - run: npx playwright install
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install playwright
+        run: npx playwright install
+
+      - name: Build the site
+        run: npm run build
 
       - name: Start server in background (without logs)
-        run: nohup node server.js > server.log 2>&1 &
+        run: |
+          nohup node server.js > server.log 2>&1 &
+          echo $! > server.pid
 
       - name: Wait for server to be started
         run: npx wait-on http://localhost:3000
 
-      - run: npm run test:playwright
+      - name: Playwright tests
+        run: npm run test:playwright
+
+      - name: Run accessibility tests
+        run: npm run test:accessibility
+
+      - name: Run performance tests
+        run: npm run test:performance
+
+      - name: Check for broken links
+        run: npm run check:links
+
+      - name: Run security checks
+        run: npm run test:security
+
+      - name: Stop server
+        run: |
+          kill $(cat server.pid)
+          rm server.pid
+
+      - name: Upload server log
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: server-log
+          path: server.log
