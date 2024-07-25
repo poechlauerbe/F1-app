@@ -24,8 +24,8 @@ jobs:
       - name: Install playwright
         run: npx playwright install
 
-      - name: Build the site
-        run: npm run build
+      # - name: Build the site
+      #   run: npm run build
 
       - name: Start server in background (without logs)
         run: |
