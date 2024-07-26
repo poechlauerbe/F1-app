@@ -37,3 +37,77 @@ select {
   font-size: 1.2em;
   margin-left: 10px;
 }
+
+#sd-elements {
+  display: flex;
+  font-size: 20px;
+}
+
+.throttle, .brake {
+  margin: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  width: 100px;
+  text-align: center;
+  border-radius: 5px;
+}
+
+#throttle {
+  border: 2px solid black;
+  background-color: white;
+  color: black;
+}
+
+#brake {
+  border: 2px solid red;
+  background-color: white;
+  color: red;
+}
+
+#throttle-pressed {
+  border: 2px solid black;
+  background-color: black;
+  color: white;
+}
+
+#brake-pressed {
+  border: 2px solid red;
+  background-color: red;
+  color: white;
+}
+
+.drs {
+  margin: 60px 10px;
+  display: flex;
+  height: 100px;
+  width: 100px;
+  border-radius: 50%;
+  font-weight: bold;
+  align-items: center;
+  justify-content: center;
+}
+
+#drs {
+  border: 2px solid darkorange;
+  background-color: white;
+  color: darkorange;
+}
+
+#drs-on {
+  border: 2px solid darkorange;
+  background-color: darkorange;
+  color: white;
+}
+
+.sd-elem {
+  margin: 70px 10px;
+  display: flex;
+  height: 80px;
+  width: 120px;
+  font-weight: bold;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid black;
+}

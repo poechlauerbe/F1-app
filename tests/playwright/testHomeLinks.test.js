@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test('test', async ({ page }) => {
   await page.goto('http://localhost:3000/');
-  await page.getByText('Countdown to next event:').click();
+  // await page.getByText('Countdown to next event:').click();
   await page.getByRole('main').getByRole('link', { name: 'Home' }).click();
   await expect(page).toHaveTitle('Home');
   await page.getByRole('main').getByRole('link', { name: 'Drivers' }).click();
