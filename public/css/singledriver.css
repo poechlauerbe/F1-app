@@ -42,7 +42,7 @@ select {
   display: flex;
 }
 
-#throttle, #brake {
+.throttle, .brake {
   margin: 10px;
   display: flex;
   align-items: center;
@@ -65,16 +65,37 @@ select {
   color: red;
 }
 
-#drs {
+#throttle-pressed {
+  border: 2px solid black;
+  background-color: black;
+  color: white;
+}
+
+#brake-pressed {
+  border: 2px solid red;
+  background-color: red;
+  color: white;
+}
+
+.drs {
   margin: 60px 10px;
   display: flex;
   height: 100px;
   width: 100px;
-  border: 2px solid darkorange;
   border-radius: 50%;
-  background-color: white;
-  color: darkorange;
   font-weight: bold;
   align-items: center;
   justify-content: center;
+}
+
+#drs {
+  border: 2px solid darkorange;
+  background-color: white;
+  color: darkorange;
+}
+
+#drs-on {
+  border: 2px solid darkorange;
+  background-color: darkorange;
+  color: white;
 }

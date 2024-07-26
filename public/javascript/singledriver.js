@@ -38,7 +38,44 @@ const loadSite = () => {
     .then(data => {
       const driverDiv = document.getElementById('singledriver');
       driverDiv.innerHTML = '';
+      let i = 0;
       data.forEach(driverinfo => {
+        if (i === 0) {
+          if (driverinfo.brake > 0) {
+            const brake = document.getElementById('brake');
+            if (brake) {
+              brake.id = 'brake-pressed';
+            }
+          } else {
+            const brake = document.getElementById('brake-pressed');
+            if (brake) {
+              brake.id = 'brake';
+            }
+          }
+          if (driverinfo.throttle > 0) {
+            const throttle = document.getElementById('throttle');
+            if (throttle) {
+              throttle.id = 'throttle-pressed';
+            }
+          } else {
+            const throttle = document.getElementById('throttle-pressed');
+            if (throttle) {
+              throttle.id = 'throttle';
+            }
+          }
+          if (driverinfo.drs > 0) {
+            const drs = document.getElementById('drs');
+            if (drs) {
+              drs.id = 'drs-on';
+            }
+          } else {
+            const drs = document.getElementById('drs-on');
+            if (drs) {
+              drs.id = 'drs';
+            }
+          }
+        }
+        i++;
         const driverElem = document.createElement('p');
         driverElem.innerHTML = `Date: ${driverinfo.date}: Number: ${driverinfo.number}, gear: ${driverinfo.gear}, speed: ${driverinfo.speed}, throttle: ${driverinfo.throttle}, brake: ${driverinfo.brake}, drs: ${driverinfo.drs}, rpm: ${driverinfo.rpm}`;
         driverDiv.appendChild(driverElem);
@@ -83,11 +120,13 @@ function changeDriverinfo () {
   const driverElem = document.createElement('p');
   const driverImage = document.createElement('img');
   const driver = allDrivers.find(driver => driver.number === parseInt(actualDriver));
-  driverElem.textContent = `Driver: ${driver.name}`;
-  driverImage.src = driver.photoUrl;
-  driverImage.alt = 'not available';
-  driverinfo.appendChild(driverElem);
-  driverinfo.appendChild(driverImage);
+  if (driver) {
+    driverElem.textContent = `Driver: ${driver.name}`;
+    driverImage.src = driver.photoUrl;
+    driverImage.alt = 'not available';
+    driverinfo.appendChild(driverElem);
+    driverinfo.appendChild(driverImage);
+  }
 }
 
 function adjustTime (direction) {
