@@ -74,6 +74,8 @@ const loadSite = () => {
               drs.id = 'drs';
             }
           }
+          const tacho = document.getElementById('tacho');
+          tacho.textContent = driverinfo.speed;
         }
         i++;
         const driverElem = document.createElement('p');

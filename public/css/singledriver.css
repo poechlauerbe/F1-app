@@ -40,6 +40,7 @@ select {
 
 #sd-elements {
   display: flex;
+  font-size: 20px;
 }
 
 .throttle, .brake {
@@ -98,4 +99,15 @@ select {
   border: 2px solid darkorange;
   background-color: darkorange;
   color: white;
+}
+
+.tacho {
+  margin: 70px 10px;
+  display: flex;
+  height: 80px;
+  width: 120px;
+  font-weight: bold;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid black;
 }
