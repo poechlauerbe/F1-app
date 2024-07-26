@@ -50,6 +50,7 @@ select {
   height: 200px;
   width: 100px;
   text-align: center;
+  border-radius: 5px;
 }
 
 #throttle {
@@ -62,4 +63,18 @@ select {
   border: 2px solid red;
   background-color: white;
   color: red;
+}
+
+#drs {
+  margin: 60px 10px;
+  display: flex;
+  height: 100px;
+  width: 100px;
+  border: 2px solid darkorange;
+  border-radius: 50%;
+  background-color: white;
+  color: darkorange;
+  font-weight: bold;
+  align-items: center;
+  justify-content: center;
 }
