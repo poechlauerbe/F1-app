@@ -23,10 +23,15 @@ const countdown = () => {
   timeString += minutes + ':';
   if (seconds < 10) timeString += '0';
   timeString += seconds;
-  if (rest < 0) timeString = '00:00:00';
+  if (rest < 0) timeString = 'LIVE';
 
   const countdownElem = document.createElement('p');
   countdownElem.textContent = timeString;
+  if (timeString === 'LIVE') {
+    countdownElem.className = 'live';
+  } else {
+    countdownElem.className = 'countdown';
+  }
   countdownDiv.appendChild(countdownElem);
 };
 
