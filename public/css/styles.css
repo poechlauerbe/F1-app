@@ -5,7 +5,7 @@
 @import url('trackinfo.css');
 
 /* * {
-	box-sizing: border-box;
+	padding: 0;
 } */
 
 /* background-image: linear-gradient(var(--white), var(--vibrant-red)); */
@@ -18,13 +18,18 @@ html {
 
 body {
 	padding: 20px;
+    min-height: 100vh;
 	font-family: Arial, Helvetica, sans-serif;
-	max-width: 1000px;
+	max-width: 900px;
 	margin: 0 auto;
     color: var(--deep-blue);
     background-color: var(--light-gray);
     opacity: 0.9;
 }
+
+/* main {
+    padding: 20pX;
+} */
 
 @media (width <= 799px) {
 	body {
