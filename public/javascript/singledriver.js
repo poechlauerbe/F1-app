@@ -75,7 +75,11 @@ const loadSite = () => {
             }
           }
           const tacho = document.getElementById('tacho');
-          tacho.textContent = driverinfo.speed;
+          tacho.innerHTML = driverinfo.speed;
+          const rpm = document.getElementById('rpm');
+          rpm.innerHTML = driverinfo.rpm;
+          const gear = document.getElementById('gear');
+          gear.innerHTML = driverinfo.gear;
         }
         i++;
         const driverElem = document.createElement('p');
