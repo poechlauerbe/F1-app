@@ -7,7 +7,7 @@
       <h1><%= headline %></h1>
       <div id="<%- id %>"></div>
       <div id="map"></div>
-      <% if (preScript) { %>
+      <% if (typeof preScript !== 'undefined') { %>
         <script src="<%= preScript %>"></script>
       <% } %>
     </main>

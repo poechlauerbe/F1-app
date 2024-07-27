@@ -1,0 +1,26 @@
+
+car data:
+DRS value 	Interpretation
+0 	DRS off
+1 	DRS off
+2 	?
+3 	?
+8 	Detected, eligible once in activation zone
+9 	? (eventually disabled)
+10 	DRS on
+12 	DRS on
+14 	DRS on
+
+
+Laps:
+Below is a table that correlates segment values to their meaning.
+
+Value 	Color
+0 	not available
+2048 	yellow sector
+2049 	green sector
+2050 	?
+2051 	purple sector
+2052 	?
+2064 	pitlane
+2068 	?
