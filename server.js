@@ -63,6 +63,7 @@ const {
 const { addSchedule, getSchedule } = require('./services/obj_schedule');
 
 const { getPitStops, addPitStop, deletePitStops } = require('./services/obj_pits');
+const { addTyre, deleteTyres, getTyres } = require('./services/obj_tyres');
 
 app.set('view engine', 'ejs');
 
@@ -307,6 +308,7 @@ async function loadLocation (
         deleteTeamradios();
         deleteWeather();
         deletePitStops();
+        deleteTyres();
         console.log('Objects deleted');
 
         startProcess = true;
@@ -666,7 +668,8 @@ async function loadStints (
     );
     const data = await response.json();
     data.forEach(elem => {
-      updateDriverTyre(elem.driver_number, elem.compound);
+      addTyre(elem.driver_number, elem.tyre_age_at_start, elem.stint_number, elem.lap_start, elem.lap_end, elem.compound);
+      updateDriverTyre(elem.driver_number, getTyres(elem.driver_number));
     });
     const actualTime = new Date();
     if (startProcess) {
@@ -1016,7 +1019,7 @@ async function serverStart () {
   });
 
   // CarData loading after opening port:
-  await loadAllCarData();
+  // await loadAllCarData();
 
   startProcess = false;
   // Set intervalls to synchronize with API:
@@ -1029,7 +1032,7 @@ async function serverStart () {
   startUpdateIntervals(4870);
   startUpdateRaceControl(10050);
   startUpdateTeamRadio(13025);
-  startUpdateAllCarData(7000);
+  // startUpdateAllCarData(7000);
 
   // Log the current time to stderr every 15 minutes
   setInterval(logTimeToStderr, 15 * 60 * 1000);

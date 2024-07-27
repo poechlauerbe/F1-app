@@ -1,4 +1,4 @@
-function Tyres(tyreAgeAtStart, stintNr, lapStart, lapEnd, compound) {
+function Tyres (tyreAgeAtStart, stintNr, lapStart, lapEnd, compound) {
   this.tyreAgeAtStart = tyreAgeAtStart;
   this.stintNr = stintNr;
   this.lapStart = lapStart;
@@ -18,11 +18,11 @@ const addTyre = (
   compound
 ) => {
   if (!tyres[driverNumber]) {
-    tyres.driverNumber = [];
+    tyres[driverNumber] = [];
   }
-  const driverTyres = tyres.driverNumber.find(t => t.stintNr === stintNr);
+  const driverTyres = tyres[driverNumber].find(t => t.stintNr === stintNr);
   if (!driverTyres) {
-    tyres.driverNumber.push(
+    tyres[driverNumber].push(
       new Tyres(tyreAgeAtStart, stintNr, lapStart, lapEnd, compound)
     );
   }
@@ -32,8 +32,11 @@ const deleteTyres = () => {
   tyres = [];
 };
 
-const getTyres = driverNumber => {
-  return tyres.driverNumber;
+const getTyres = (driverNumber) => {
+  if (!tyres[driverNumber]) {
+	return null;
+  }
+  return tyres[driverNumber];
 };
 
 module.exports = {
