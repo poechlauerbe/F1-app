@@ -2,30 +2,30 @@
 <html lang="en">
   <%- include('partials/head') %>
   <body>
-    <header>
-      <nav><%- include('partials/nav') %></nav>
-    </header>
-    <h1><%= headline %></h1>
-    <p>For testing only one driver available</p>
-    <div class="time-input-container">
-      <input type="text" id="time-input" value="00:07.000" />
-      <div class="timebuttons">
-        <button class="arrow-buttons" data-direction="up">▲</button>
-        <button class="arrow-buttons" data-direction="down">▼</button>
+    <%- include('partials/nav') %>
+    <main>
+      <h1><%= headline %></h1>
+      <p>In progress... Time button is not working at the moment - Updates of the page are not that often - will be adapted soon</p>
+      <div class="time-input-container">
+        <input type="text" id="time-input" value="00:07.000" />
+        <div class="timebuttons">
+          <button class="arrow-buttons" data-direction="up">▲</button>
+          <button class="arrow-buttons" data-direction="down">▼</button>
+        </div>
       </div>
-    </div>
-    <select id="drivers"></select>
-    <div id="driverinfo"></div>
-    <div id="sd-elements">
-      <p id="throttle" class="throttle">Throttle</p>
-      <p id="brake" class="brake">Brake</p>
-      <p id="drs" class="drs">DRS</p>
-      <p class="sd-elem"><span id="tacho">0</span> km/h</p>
-      <p class="sd-elem"><span id="rpm">0</span> r/min</p>
-      <p class="sd-elem"><span id="gear">0</span>. gear</p>
-    </div>
-    <div id="<%- id %>"></div>
+      <select id="drivers"></select>
+      <div id="driverinfo"></div>
+      <div id="sd-elements">
+        <p id="throttle" class="throttle">Throttle</p>
+        <p id="brake" class="brake">Brake</p>
+        <p id="drs" class="drs">DRS</p>
+        <p class="sd-elem"><span id="tacho">0</span> km/h</p>
+        <p class="sd-elem"><span id="rpm">0</span> r/min</p>
+        <p class="sd-elem"><span id="gear">0</span>. gear</p>
+      </div>
+      <div id="<%- id %>"></div>
+    </main>
     <script defer type="module" src="./javascript/singledriver.js"></script>
     <script defer src="javascript/services/navbar.js"></script>
-  </body>
+    </body>
 </html>

@@ -41,7 +41,7 @@ const loadSite = () => {
       let i = 0;
       data.forEach(driverinfo => {
         if (i === 0) {
-          if (driverinfo.brake > 0) {
+          if (driverinfo.brake > 0 && driverinfo.brake <= 100) {
             const brake = document.getElementById('brake');
             if (brake) {
               brake.id = 'brake-pressed';
@@ -52,7 +52,7 @@ const loadSite = () => {
               brake.id = 'brake';
             }
           }
-          if (driverinfo.throttle > 0) {
+          if (driverinfo.throttle > 0 && driverinfo.throttle <= 100) {
             const throttle = document.getElementById('throttle');
             if (throttle) {
               throttle.id = 'throttle-pressed';
@@ -63,7 +63,7 @@ const loadSite = () => {
               throttle.id = 'throttle';
             }
           }
-          if (driverinfo.drs > 0) {
+          if (driverinfo.drs > 10) {
             const drs = document.getElementById('drs');
             if (drs) {
               drs.id = 'drs-on';

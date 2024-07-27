@@ -6,7 +6,6 @@ router.get('/', (req, res) => {
     title: 'Race Leaderboard',
     headline: 'Race Leaderboard',
     id: 'positions',
-    preScript: '',
     script: 'javascript/leaderboard.js'
   });
 });

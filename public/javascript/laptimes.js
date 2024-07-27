@@ -50,7 +50,13 @@ function loadSite () {
         lapTimesRowElm.appendChild(lapTimesDataElmTime);
 
         const lapTimesDataTyreElm = document.createElement('td');
-        lapTimesDataTyreElm.textContent = driver.tyre;
+        let tyre1 = 'N/A';
+        if (driver.tyre && driver.tyre.length > 0) {
+          driver.tyre.forEach(t => {
+            tyre1 = t.compound;
+          });
+        }
+        lapTimesDataTyreElm.textContent = tyre1;
         lapTimesRowElm.appendChild(lapTimesDataTyreElm);
 
         const lapTimesRow2Elm = document.createElement('tr');
@@ -81,7 +87,15 @@ function loadSite () {
         lapTimesRow2Elm.appendChild(lapTimesData2ElmTime);
 
         const lapTimesData2TyreElm = document.createElement('td');
-        lapTimesData2TyreElm.textContent = driver.tyre;
+        let tyre2 = 'N/A';
+        if (driver.tyre && driver.tyre.length > 0) {
+          driver.tyre.forEach(t => {
+            if (t.lapStart <= driver.lastLap.lapNr && t.lapEnd >= driver.lastLap.lapNr) {
+              tyre2 = t.compound;
+            }
+          });
+        }
+        lapTimesData2TyreElm.textContent = tyre2;
         lapTimesRow2Elm.appendChild(lapTimesData2TyreElm);
 
         const lapTimesRow3Elm = document.createElement('tr');
@@ -118,11 +132,17 @@ function loadSite () {
         lapTimesRow3Elm.appendChild(lapTimesData3ElmTime);
 
         const lapTimesData3TyreElm = document.createElement('td');
-        lapTimesData3TyreElm.textContent = driver.tyre;
+        let tyre3 = 'N/A';
+        if (driver.tyre && driver.tyre.length > 0) {
+          driver.tyre.forEach(t => {
+            if (t.lapStart <= driver.lastLap.lapNr && t.lapEnd >= driver.lastLap.lapNr) {
+              tyre3 = t.compound;
+            }
+          });
+        }
+        lapTimesData3TyreElm.textContent = tyre3;
         lapTimesData3TyreElm.className = 'bottom-border-thick';
         lapTimesRow3Elm.appendChild(lapTimesData3TyreElm);
-        // lapTimesRowElm.textContent = `Name: ${driver['name']}, Number: ${driver['number']}, Team: ${driver['team']}, Country: ${driver['country']}`;
-        // lapTimesDiv.appendChild(driverImage);
       });
     })
     .catch(error => {

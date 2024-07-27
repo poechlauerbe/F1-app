@@ -9,8 +9,6 @@ For now there are these tabs with inforamtion: Drivers, Track info, Training, Ra
 
 Next tests possible during the upcoming race weekend starting on Fr 5.7.2024
 
-[Open Points list](OpenPoints.md)
-
 ## Prerequisites
 1. Node
 2. additionally npm to:

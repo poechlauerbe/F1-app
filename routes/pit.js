@@ -6,7 +6,6 @@ router.get('/', (req, res) => {
     title: 'Pit Stops',
     headline: 'Pit Stops',
     id: 'pit',
-    preScript: '',
     script: 'javascript/pit.js'
   });
 });
