@@ -34,7 +34,7 @@ const deleteTyres = () => {
 
 const getTyres = (driverNumber) => {
   if (!tyres[driverNumber]) {
-	return null;
+    return null;
   }
   return tyres[driverNumber];
 };
