@@ -1019,7 +1019,7 @@ async function serverStart () {
   });
 
   // CarData loading after opening port:
-  // await loadAllCarData();
+  await loadAllCarData();
 
   startProcess = false;
   // Set intervalls to synchronize with API:
@@ -1032,7 +1032,7 @@ async function serverStart () {
   startUpdateIntervals(4870);
   startUpdateRaceControl(10050);
   startUpdateTeamRadio(13025);
-  // startUpdateAllCarData(7000);
+  startUpdateAllCarData(7000);
 
   // Log the current time to stderr every 15 minutes
   setInterval(logTimeToStderr, 15 * 60 * 1000);
