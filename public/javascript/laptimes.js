@@ -53,7 +53,7 @@ function loadSite () {
         let tyre1 = 'N/A';
         if (driver.tyre && driver.tyre.length > 0) {
           driver.tyre.forEach(t => {
-            tyre1 =t.compound;
+            tyre1 = t.compound;
           });
         }
         lapTimesDataTyreElm.textContent = tyre1;
@@ -91,7 +91,7 @@ function loadSite () {
         if (driver.tyre && driver.tyre.length > 0) {
           driver.tyre.forEach(t => {
             if (t.lapStart <= driver.lastLap.lapNr && t.lapEnd >= driver.lastLap.lapNr) {
-              tyre2 =t.compound;
+              tyre2 = t.compound;
             }
           });
         }
@@ -136,7 +136,7 @@ function loadSite () {
         if (driver.tyre && driver.tyre.length > 0) {
           driver.tyre.forEach(t => {
             if (t.lapStart <= driver.lastLap.lapNr && t.lapEnd >= driver.lastLap.lapNr) {
-              tyre3 =t.compound;
+              tyre3 = t.compound;
             }
           });
         }
