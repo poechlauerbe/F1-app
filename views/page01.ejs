@@ -6,7 +6,11 @@
     <main>
       <h1><%= headline %></h1>
       <div id="<%- id %>"></div>
-      <div id="map"></div>
+
+      <% if (typeof extraId !== 'undefined') { %>
+      <div id="<%- extraId %>"></div>
+      <% } %>
+
       <% if (typeof preScript !== 'undefined') { %>
         <script src="<%= preScript %>"></script>
       <% } %>
