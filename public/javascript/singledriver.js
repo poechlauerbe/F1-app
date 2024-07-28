@@ -1,10 +1,57 @@
 const apiString = '/api/singledriver?driverNumber=';
 let allDrivers = [];
 let actualDriver = 0;
+let carData = [];
+let momentNow = Date('2024-07-27T14:56:57.325000+00:00');
+let iter = 0;
 
-// const driverImage = document.createElement('img');
-// driverImage.src = driver['photoUrl'];
-// driversSelect.appendChild(driverImage);
+const updateObjects = () => {
+  console.log(carData);
+  if (carData.length > 0) {
+    if (carData[iter].brake > 0 && carData[iter].brake <= 100) {
+      const brake = document.getElementById('brake');
+      if (brake) {
+        brake.id = 'brake-pressed';
+      }
+    } else {
+      const brake = document.getElementById('brake-pressed');
+      if (brake) {
+        brake.id = 'brake';
+      }
+    }
+    if (carData[iter].throttle > 0 && carData[iter].throttle <= 100) {
+      const throttle = document.getElementById('throttle');
+      if (throttle) {
+        throttle.id = 'throttle-pressed';
+      }
+    } else {
+      const throttle = document.getElementById('throttle-pressed');
+      if (throttle) {
+        throttle.id = 'throttle';
+      }
+    }
+    if (carData[iter].drs > 10) {
+      const drs = document.getElementById('drs');
+      if (drs) {
+        drs.id = 'drs-on';
+      }
+    } else {
+      const drs = document.getElementById('drs-on');
+      if (drs) {
+        drs.id = 'drs';
+      }
+    }
+    const tacho = document.getElementById('tacho');
+    tacho.innerHTML = carData[iter].speed;
+    const rpm = document.getElementById('rpm');
+    rpm.innerHTML = carData[iter].rpm;
+    const gear = document.getElementById('gear');
+    gear.innerHTML = carData[iter].gear;
+  }
+  if (iter < carData.length - 1) {
+    iter++;
+  }
+};
 
 const getDrivers = () => {
   fetch('/api/drivers')
@@ -38,54 +85,14 @@ const loadSite = () => {
     .then(data => {
       const driverDiv = document.getElementById('singledriver');
       driverDiv.innerHTML = '';
-      let i = 0;
+      const carData2 = [];
       data.forEach(driverinfo => {
-        if (i === 0) {
-          if (driverinfo.brake > 0 && driverinfo.brake <= 100) {
-            const brake = document.getElementById('brake');
-            if (brake) {
-              brake.id = 'brake-pressed';
-            }
-          } else {
-            const brake = document.getElementById('brake-pressed');
-            if (brake) {
-              brake.id = 'brake';
-            }
-          }
-          if (driverinfo.throttle > 0 && driverinfo.throttle <= 100) {
-            const throttle = document.getElementById('throttle');
-            if (throttle) {
-              throttle.id = 'throttle-pressed';
-            }
-          } else {
-            const throttle = document.getElementById('throttle-pressed');
-            if (throttle) {
-              throttle.id = 'throttle';
-            }
-          }
-          if (driverinfo.drs > 10) {
-            const drs = document.getElementById('drs');
-            if (drs) {
-              drs.id = 'drs-on';
-            }
-          } else {
-            const drs = document.getElementById('drs-on');
-            if (drs) {
-              drs.id = 'drs';
-            }
-          }
-          const tacho = document.getElementById('tacho');
-          tacho.innerHTML = driverinfo.speed;
-          const rpm = document.getElementById('rpm');
-          rpm.innerHTML = driverinfo.rpm;
-          const gear = document.getElementById('gear');
-          gear.innerHTML = driverinfo.gear;
-        }
-        i++;
+        carData2.push(driverinfo);
         const driverElem = document.createElement('p');
         driverElem.innerHTML = `Date: ${driverinfo.date}: Number: ${driverinfo.number}, gear: ${driverinfo.gear}, speed: ${driverinfo.speed}, throttle: ${driverinfo.throttle}, brake: ${driverinfo.brake}, drs: ${driverinfo.drs}, rpm: ${driverinfo.rpm}`;
         driverDiv.appendChild(driverElem);
       });
+      carData = carData2;
     })
     .catch(error => {
       console.error('Error fetching single driver infos:', error);
@@ -95,7 +102,8 @@ const loadSite = () => {
 document.addEventListener('DOMContentLoaded', () => {
   getDrivers();
   loadSite();
-  setInterval(loadSite, 3000);
+  setInterval(loadSite, 6000);
+  setInterval(updateObjects, 300);
 });
 
 document.getElementById('drivers').addEventListener('change', function () {
@@ -104,6 +112,7 @@ document.getElementById('drivers').addEventListener('change', function () {
   driverDiv.innerHTML = '';
   changeDriverinfo();
   loadSite();
+  updateObjects();
 });
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -119,6 +128,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function changeDriverinfo () {
   const driverinfo = document.getElementById('driverinfo');
+  carData = [];
   driverinfo.innerHTML = '';
   if (actualDriver === 0) {
     return;
@@ -155,7 +165,7 @@ function adjustTime (direction) {
       minutes += 1;
     }
   } else if (direction === 'down') {
-    millis -= 100;
+    millis -= 500;
     if (millis < 0) {
       millis += 1000;
       sec -= 1;
