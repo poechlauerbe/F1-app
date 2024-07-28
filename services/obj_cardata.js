@@ -30,15 +30,15 @@ const getCarData = driverNumber => {
   return cardata[driverNumber].slice().reverse();
 };
 
-const getLast100CarData = driverNumber => {
+const getLast200CarData = driverNumber => {
   if (!cardata[driverNumber]) return;
   const data = cardata[driverNumber].slice().reverse();
-  const last100 = [];
-  for (let i = 0; i < 100; i++) {
+  const last200 = [];
+  for (let i = 0; i < 200; i++) {
     if (!data[i]) break;
-    last100.push(data[i]);
+    last200.push(data[i]);
   }
-  return last100;
+  return last200.slice().reverse();
 };
 
 const getLastCarDataTime = driverNumber => {
@@ -88,7 +88,7 @@ const deleteCarData = () => {
 module.exports = {
   deleteCarData,
   getCarData,
-  getLast100CarData,
+  getLast200CarData,
   getLastCarDataTime,
   updateCarData
 };

@@ -6,6 +6,7 @@ router.get('/', (req, res) => {
     title: 'Track Info',
     headline: 'Track Info',
     id: 'trackinfo',
+    extraID: 'map',
     preScript: 'https://unpkg.com/leaflet/dist/leaflet.js',
     script: 'javascript/trackinfo.js'
   });

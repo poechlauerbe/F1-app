@@ -56,7 +56,7 @@ const { getGpList, addGpList } = require('./services/obj_GP_list');
 const {
   deleteCarData,
   updateCarData,
-  getLast100CarData,
+  getLast200CarData,
   getLastCarDataTime
 } = require('./services/obj_cardata');
 
@@ -880,14 +880,14 @@ app.get('/api/singledriver', async (req, res) => {
   const checkInput = driverNumbers.find(one => one === Number(driverNumber));
   if (!checkInput) return res.json(null);
   if (
-    getLast100CarData(driverNumber) &&
-    getLast100CarData(driverNumber).length > 0
+    getLast200CarData(driverNumber) &&
+    getLast200CarData(driverNumber).length > 0
   ) {
-    return res.json(getLast100CarData(driverNumber));
+    return res.json(getLast200CarData(driverNumber));
   }
   try {
     await loadCarData(driverNumber);
-    res.json(getLast100CarData(driverNumber));
+    res.json(getLast200CarData(driverNumber));
   } catch (error) {
     console.error(
       getTimeNowIsoString() + ': Error fetching data (drivers):',
