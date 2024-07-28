@@ -2,11 +2,22 @@ const apiString = '/api/singledriver?driverNumber=';
 let allDrivers = [];
 let actualDriver = 0;
 let carData = [];
-let momentNow = Date('2024-07-27T14:56:57.325000+00:00');
-let iter = 0;
+let date = new Date();
+let timeGap = 0;
 
 const updateObjects = () => {
-  console.log(carData);
+  let iter = 0;
+  date = new Date();
+  date.setMilliseconds(date.getMilliseconds() - timeGap);
+  while (carData.length > 0 && date.toISOString() > new Date(carData[iter].date).toISOString() && iter < carData.length - 1) {
+    iter++;
+  }
+  // console.log(date.toISOString());
+  if (carData.length > iter) {
+    console.log('2: ' + new Date(carData[iter].date).toISOString());
+    console.log(iter);
+  }
+  // Add 300 milliseconds to the Date object
   if (carData.length > 0) {
     if (carData[iter].brake > 0 && carData[iter].brake <= 100) {
       const brake = document.getElementById('brake');
@@ -85,13 +96,14 @@ const loadSite = () => {
     .then(data => {
       const driverDiv = document.getElementById('singledriver');
       driverDiv.innerHTML = '';
-      const carData2 = [];
+      let carData2 = [];
       data.forEach(driverinfo => {
         carData2.push(driverinfo);
         const driverElem = document.createElement('p');
         driverElem.innerHTML = `Date: ${driverinfo.date}: Number: ${driverinfo.number}, gear: ${driverinfo.gear}, speed: ${driverinfo.speed}, throttle: ${driverinfo.throttle}, brake: ${driverinfo.brake}, drs: ${driverinfo.drs}, rpm: ${driverinfo.rpm}`;
         driverDiv.appendChild(driverElem);
       });
+      carData = [];
       carData = carData2;
     })
     .catch(error => {
@@ -101,6 +113,7 @@ const loadSite = () => {
 
 document.addEventListener('DOMContentLoaded', () => {
   getDrivers();
+  adjustTime('none');
   loadSite();
   setInterval(loadSite, 6000);
   setInterval(updateObjects, 300);
@@ -176,5 +189,7 @@ function adjustTime (direction) {
     }
   }
 
+  timeGap = minutes * 60 * 1000 + sec * 1000 + millis;
+  console.log(timeGap);
   timeInput.value = `${String(minutes).padStart(2, '0')}:${String(sec).padStart(2, '0')}.${String(millis).padStart(3, '0')}`;
 }

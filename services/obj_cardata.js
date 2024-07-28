@@ -64,10 +64,6 @@ const updateCarData = (
   }
   const driver = cardata[number].find(driver => driver.date === date);
   if (!driver) {
-    // for testing:
-    if (brake > 100 || throttle > 100) {
-      return;
-    }
 
     cardata[number].push(
       new CarData(
