@@ -96,7 +96,7 @@ const loadSite = () => {
     .then(data => {
       const driverDiv = document.getElementById('singledriver');
       driverDiv.innerHTML = '';
-      let carData2 = [];
+      const carData2 = [];
       data.forEach(driverinfo => {
         carData2.push(driverinfo);
         const driverElem = document.createElement('p');

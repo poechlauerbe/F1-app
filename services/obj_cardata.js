@@ -64,7 +64,6 @@ const updateCarData = (
   }
   const driver = cardata[number].find(driver => driver.date === date);
   if (!driver) {
-
     cardata[number].push(
       new CarData(
         number,
