@@ -22,6 +22,7 @@ function loadSchedule () {
             }).addTo(map);
           }
           sessionName = data[i].name;
+          console.log(data[i].start);
           break;
         }
       }
