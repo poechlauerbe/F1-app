@@ -146,3 +146,11 @@ nav > ul > li {
 .subnav li a:hover {
     background-color: var(--bright-yellow); /* Adjust hover background color as needed */
 }
+
+.background-next-weekend {
+	background-color: #d4941c;
+}
+
+.background-this-weekend {
+    background-color: #1c7cd4;
+}

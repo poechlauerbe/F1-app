@@ -80,6 +80,7 @@ const racecontrolRouter = require('./routes/racecontrol');
 const singleDriverRouter = require('./routes/singledriver');
 const teamradioRouter = require('./routes/teamradio');
 const trackinfoRouter = require('./routes/trackinfo');
+const racedatesRouter = require('./routes/racedates');
 
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
@@ -98,6 +99,7 @@ app.use('/racecontrol', racecontrolRouter);
 app.use('/singledriver', singleDriverRouter);
 app.use('/teamradio', teamradioRouter);
 app.use('/trackinfo', trackinfoRouter);
+app.use('/racedates', racedatesRouter);
 
 let loadIntervalsIsFetching = false;
 let loadLocationIsFetching = false;
