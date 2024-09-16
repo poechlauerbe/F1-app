@@ -42,6 +42,6 @@
     "mocha": "^10.7.3",
     "nodemon": "^3.1.4",
     "playwright": "^1.47.1",
-    "playwright-core": "^1.47.0"
+    "playwright-core": "^1.47.1"
   }
 }
