@@ -85,6 +85,24 @@ const updateObjects = () => {
   }
 };
 
+const getBaseData = () => {
+  const baseData= document.getElementById('base-data');
+  baseData.innerHTML = '';
+  if (actualDriver === 0) return;
+  const totalApiString = '/api/singledriverBaseData?driverNumber=' + actualDriver;
+  fetch(totalApiString)
+  .then(response => response.json())
+  .then(data => {
+      const driverElem = document.createElement('p');
+      driverElem.innerHTML = data;
+      baseData.appendChild(driverElem);
+      // console.log(data);
+  })
+  .catch(error => {
+    console.error('Error fetching single driver infos:', error);
+  });
+}
+
 const getDrivers = () => {
   fetch('/api/drivers')
     .then(response => response.json())
@@ -111,6 +129,7 @@ const getDrivers = () => {
 
 const loadSite = () => {
   if (!actualDriver || actualDriver === '0') return;
+  // getBaseData(actualDriver);
   const totalApiString = apiString + actualDriver;
   fetch(totalApiString)
     .then(response => response.json())
@@ -120,9 +139,9 @@ const loadSite = () => {
       const carData2 = [];
       data.forEach(driverinfo => {
         carData2.push(driverinfo);
-        const driverElem = document.createElement('p');
-        driverElem.innerHTML = `Date: ${driverinfo.date}: Number: ${driverinfo.number}, gear: ${driverinfo.gear}, speed: ${driverinfo.speed}, throttle: ${driverinfo.throttle}, brake: ${driverinfo.brake}, drs: ${driverinfo.drs}, rpm: ${driverinfo.rpm}`;
-        driverDiv.appendChild(driverElem);
+        // const driverElem = document.createElement('p');
+        // driverElem.innerHTML = `Date: ${driverinfo.date}: Number: ${driverinfo.number}, gear: ${driverinfo.gear}, speed: ${driverinfo.speed}, throttle: ${driverinfo.throttle}, brake: ${driverinfo.brake}, drs: ${driverinfo.drs}, rpm: ${driverinfo.rpm}`;
+        // driverDiv.appendChild(driverElem);
       });
       carData = [];
       carData = carData2;

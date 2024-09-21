@@ -14,6 +14,7 @@ let sessionId = 0;
 const {
   addDriver,
   deleteDrivers,
+  getDriverData,
   getDriverNumbers,
   getDrivers,
   getDriversByPositon,
@@ -898,6 +899,28 @@ app.get('/api/singledriver', async (req, res) => {
       getTimeNowIsoString() + ': Error fetching data (drivers):',
       error
     );
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.get('/api/singleDriverBaseData', async (req, res) => {
+  const driverNumber = req.query.driverNumber;
+  const driverNumbers = getDriverNumbers();
+  const checkInput = driverNumbers.find(one => one === Number(driverNumber));
+  if (!checkInput) return res.json(null);
+  if (
+    getDriverData(driverNumber) &&
+    getDriverData(driverNumber).length > 0
+  ) {
+    console.log(getDriverData(driverNumber));
+    return res.json(getDriverData(driverNumber));
+  }
+  try {
+    await loadDrivers();
+    res.json(getDriverData(driverNumber));
+  } catch (error) {
+    console.error(
+      getTimeNowIsoString() + ': Error fetching data (drivers):', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });

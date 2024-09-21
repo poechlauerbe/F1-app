@@ -65,6 +65,15 @@ const getDrivers = () => {
   return drivers;
 };
 
+const getDriverData = (driverNumber) => {
+  console.log(driverNumber);
+  const driver = drivers.find(driver => driver.number === driverNumber);
+  if (driver) {
+    return driver;
+  }
+  return null;
+};
+
 const getDriverNumbers = () => {
   const driverNumbers = [];
   drivers.forEach(element => {
@@ -182,6 +191,7 @@ const deleteDrivers = () => {
 module.exports = {
   addDriver,
   deleteDrivers,
+  getDriverData,
   getDriverGapToLeader,
   getDriverLastLap,
   getDriverName,
