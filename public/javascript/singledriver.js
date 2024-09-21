@@ -52,6 +52,25 @@ const updateObjects = () => {
         drs.id = 'drs';
       }
     }
+    console.log(carData[iter]);
+    if (carData[iter].tyre) {
+      const tyreTypes = ["tyre-soft", "tyre-medium", "tyre-hard", "tyre"];
+      for (i = 0; i < tyreTypes.length(); i++) {
+        const tyre = document.getElementById(tyreTypes[i]);
+        if (tyre) {
+          if (carData[iter].tyre === "SOFT") {
+            tyre.id = 'tyre-soft';
+          } else if (carData[iter].tyre === "MEDIUM") {
+            tyre.id = 'tyre-medium';
+          } else if (carData[iter].tyre === "HARD") {
+            tyre.id = 'tyre-hard';
+          } else {
+            tyre.id = 'tyre';
+          }
+        }
+      }
+
+    }
     const tacho = document.getElementById('tacho');
     tacho.innerHTML = carData[iter].speed;
     const rpm = document.getElementById('rpm');

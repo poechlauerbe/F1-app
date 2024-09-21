@@ -27,7 +27,8 @@ function Driver (
     timeS2: 'no time',
     timeS3: 'no time',
     lapNr: '',
-    lapTime: 'no time'
+    lapTime: 'no time',
+    tyre: ''
   };
   this.lastLap = lastLap || {
     driverNumber: number,
@@ -35,7 +36,8 @@ function Driver (
     timeS2: 'no time',
     timeS3: 'no time',
     lapNr: '',
-    lapTime: 'no time'
+    lapTime: 'no time',
+    tyre: ''
   };
   this.fastestLap = fastestLap || {
     driverNumber: number,
@@ -43,7 +45,8 @@ function Driver (
     timeS2: 'no time',
     timeS3: 'no time',
     lapNr: '',
-    lapTime: 'no time'
+    lapTime: 'no time',
+    tyre: ''
   };
   this.laps = [];
   this.tyre = tyre || '';

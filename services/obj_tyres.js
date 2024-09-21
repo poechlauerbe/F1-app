@@ -29,6 +29,10 @@ const addTyre = (
       driverTyres.lapEnd = lapEnd;
       driverTyres.compound = compound;
     }
+    else if (driverTyres.lapStart === lapStart && driverTyres.lapEnd !== lapEnd) {
+      driverTyres.lapEnd = lapEnd;
+      driverTyres.compound = compound;
+    }
   } else {
     tyres[driverNumber].push(
       new Tyres(tyreAgeAtStart, stintNr, lapStart, lapEnd, compound)
@@ -41,9 +45,11 @@ const deleteTyres = () => {
 };
 
 const getActualTyre = (driverNumber) => {
-  const tyreArray = tyres.filter(tyre => tyre.driverNumber === driverNumber);
-  if (tyreArray.length === 0) return null;
-  return tyreArray[tyreArray.length - 1];
+  tyreArray = [];
+  tyreArray = getTyres(driverNumber);
+  if (tyreArray && tyreArray.length())
+    return tyreArray[tyreArray.length() - 1]
+  return null;
 }
 
 const getTyres = (driverNumber) => {

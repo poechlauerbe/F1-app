@@ -63,7 +63,7 @@ const {
 const { addSchedule, getSchedule } = require('./services/obj_schedule');
 
 const { getPitStops, addPitStop, deletePitStops } = require('./services/obj_pits');
-const { addTyre, deleteTyres, getTyres } = require('./services/obj_tyres');
+const { addTyre, deleteTyres, getActualTyre, getTyres } = require('./services/obj_tyres');
 
 app.set('view engine', 'ejs');
 
@@ -81,6 +81,7 @@ const singleDriverRouter = require('./routes/singledriver');
 const teamradioRouter = require('./routes/teamradio');
 const trackinfoRouter = require('./routes/trackinfo');
 const racedatesRouter = require('./routes/racedates');
+const impressumRouter = require('./routes/impressum');
 
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
@@ -100,6 +101,7 @@ app.use('/singledriver', singleDriverRouter);
 app.use('/teamradio', teamradioRouter);
 app.use('/trackinfo', trackinfoRouter);
 app.use('/racedates', racedatesRouter);
+app.use('/impressum', impressumRouter);
 
 let loadIntervalsIsFetching = false;
 let loadLocationIsFetching = false;
@@ -767,7 +769,8 @@ async function loadCarData (
         element.rpm,
         element.session_key,
         element.speed,
-        element.throttle
+        element.throttle,
+        getActualTyre(driverNumber)
       );
     });
     if (startProcess) {
