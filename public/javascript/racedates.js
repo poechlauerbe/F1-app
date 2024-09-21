@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         addEventToHtmlList(gpListDiv, event);
       });
-    scrollDown();
+      scrollDown();
     })
     .catch(error => {
       console.error('Error fetching pit infos:', error);
