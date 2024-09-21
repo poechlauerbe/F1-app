@@ -13,10 +13,10 @@ const updateObjects = () => {
     iter++;
   }
   // console.log(date.toISOString());
-  if (carData.length > iter) {
-    console.log('2: ' + new Date(carData[iter].date).toISOString());
-    console.log(iter);
-  }
+  // if (carData.length > iter) {
+  //   console.log('2: ' + new Date(carData[iter].date).toISOString());
+  //   console.log(iter);
+  // }
   // Add 300 milliseconds to the Date object
   if (carData.length > 0) {
     if (carData[iter].brake > 0 && carData[iter].brake <= 100) {
@@ -52,19 +52,18 @@ const updateObjects = () => {
         drs.id = 'drs';
       }
     }
-    console.log(carData[iter]);
     if (carData[iter].tyre) {
       const tyreTypes = ['tyre-soft', 'tyre-medium', 'tyre-hard', 'tyre'];
       for (let i = 0; i < tyreTypes.length; i++) {
         const tyre = document.getElementById(tyreTypes[i]);
         if (tyre) {
-          if (carData[iter].tyre === 'SOFT') {
+          if (carData[iter].tyre.compound === 'SOFT') {
             tyre.id = 'tyre-soft';
             tyre.textContent = 'Soft';
-          } else if (carData[iter].tyre === 'MEDIUM') {
+          } else if (carData[iter].tyre.compound === 'MEDIUM') {
             tyre.id = 'tyre-medium';
             tyre.textContent = 'Medium';
-          } else if (carData[iter].tyre === 'HARD') {
+          } else if (carData[iter].tyre.compound === 'HARD') {
             tyre.id = 'tyre-hard';
             tyre.textContent = 'Hard';
           } else {
@@ -212,6 +211,6 @@ function adjustTime (direction) {
   }
 
   timeGap = minutes * 60 * 1000 + sec * 1000 + millis;
-  console.log(timeGap);
+  // console.log(timeGap);
   timeInput.value = `${String(minutes).padStart(2, '0')}:${String(sec).padStart(2, '0')}.${String(millis).padStart(3, '0')}`;
 }

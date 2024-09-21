@@ -9,7 +9,7 @@ function CarData (
   sessionKey,
   speed,
   throttle,
-  // tyre
+  tyre
 ) {
   this.number = number || 0;
   this.date = date || '';
@@ -21,7 +21,7 @@ function CarData (
   this.sessionKey = sessionKey || 0;
   this.speed = speed || 0;
   this.throttle = throttle || 0;
-  this.tyre = 'SOFT';
+  this.tyre = tyre || '';
 }
 
 let cardata = {};
@@ -60,7 +60,7 @@ const updateCarData = (
   sessionKey,
   speed,
   throttle,
-  // tyre
+  tyre
 ) => {
   if (!cardata[number]) {
     cardata[number] = [];
@@ -79,7 +79,7 @@ const updateCarData = (
         sessionKey,
         speed,
         throttle,
-        // tyre
+        tyre
       )
     );
   }
