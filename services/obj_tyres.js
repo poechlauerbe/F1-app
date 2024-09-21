@@ -22,14 +22,13 @@ const addTyre = (
   }
   const driverTyres = tyres[driverNumber].find(t => t.stintNr === stintNr);
   if (driverTyres) {
-    if ((driverTyres.compound === "" || driverTyres.compound === "UNKNOWN") && compound !== "") {
+    if ((driverTyres.compound === '' || driverTyres.compound === 'UNKNOWN') && compound !== '') {
       driverTyres.tyreAgeAtStart = tyreAgeAtStart;
       driverTyres.stintNr = stintNr;
       driverTyres.lapStart = lapStart;
       driverTyres.lapEnd = lapEnd;
       driverTyres.compound = compound;
-    }
-    else if (driverTyres.lapStart === lapStart && driverTyres.lapEnd !== lapEnd) {
+    } else if (driverTyres.lapStart === lapStart && driverTyres.lapEnd !== lapEnd) {
       driverTyres.lapEnd = lapEnd;
       driverTyres.compound = compound;
     }
@@ -45,12 +44,13 @@ const deleteTyres = () => {
 };
 
 const getActualTyre = (driverNumber) => {
-  tyreArray = [];
+  let tyreArray = [];
   tyreArray = getTyres(driverNumber);
-  if (tyreArray && tyreArray.length())
-    return tyreArray[tyreArray.length() - 1]
+  if (tyreArray && tyreArray.length()) {
+    return tyreArray[tyreArray.length() - 1];
+  }
   return null;
-}
+};
 
 const getTyres = (driverNumber) => {
   if (!tyres[driverNumber]) {

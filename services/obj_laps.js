@@ -1,6 +1,6 @@
 // const { getDriverName } = require('./obj_drivers');
 
-function Lap (driverNumber, timeS1, timeS2, timeS3, lapNr, lapTime) {
+function Lap (driverNumber, timeS1, timeS2, timeS3, lapNr, lapTime, tyre) {
   this.driverNumber = driverNumber;
   this.timeS1 = timeS1 || 'no time';
   this.timeS2 = timeS2 || 'no time';

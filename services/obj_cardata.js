@@ -21,7 +21,7 @@ function CarData (
   this.sessionKey = sessionKey || 0;
   this.speed = speed || 0;
   this.throttle = throttle || 0;
-  this.tyres = tyre || "";
+  this.tyres = tyre || '';
 }
 
 let cardata = {};
