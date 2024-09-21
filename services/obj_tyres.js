@@ -46,8 +46,8 @@ const deleteTyres = () => {
 const getActualTyre = (driverNumber) => {
   let tyreArray = [];
   tyreArray = getTyres(driverNumber);
-  if (tyreArray && tyreArray.length()) {
-    return tyreArray[tyreArray.length() - 1];
+  if (tyreArray && tyreArray.length) {
+    return tyreArray[tyreArray.length - 1];
   }
   return null;
 };

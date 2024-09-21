@@ -55,17 +55,21 @@ const updateObjects = () => {
     console.log(carData[iter]);
     if (carData[iter].tyre) {
       const tyreTypes = ['tyre-soft', 'tyre-medium', 'tyre-hard', 'tyre'];
-      for (let i = 0; i < tyreTypes.length(); i++) {
+      for (let i = 0; i < tyreTypes.length; i++) {
         const tyre = document.getElementById(tyreTypes[i]);
         if (tyre) {
           if (carData[iter].tyre === 'SOFT') {
             tyre.id = 'tyre-soft';
+            tyre.textContent = 'Soft';
           } else if (carData[iter].tyre === 'MEDIUM') {
             tyre.id = 'tyre-medium';
+            tyre.textContent = 'Medium';
           } else if (carData[iter].tyre === 'HARD') {
             tyre.id = 'tyre-hard';
+            tyre.textContent = 'Hard';
           } else {
             tyre.id = 'tyre';
+            tyre.textContent = 'Compound';
           }
         }
       }

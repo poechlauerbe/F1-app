@@ -770,7 +770,7 @@ async function loadCarData (
         element.session_key,
         element.speed,
         element.throttle,
-        getActualTyre(driverNumber)
+        // getActualTyre(driverNumber)
       );
     });
     if (startProcess) {
