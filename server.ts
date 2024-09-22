@@ -1,4 +1,5 @@
-const express = require('express');
+import express, { Request, Response } from 'express';
+
 const ical = require('ical');
 const fetch = (...args) =>
   import('node-fetch').then(({ default: fetch }) => fetch(...args));

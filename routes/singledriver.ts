@@ -1,7 +1,7 @@
-const express = require('express');
+import express, { Request, Response } from 'express';
 const router = express.Router();
 
-router.get('/', (req, res) => {
+router.get('/', (req: Request, res: Response) => {
   res.render('singledriver', {
     title: 'Single Driver',
     headline: 'Single Driver',
@@ -9,4 +9,4 @@ router.get('/', (req, res) => {
   });
 });
 
-module.exports = router;
+export default router;
