@@ -8,6 +8,7 @@ const fetch = async (...args: Parameters<typeof import('node-fetch').default>) =
 };
 
 const app = express();
+
 const port = 3000;
 let startProcess: boolean = true;
 let lastLoading: Date;
@@ -70,43 +71,45 @@ const { getTimeNowIsoString } = require('./services/service_time');
 // const { getPitStops, addPitStop, deletePitStops } = require('./services/obj_pits');
 // const { addTyre, deleteTyres, getActualTyre, getTyres } = require('./services/obj_tyres');
 
-// app.set('view engine', 'ejs');
 
 // // Use the routes defined in the route files
 
-// const indexRouter = require('./routes/index');
+import indexRouter from './routes/index';
 
-// const driverRouter = require('./routes/drivers');
-// const gplistRouter = require('./routes/gplist');
-// const laptimesRouter = require('./routes/laptimes');
-// const leaderboardRouter = require('./routes/leaderboard');
-// const pitRouter = require('./routes/pit');
-// const racecontrolRouter = require('./routes/racecontrol');
-// const singleDriverRouter = require('./routes/singledriver');
-// const teamradioRouter = require('./routes/teamradio');
-// const trackinfoRouter = require('./routes/trackinfo');
-// const racedatesRouter = require('./routes/racedates');
-// const impressumRouter = require('./routes/impressum');
+
+import driverRouter from './routes/drivers';
+import gplistRouter from './routes/gplist';
+import laptimesRouter from './routes/laptimes';
+import leaderboardRouter from './routes/leaderboard';
+import pitRouter from './routes/pit';
+import racecontrolRouter from './routes/racecontrol';
+import singleDriverRouter from './routes/singledriver';
+import teamradioRouter from './routes/teamradio';
+import trackinfoRouter from './routes/trackinfo';
+import racedatesRouter from './routes/racedates';
+import impressumRouter from './routes/impressum';
+
+app.set('view engine', 'ejs');
 
 // // Serve static files from the 'public' directory
-// app.use(express.static('public'));
+app.use(express.static('public'));
 
 // // Serve the favicon
-// app.use('/favicon.ico', express.static('public/favicon.ico'));
+app.use('/favicon.ico', express.static('public/favicon.ico'));
 
-// app.use('/', indexRouter);
+app.use('/', indexRouter);
 
-// app.use('/drivers', driverRouter);
-// app.use('/gplist', gplistRouter);
-// app.use('/laptimes', laptimesRouter);
-// app.use('/leaderboard', leaderboardRouter);
-// app.use('/pit', pitRouter);
-// app.use('/racecontrol', racecontrolRouter);
-// app.use('/singledriver', singleDriverRouter);
-// app.use('/teamradio', teamradioRouter);
-// app.use('/trackinfo', trackinfoRouter);
-// app.use('/racedates', racedatesRouter);
-// app.use('/impressum', impressumRouter);
+app.use('/drivers', driverRouter);
+app.use('/gplist', gplistRouter);
+app.use('/laptimes', laptimesRouter);
+app.use('/leaderboard', leaderboardRouter);
+app.use('/pit', pitRouter);
+app.use('/racecontrol', racecontrolRouter);
+app.use('/singledriver', singleDriverRouter);
+app.use('/teamradio', teamradioRouter);
+app.use('/trackinfo', trackinfoRouter);
+app.use('/racedates', racedatesRouter);
+app.use('/impressum', impressumRouter);
 
 // let loadIntervalsIsFetching = false;
 // let loadLocationIsFetching = false;
@@ -1056,7 +1059,7 @@ const startLoading: Date = new Date();
 console.error(startLoading.toISOString() + ': Server loading ...\n');
 
 async function serverStart () {
-  await loadDrivers(); // no prerequesitary
+  // await loadDrivers(); // no prerequesitary
   // await loadLocation(); // no prerequesitary
   // await loadLaps();
   // await loadWeather();
