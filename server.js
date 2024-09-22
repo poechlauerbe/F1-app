@@ -354,7 +354,7 @@ async function loadLocation (
     // console.error(new Date().toISOString() + ': Error fetching data (sessions):', error);
     if (retryCount < maxRetries) {
       console.error(
-          getTimeNowIsoString() +
+        getTimeNowIsoString() +
           `: loadLocation: Retrying... (${retryCount + 1}/${maxRetries})`
       );
       await new Promise(resolve => setTimeout(resolve, delayMs));
