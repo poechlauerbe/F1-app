@@ -29,7 +29,7 @@ cd F1-app
 ```
 2. Start server in shell:
 ```bash
-node ./server.js
+node ./server.ts
 ```
 3. Open in browser:
 ```Browser
