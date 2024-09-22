@@ -354,7 +354,6 @@ async function loadLocation (
     // console.error(new Date().toISOString() + ': Error fetching data (sessions):', error);
     if (retryCount < maxRetries) {
       console.error(
-        '\n' +
           getTimeNowIsoString() +
           `: loadLocation: Retrying... (${retryCount + 1}/${maxRetries})`
       );
@@ -805,7 +804,10 @@ async function loadCarData (
         true
       );
     } else {
-      console.error('Max retries reached. Unable to fetch driver data.');
+      console.error(
+        getTimeNowIsoString() +
+          `:\ncarData (car ${driverNumber}): Max retries reached. Unable to fetch driver data.`
+      );
     }
   }
 }
@@ -912,7 +914,7 @@ app.get('/api/singleDriverBaseData', async (req, res) => {
     getDriverData(driverNumber) &&
     getDriverData(driverNumber).length > 0
   ) {
-    console.log(getDriverData(driverNumber));
+    // console.log(getDriverData(driverNumber));
     return res.json(getDriverData(driverNumber));
   }
   try {
