@@ -13,6 +13,7 @@ var _channelOwner = require("./channelOwner");
 var _network = require("./network");
 var _tracing = require("./tracing");
 var _errors = require("./errors");
+var _browserContext = require("./browserContext");
 let _Symbol$asyncDispose, _Symbol$asyncDispose2, _util$inspect$custom;
 /**
  * Copyright (c) Microsoft Corporation.
@@ -53,7 +54,8 @@ class APIRequest {
       ...options,
       extraHTTPHeaders: options.extraHTTPHeaders ? (0, _utils.headersObjectToArray)(options.extraHTTPHeaders) : undefined,
       storageState,
-      tracesDir
+      tracesDir,
+      clientCertificates: await (0, _browserContext.toClientCertificatesProtocol)(options.clientCertificates)
     })).request);
     this._contexts.add(context);
     context._request = this;
@@ -142,11 +144,11 @@ class APIRequestContext extends _channelOwner.ChannelOwner {
       if (this._closeReason) throw new _errors.TargetClosedError(this._closeReason);
       (0, _utils.assert)(options.request || typeof options.url === 'string', 'First argument must be either URL string or Request');
       (0, _utils.assert)((options.data === undefined ? 0 : 1) + (options.form === undefined ? 0 : 1) + (options.multipart === undefined ? 0 : 1) <= 1, `Only one of 'data', 'form' or 'multipart' can be specified`);
-      (0, _utils.assert)(options.maxRedirects === undefined || options.maxRedirects >= 0, `'maxRedirects' should be greater than or equal to '0'`);
+      (0, _utils.assert)(options.maxRedirects === undefined || options.maxRedirects >= 0, `'maxRedirects' must be greater than or equal to '0'`);
+      (0, _utils.assert)(options.maxRetries === undefined || options.maxRetries >= 0, `'maxRetries' must be greater than or equal to '0'`);
       const url = options.url !== undefined ? options.url : options.request.url();
-      const params = objectToArray(options.params);
+      const params = mapParamsToArray(options.params);
       const method = options.method || ((_options$request = options.request) === null || _options$request === void 0 ? void 0 : _options$request.method());
-      const maxRedirects = options.maxRedirects;
       // Cannot call allHeaders() here as the request may be paused inside route handler.
       const headersObj = options.headers || ((_options$request2 = options.request) === null || _options$request2 === void 0 ? void 0 : _options$request2.headers());
       const headers = headersObj ? (0, _utils.headersObjectToArray)(headersObj) : undefined;
@@ -209,7 +211,8 @@ class APIRequestContext extends _channelOwner.ChannelOwner {
         timeout: options.timeout,
         failOnStatusCode: options.failOnStatusCode,
         ignoreHTTPSErrors: options.ignoreHTTPSErrors,
-        maxRedirects: maxRedirects,
+        maxRedirects: options.maxRedirects,
+        maxRetries: options.maxRetries,
         ...fixtures
       });
       return new APIResponse(this, result.response);
@@ -369,6 +372,24 @@ function objectToArray(map) {
     value: String(value)
   });
   return result;
+}
+function queryStringToArray(queryString) {
+  const searchParams = new URLSearchParams(queryString);
+  return searchParamsToArray(searchParams);
+}
+function searchParamsToArray(searchParams) {
+  if (searchParams.size === 0) return undefined;
+  const result = [];
+  for (const [name, value] of searchParams.entries()) result.push({
+    name,
+    value
+  });
+  return result;
+}
+function mapParamsToArray(params) {
+  if (params instanceof URLSearchParams) return searchParamsToArray(params);
+  if (typeof params === 'string') return queryStringToArray(params);
+  return objectToArray(params);
 }
 function isFilePayload(value) {
   return typeof value === 'object' && value['name'] && value['mimeType'] && value['buffer'];

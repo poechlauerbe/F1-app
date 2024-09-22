@@ -205,6 +205,7 @@ class Connection extends _events.EventEmitter {
     }));
   }
   close(cause) {
+    if (this._closedError) return;
     this._closedError = new _errors.TargetClosedError(cause);
     for (const callback of this._callbacks.values()) callback.reject(this._closedError);
     this._callbacks.clear();

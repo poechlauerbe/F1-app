@@ -42,7 +42,15 @@ class Browser extends _instrumentation.SdkObject {
   }
   async newContext(metadata, options) {
     (0, _browserContext.validateBrowserContextOptions)(options, this.options);
-    const context = await this.doCreateNewContext(options);
+    const clientCertificatesProxy = await (0, _browserContext.createClientCertificatesProxyIfNeeded)(options, this.options);
+    let context;
+    try {
+      context = await this.doCreateNewContext(options);
+    } catch (error) {
+      await (clientCertificatesProxy === null || clientCertificatesProxy === void 0 ? void 0 : clientCertificatesProxy.close());
+      throw error;
+    }
+    context._clientCertificatesProxy = clientCertificatesProxy;
     if (options.storageState) await context.setStorageState(metadata, options.storageState);
     return context;
   }

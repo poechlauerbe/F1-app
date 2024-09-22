@@ -270,7 +270,9 @@ const DOWNLOAD_PATHS = {
     'mac14': 'builds/android/%s/android.zip',
     'mac14-arm64': 'builds/android/%s/android.zip',
     'win64': 'builds/android/%s/android.zip'
-  }
+  },
+  // TODO(bidi): implement downloads.
+  'bidi': {}
 };
 const registryDirectory = exports.registryDirectory = (() => {
   let result;
@@ -440,6 +442,11 @@ class Registry {
       'darwin': '/Applications/Microsoft Edge Canary.app/Contents/MacOS/Microsoft Edge Canary',
       'win32': `\\Microsoft\\Edge SxS\\Application\\msedge.exe`
     }));
+    this._executables.push(this._createBidiChannel('bidi-firefox-stable', {
+      'linux': '/usr/bin/firefox',
+      'darwin': '/Applications/Firefox.app/Contents/MacOS/firefox',
+      'win32': '\\Mozilla Firefox\\firefox.exe'
+    }));
     const firefox = descriptors.find(d => d.name === 'firefox');
     const firefoxExecutable = findExecutablePath(firefox.dir, 'firefox');
     this._executables.push({
@@ -523,6 +530,20 @@ class Registry {
       _dependencyGroup: 'tools',
       _isHermeticInstallation: true
     });
+    this._executables.push({
+      type: 'browser',
+      name: 'bidi',
+      browserName: 'bidi',
+      directory: undefined,
+      executablePath: () => undefined,
+      executablePathOrDie: () => '',
+      installType: 'none',
+      _validateHostRequirements: () => Promise.resolve(),
+      downloadURLs: [],
+      _install: () => Promise.resolve(),
+      _dependencyGroup: 'tools',
+      _isHermeticInstallation: true
+    });
   }
   _createChromiumChannel(name, lookAt, install) {
     const executablePath = (sdkLanguage, shouldThrow) => {
@@ -545,6 +566,36 @@ class Registry {
       type: 'channel',
       name,
       browserName: 'chromium',
+      directory: undefined,
+      executablePath: sdkLanguage => executablePath(sdkLanguage, false),
+      executablePathOrDie: sdkLanguage => executablePath(sdkLanguage, true),
+      installType: install ? 'install-script' : 'none',
+      _validateHostRequirements: () => Promise.resolve(),
+      _isHermeticInstallation: false,
+      _install: install
+    };
+  }
+  _createBidiChannel(name, lookAt, install) {
+    const executablePath = (sdkLanguage, shouldThrow) => {
+      const suffix = lookAt[process.platform];
+      if (!suffix) {
+        if (shouldThrow) throw new Error(`Firefox distribution '${name}' is not supported on ${process.platform}`);
+        return undefined;
+      }
+      const prefixes = process.platform === 'win32' ? [process.env.LOCALAPPDATA, process.env.PROGRAMFILES, process.env['PROGRAMFILES(X86)']].filter(Boolean) : [''];
+      for (const prefix of prefixes) {
+        const executablePath = _path.default.join(prefix, suffix);
+        if ((0, _fileUtils.canAccessFile)(executablePath)) return executablePath;
+      }
+      if (!shouldThrow) return undefined;
+      const location = prefixes.length ? ` at ${_path.default.join(prefixes[0], suffix)}` : ``;
+      const installation = install ? `\nRun "${buildPlaywrightCLICommand(sdkLanguage, 'install ' + name)}"` : '';
+      throw new Error(`Firefox distribution '${name}' is not found${location}${installation}`);
+    };
+    return {
+      type: 'channel',
+      name,
+      browserName: 'bidi',
       directory: undefined,
       executablePath: sdkLanguage => executablePath(sdkLanguage, false),
       executablePathOrDie: sdkLanguage => executablePath(sdkLanguage, true),

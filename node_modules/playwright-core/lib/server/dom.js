@@ -219,6 +219,7 @@ class ElementHandle extends js.JSHandle {
       width: innerWidth,
       height: innerHeight
     })))]);
+    if (quads === 'error:notconnected') return quads;
     if (!quads || !quads.length) return 'error:notvisible';
 
     // Allow 1x1 elements. Compensate for rounding errors by comparing with 0.99 instead.
@@ -401,7 +402,7 @@ class ElementHandle extends js.JSHandle {
         hitTargetInterceptionHandle.dispose();
       });
     }
-    const actionResult = await this._page._frameManager.waitForSignalsCreatedBy(progress, options.noWaitAfter, async () => {
+    const actionResult = await this._page._frameManager.waitForSignalsCreatedBy(progress, options.waitAfter === true, async () => {
       if (options.__testHookBeforePointerAction) await options.__testHookBeforePointerAction();
       progress.throwIfAborted(); // Avoid action that has side-effects.
       let restoreModifiers;
@@ -410,11 +411,13 @@ class ElementHandle extends js.JSHandle {
       await action(point);
       if (restoreModifiers) await this._page.keyboard.ensureModifiers(restoreModifiers);
       if (hitTargetInterceptionHandle) {
-        const stopHitTargetInterception = hitTargetInterceptionHandle.evaluate(h => h.stop()).catch(e => 'done').finally(() => {
+        const stopHitTargetInterception = this._frame.raceAgainstEvaluationStallingEvents(() => {
+          return hitTargetInterceptionHandle.evaluate(h => h.stop());
+        }).catch(e => 'done').finally(() => {
           var _hitTargetInterceptio;
           (_hitTargetInterceptio = hitTargetInterceptionHandle) === null || _hitTargetInterceptio === void 0 || _hitTargetInterceptio.dispose();
         });
-        if (!options.noWaitAfter) {
+        if (options.waitAfter !== false) {
           // When noWaitAfter is passed, we do not want to accidentally stall on
           // non-committed navigation blocking the evaluate.
           const hitTargetResult = await stopHitTargetInterception;
@@ -425,7 +428,7 @@ class ElementHandle extends js.JSHandle {
       progress.log('  waiting for scheduled navigations to finish');
       if (options.__testHookAfterPointerAction) await options.__testHookAfterPointerAction();
       return 'done';
-    }, 'input');
+    });
     if (actionResult !== 'done') return actionResult;
     progress.log('  navigations have finished');
     return 'done';
@@ -438,12 +441,18 @@ class ElementHandle extends js.JSHandle {
     }, this._page._timeoutSettings.timeout(options));
   }
   _hover(progress, options) {
-    return this._retryPointerAction(progress, 'hover', false /* waitForEnabled */, point => this._page.mouse.move(point.x, point.y), options);
+    return this._retryPointerAction(progress, 'hover', false /* waitForEnabled */, point => this._page.mouse.move(point.x, point.y), {
+      ...options,
+      waitAfter: 'disabled'
+    });
   }
   async click(metadata, options = {}) {
     const controller = new _progress.ProgressController(metadata, this);
     return controller.run(async progress => {
-      const result = await this._click(progress, options);
+      const result = await this._click(progress, {
+        ...options,
+        waitAfter: !options.noWaitAfter
+      });
       return assertDone(throwRetargetableDOMError(result));
     }, this._page._timeoutSettings.timeout(options));
   }
@@ -458,7 +467,10 @@ class ElementHandle extends js.JSHandle {
     }, this._page._timeoutSettings.timeout(options));
   }
   _dblclick(progress, options) {
-    return this._retryPointerAction(progress, 'dblclick', true /* waitForEnabled */, point => this._page.mouse.dblclick(point.x, point.y, options), options);
+    return this._retryPointerAction(progress, 'dblclick', true /* waitForEnabled */, point => this._page.mouse.dblclick(point.x, point.y, options), {
+      ...options,
+      waitAfter: 'disabled'
+    });
   }
   async tap(metadata, options = {}) {
     const controller = new _progress.ProgressController(metadata, this);
@@ -468,7 +480,10 @@ class ElementHandle extends js.JSHandle {
     }, this._page._timeoutSettings.timeout(options));
   }
   _tap(progress, options) {
-    return this._retryPointerAction(progress, 'tap', true /* waitForEnabled */, point => this._page.touchscreen.tap(point.x, point.y), options);
+    return this._retryPointerAction(progress, 'tap', true /* waitForEnabled */, point => this._page.touchscreen.tap(point.x, point.y), {
+      ...options,
+      waitAfter: 'disabled'
+    });
   }
   async selectOption(metadata, elements, values, options) {
     const controller = new _progress.ProgressController(metadata, this);
@@ -516,29 +531,27 @@ class ElementHandle extends js.JSHandle {
     progress.log(`  fill("${value}")`);
     return await this._retryAction(progress, 'fill', async () => {
       await progress.beforeInputAction(this);
-      return this._page._frameManager.waitForSignalsCreatedBy(progress, options.noWaitAfter, async () => {
-        if (!options.force) progress.log('  waiting for element to be visible, enabled and editable');
-        const result = await this.evaluateInUtility(async ([injected, node, {
-          value,
-          force
-        }]) => {
-          if (!force) {
-            const checkResult = await injected.checkElementStates(node, ['visible', 'enabled', 'editable']);
-            if (checkResult) return checkResult;
-          }
-          return injected.fill(node, value);
-        }, {
-          value,
-          force: options.force
-        });
-        progress.throwIfAborted(); // Avoid action that has side-effects.
-        if (result === 'needsinput') {
-          if (value) await this._page.keyboard.insertText(value);else await this._page.keyboard.press('Delete');
-          return 'done';
-        } else {
-          return result;
+      if (!options.force) progress.log('  waiting for element to be visible, enabled and editable');
+      const result = await this.evaluateInUtility(async ([injected, node, {
+        value,
+        force
+      }]) => {
+        if (!force) {
+          const checkResult = await injected.checkElementStates(node, ['visible', 'enabled', 'editable']);
+          if (checkResult) return checkResult;
         }
-      }, 'input');
+        return injected.fill(node, value);
+      }, {
+        value,
+        force: options.force
+      });
+      progress.throwIfAborted(); // Avoid action that has side-effects.
+      if (result === 'needsinput') {
+        if (value) await this._page.keyboard.insertText(value);else await this._page.keyboard.press('Delete');
+        return 'done';
+      } else {
+        return result;
+      }
     }, options);
   }
   async selectText(metadata, options = {}) {
@@ -565,11 +578,11 @@ class ElementHandle extends js.JSHandle {
     const inputFileItems = await (0, _fileUploadUtils.prepareFilesForUpload)(this._frame, params);
     const controller = new _progress.ProgressController(metadata, this);
     return controller.run(async progress => {
-      const result = await this._setInputFiles(progress, inputFileItems, params);
+      const result = await this._setInputFiles(progress, inputFileItems);
       return assertDone(throwRetargetableDOMError(result));
     }, this._page._timeoutSettings.timeout(params));
   }
-  async _setInputFiles(progress, items, options) {
+  async _setInputFiles(progress, items) {
     const {
       filePayloads,
       localPaths,
@@ -586,6 +599,7 @@ class ElementHandle extends js.JSHandle {
       const inputElement = element;
       if (multiple && !inputElement.multiple && !inputElement.webkitdirectory) throw injected.createStacklessError('Non-multiple file input can only accept single file');
       if (directoryUpload && !inputElement.webkitdirectory) throw injected.createStacklessError('File input does not support directories, pass individual files instead');
+      if (!directoryUpload && inputElement.webkitdirectory) throw injected.createStacklessError('[webkitdirectory] input requires passing a path to a directory');
       return inputElement;
     }, {
       multiple,
@@ -594,23 +608,21 @@ class ElementHandle extends js.JSHandle {
     if (result === 'error:notconnected' || !result.asElement()) return 'error:notconnected';
     const retargeted = result.asElement();
     await progress.beforeInputAction(this);
-    await this._page._frameManager.waitForSignalsCreatedBy(progress, options.noWaitAfter, async () => {
-      progress.throwIfAborted(); // Avoid action that has side-effects.
-      if (localPaths || localDirectory) {
-        const localPathsOrDirectory = localDirectory ? [localDirectory] : localPaths;
-        await Promise.all(localPathsOrDirectory.map(localPath => _fs.default.promises.access(localPath, _fs.default.constants.F_OK)));
-        // Browsers traverse the given directory asynchronously and we want to ensure all files are uploaded.
-        const waitForInputEvent = localDirectory ? this.evaluate(node => new Promise(fulfill => {
-          node.addEventListener('input', fulfill, {
-            once: true
-          });
-        })).catch(() => {}) : Promise.resolve();
-        await this._page._delegate.setInputFilePaths(retargeted, localPathsOrDirectory);
-        await waitForInputEvent;
-      } else {
-        await this._page._delegate.setInputFiles(retargeted, filePayloads);
-      }
-    });
+    progress.throwIfAborted(); // Avoid action that has side-effects.
+    if (localPaths || localDirectory) {
+      const localPathsOrDirectory = localDirectory ? [localDirectory] : localPaths;
+      await Promise.all(localPathsOrDirectory.map(localPath => _fs.default.promises.access(localPath, _fs.default.constants.F_OK)));
+      // Browsers traverse the given directory asynchronously and we want to ensure all files are uploaded.
+      const waitForInputEvent = localDirectory ? this.evaluate(node => new Promise(fulfill => {
+        node.addEventListener('input', fulfill, {
+          once: true
+        });
+      })).catch(() => {}) : Promise.resolve();
+      await this._page._delegate.setInputFilePaths(retargeted, localPathsOrDirectory);
+      await waitForInputEvent;
+    } else {
+      await this._page._delegate.setInputFiles(retargeted, filePayloads);
+    }
     return 'done';
   }
   async focus(metadata) {
@@ -638,13 +650,11 @@ class ElementHandle extends js.JSHandle {
   async _type(progress, text, options) {
     progress.log(`elementHandle.type("${text}")`);
     await progress.beforeInputAction(this);
-    return this._page._frameManager.waitForSignalsCreatedBy(progress, options.noWaitAfter, async () => {
-      const result = await this._focus(progress, true /* resetSelectionIfNotFocused */);
-      if (result !== 'done') return result;
-      progress.throwIfAborted(); // Avoid action that has side-effects.
-      await this._page.keyboard.type(text, options);
-      return 'done';
-    }, 'input');
+    const result = await this._focus(progress, true /* resetSelectionIfNotFocused */);
+    if (result !== 'done') return result;
+    progress.throwIfAborted(); // Avoid action that has side-effects.
+    await this._page.keyboard.type(text, options);
+    return 'done';
   }
   async press(metadata, key, options) {
     const controller = new _progress.ProgressController(metadata, this);
@@ -656,13 +666,13 @@ class ElementHandle extends js.JSHandle {
   async _press(progress, key, options) {
     progress.log(`elementHandle.press("${key}")`);
     await progress.beforeInputAction(this);
-    return this._page._frameManager.waitForSignalsCreatedBy(progress, options.noWaitAfter, async () => {
+    return this._page._frameManager.waitForSignalsCreatedBy(progress, !options.noWaitAfter, async () => {
       const result = await this._focus(progress, true /* resetSelectionIfNotFocused */);
       if (result !== 'done') return result;
       progress.throwIfAborted(); // Avoid action that has side-effects.
       await this._page.keyboard.press(key, options);
       return 'done';
-    }, 'input');
+    });
   }
   async check(metadata, options) {
     const controller = new _progress.ProgressController(metadata, this);
@@ -684,7 +694,10 @@ class ElementHandle extends js.JSHandle {
       return throwRetargetableDOMError(result);
     };
     if ((await isChecked()) === state) return 'done';
-    const result = await this._click(progress, options);
+    const result = await this._click(progress, {
+      ...options,
+      waitAfter: 'disabled'
+    });
     if (result !== 'done') return result;
     if (options.trial) return 'done';
     if ((await isChecked()) !== state) throw new NonRecoverableDOMError('Clicking the checkbox did not change its state');

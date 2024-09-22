@@ -306,15 +306,16 @@ class CRNetworkManager {
       return;
     }
     let route = null;
+    let headersOverride;
     if (requestPausedEvent) {
       // We do not support intercepting redirects.
       if (redirectedFrom || !this._userRequestInterceptionEnabled && this._protocolRequestInterceptionEnabled) {
         var _redirectedFrom;
         // Chromium does not preserve header overrides between redirects, so we have to do it ourselves.
-        const headers = (_redirectedFrom = redirectedFrom) === null || _redirectedFrom === void 0 || (_redirectedFrom = _redirectedFrom._originalRequestRoute) === null || _redirectedFrom === void 0 || (_redirectedFrom = _redirectedFrom._alreadyContinuedParams) === null || _redirectedFrom === void 0 ? void 0 : _redirectedFrom.headers;
+        headersOverride = (_redirectedFrom = redirectedFrom) === null || _redirectedFrom === void 0 || (_redirectedFrom = _redirectedFrom._originalRequestRoute) === null || _redirectedFrom === void 0 || (_redirectedFrom = _redirectedFrom._alreadyContinuedParams) === null || _redirectedFrom === void 0 ? void 0 : _redirectedFrom.headers;
         requestPausedSessionInfo.session._sendMayFail('Fetch.continueRequest', {
           requestId: requestPausedEvent.requestId,
-          headers
+          headers: headersOverride
         });
       } else {
         route = new RouteImpl(requestPausedSessionInfo.session, requestPausedEvent.requestId);
@@ -331,11 +332,12 @@ class CRNetworkManager {
       route,
       requestWillBeSentEvent,
       requestPausedEvent,
-      redirectedFrom
+      redirectedFrom,
+      headersOverride: headersOverride || null
     });
     this._requestIdToRequest.set(requestWillBeSentEvent.requestId, request);
-    if (requestPausedEvent) {
-      // We will not receive extra info when intercepting the request.
+    if (route) {
+      // We may not receive extra info when intercepting the request.
       // Use the headers from the Fetch.requestPausedPayload and release the allHeaders()
       // right away, so that client can call it from the route handler.
       request.request.setRawRequestHeaders((0, _utils.headersObjectToArray)(requestPausedEvent.request.headers, '\n'));
@@ -544,7 +546,8 @@ class InterceptableRequest {
       requestWillBeSentEvent,
       requestPausedEvent,
       redirectedFrom,
-      serviceWorker
+      serviceWorker,
+      headersOverride
     } = options;
     this.session = session;
     this._timestamp = requestWillBeSentEvent.timestamp;
@@ -564,7 +567,7 @@ class InterceptableRequest {
     let postDataBuffer = null;
     const entries = postDataEntries === null || postDataEntries === void 0 ? void 0 : postDataEntries.filter(entry => entry.bytes);
     if (entries && entries.length) postDataBuffer = Buffer.concat(entries.map(entry => Buffer.from(entry.bytes, 'base64')));
-    this.request = new network.Request(context, frame, serviceWorker, (redirectedFrom === null || redirectedFrom === void 0 ? void 0 : redirectedFrom.request) || null, documentId, url, type, method, postDataBuffer, (0, _utils.headersObjectToArray)(headers));
+    this.request = new network.Request(context, frame, serviceWorker, (redirectedFrom === null || redirectedFrom === void 0 ? void 0 : redirectedFrom.request) || null, documentId, url, type, method, postDataBuffer, headersOverride || (0, _utils.headersObjectToArray)(headers));
   }
 }
 class RouteImpl {
@@ -576,7 +579,7 @@ class RouteImpl {
     this._session = session;
     this._interceptionId = interceptionId;
   }
-  async continue(request, overrides) {
+  async continue(overrides) {
     this._alreadyContinuedParams = {
       requestId: this._interceptionId,
       url: overrides.url,

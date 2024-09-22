@@ -22,7 +22,6 @@ var _instrumentation = require("./instrumentation");
 var _selectorParser = require("../utils/isomorphic/selectorParser");
 var _utilityScriptSerializers = require("./isomorphic/utilityScriptSerializers");
 var _errors = require("./errors");
-var _locatorGenerators = require("../utils/isomorphic/locatorGenerators");
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 /**
@@ -213,13 +212,13 @@ class Page extends _instrumentation.SdkObject {
     if (this._browserContext._pageBindings.has(name)) throw new Error(`Function "${name}" has been already registered in the browser context`);
     const binding = new PageBinding(name, playwrightBinding, needsHandle);
     this._pageBindings.set(name, binding);
-    await this._delegate.exposeBinding(binding);
+    await this._delegate.addInitScript(binding.initScript);
+    await Promise.all(this.frames().map(frame => frame.evaluateExpression(binding.initScript.source).catch(e => {})));
   }
   async _removeExposedBindings() {
-    for (const key of this._pageBindings.keys()) {
-      if (!key.startsWith('__pw')) this._pageBindings.delete(key);
+    for (const [key, binding] of this._pageBindings) {
+      if (!binding.internal) this._pageBindings.delete(key);
     }
-    await this._delegate.removeExposedBindings();
   }
   setExtraHTTPHeaders(headers) {
     this._extraHTTPHeaders = headers;
@@ -320,11 +319,11 @@ class Page extends _instrumentation.SdkObject {
       }
       if (handler.resolved) {
         ++this._locatorHandlerRunningCounter;
-        progress.log(`  found ${(0, _locatorGenerators.asLocator)(this.attribution.playwright.options.sdkLanguage, handler.selector)}, intercepting action to run the handler`);
+        progress.log(`  found ${(0, _utils.asLocator)(this.attribution.playwright.options.sdkLanguage, handler.selector)}, intercepting action to run the handler`);
         const promise = handler.resolved.then(async () => {
           progress.throwIfAborted();
           if (!handler.noWaitAfter) {
-            progress.log(`  locator handler has finished, waiting for ${(0, _locatorGenerators.asLocator)(this.attribution.playwright.options.sdkLanguage, handler.selector)} to be hidden`);
+            progress.log(`  locator handler has finished, waiting for ${(0, _utils.asLocator)(this.attribution.playwright.options.sdkLanguage, handler.selector)} to be hidden`);
             await this.mainFrame().waitForSelectorInternal(progress, handler.selector, {
               state: 'hidden'
             });
@@ -388,8 +387,8 @@ class Page extends _instrumentation.SdkObject {
     await this._delegate.addInitScript(initScript);
   }
   async _removeInitScripts() {
-    this.initScripts.splice(0, this.initScripts.length);
-    await this._delegate.removeInitScripts();
+    this.initScripts = this.initScripts.filter(script => script.internal);
+    await this._delegate.removeNonInternalInitScripts();
   }
   needsRequestInterception() {
     return !!this._clientRequestInterceptor || !!this._serverRequestInterceptor || !!this._browserContext._requestInterceptor;
@@ -544,8 +543,9 @@ class Page extends _instrumentation.SdkObject {
     const origin = frame.origin();
     if (origin) this._browserContext.addVisitedOrigin(origin);
   }
-  allBindings() {
-    return [...this._browserContext._pageBindings.values(), ...this._pageBindings.values()];
+  allInitScripts() {
+    const bindings = [...this._browserContext._pageBindings.values(), ...this._pageBindings.values()];
+    return [...bindings.map(binding => binding.initScript), ...this._browserContext.initScripts, ...this.initScripts];
   }
   getBinding(name) {
     return this._pageBindings.get(name) || this._browserContext._pageBindings.get(name);
@@ -560,6 +560,15 @@ class Page extends _instrumentation.SdkObject {
   }
   temporarilyDisableTracingScreencastThrottling() {
     this._frameThrottler.recharge();
+  }
+  async safeNonStallingEvaluateInAllFrames(expression, world, options = {}) {
+    await Promise.all(this.frames().map(async frame => {
+      try {
+        await frame.nonStallingEvaluateInExistingContext(expression, world);
+      } catch (e) {
+        if (options.throwOnJSErrors && js.isJavaScriptErrorInEvaluate(e)) throw e;
+      }
+    }));
   }
   async hideHighlight() {
     await Promise.all(this.frames().map(frame => frame.hideHighlight().catch(() => {})));
@@ -628,12 +637,14 @@ class PageBinding {
   constructor(name, playwrightFunction, needsHandle) {
     this.name = void 0;
     this.playwrightFunction = void 0;
-    this.source = void 0;
+    this.initScript = void 0;
     this.needsHandle = void 0;
+    this.internal = void 0;
     this.name = name;
     this.playwrightFunction = playwrightFunction;
-    this.source = `(${addPageBinding.toString()})(${JSON.stringify(name)}, ${needsHandle}, (${_utilityScriptSerializers.source})())`;
+    this.initScript = new InitScript(`(${addPageBinding.toString()})(${JSON.stringify(PageBinding.kPlaywrightBinding)}, ${JSON.stringify(name)}, ${needsHandle}, (${_utilityScriptSerializers.source})())`, true /* internal */);
     this.needsHandle = needsHandle;
+    this.internal = name.startsWith('__pw');
   }
   static async dispatch(page, payload, context) {
     const {
@@ -644,6 +655,7 @@ class PageBinding {
     try {
       (0, _utils.assert)(context.world);
       const binding = page.getBinding(name);
+      if (!binding) throw new Error(`Function "${name}" is not exposed`);
       let result;
       if (binding.needsHandle) {
         const handle = await context.evaluateHandle(takeHandle, {
@@ -669,12 +681,7 @@ class PageBinding {
         result
       }).catch(e => _debugLogger.debugLogger.log('error', e));
     } catch (error) {
-      if ((0, _utils.isError)(error)) context.evaluate(deliverError, {
-        name,
-        seq,
-        message: error.message,
-        stack: error.stack
-      }).catch(e => _debugLogger.debugLogger.log('error', e));else context.evaluate(deliverErrorValue, {
+      context.evaluate(deliverResult, {
         name,
         seq,
         error
@@ -686,25 +693,16 @@ class PageBinding {
       return handle;
     }
     function deliverResult(arg) {
-      globalThis[arg.name]['callbacks'].get(arg.seq).resolve(arg.result);
-      globalThis[arg.name]['callbacks'].delete(arg.seq);
-    }
-    function deliverError(arg) {
-      const error = new Error(arg.message);
-      error.stack = arg.stack;
-      globalThis[arg.name]['callbacks'].get(arg.seq).reject(error);
-      globalThis[arg.name]['callbacks'].delete(arg.seq);
-    }
-    function deliverErrorValue(arg) {
-      globalThis[arg.name]['callbacks'].get(arg.seq).reject(arg.error);
-      globalThis[arg.name]['callbacks'].delete(arg.seq);
+      const callbacks = globalThis[arg.name]['callbacks'];
+      if ('error' in arg) callbacks.get(arg.seq).reject(arg.error);else callbacks.get(arg.seq).resolve(arg.result);
+      callbacks.delete(arg.seq);
     }
   }
 }
 exports.PageBinding = PageBinding;
-function addPageBinding(bindingName, needsHandle, utilityScriptSerializers) {
-  const binding = globalThis[bindingName];
-  if (binding.__installed) return;
+PageBinding.kPlaywrightBinding = '__playwright__binding__';
+function addPageBinding(playwrightBinding, bindingName, needsHandle, utilityScriptSerializers) {
+  const binding = globalThis[playwrightBinding];
   globalThis[bindingName] = (...args) => {
     const me = globalThis[bindingName];
     if (needsHandle && args.slice(1).some(arg => arg !== undefined)) throw new Error(`exposeBindingHandle supports a single argument, ${args.length} received`);
@@ -752,8 +750,9 @@ function addPageBinding(bindingName, needsHandle, utilityScriptSerializers) {
   globalThis[bindingName].__installed = true;
 }
 class InitScript {
-  constructor(source) {
+  constructor(source, internal) {
     this.source = void 0;
+    this.internal = void 0;
     const guid = (0, _utils.createGuid)();
     this.source = `(() => {
       globalThis.__pwInitScripts = globalThis.__pwInitScripts || {};
@@ -763,6 +762,7 @@ class InitScript {
       globalThis.__pwInitScripts[${JSON.stringify(guid)}] = true;
       ${source}
     })();`;
+    this.internal = !!internal;
   }
 }
 exports.InitScript = InitScript;

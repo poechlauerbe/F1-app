@@ -15,8 +15,6 @@ var _utils = require("../utils");
 var _manualPromise = require("../utils/manualPromise");
 var _events = require("./events");
 var _waiter = require("./waiter");
-var _network = require("../utils/network");
-var _multimap = require("../utils/multimap");
 var _fetch = require("./fetch");
 var _errors = require("./errors");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -520,7 +518,7 @@ class RouteHandler {
     return patterns;
   }
   matches(requestURL) {
-    return (0, _network.urlMatches)(this._baseURL, requestURL, this.url);
+    return (0, _utils.urlMatches)(this._baseURL, requestURL, this.url);
   }
   async handle(route) {
     const handlerInvocation = {
@@ -582,7 +580,7 @@ class RawHeaders {
   }
   constructor(headers) {
     this._headersArray = void 0;
-    this._headersMap = new _multimap.MultiMap();
+    this._headersMap = new _utils.MultiMap();
     this._headersArray = headers;
     for (const header of headers) this._headersMap.set(header.name.toLowerCase(), header.value);
   }

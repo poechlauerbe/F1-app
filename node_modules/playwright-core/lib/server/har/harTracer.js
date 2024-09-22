@@ -12,10 +12,7 @@ var _utils = require("../../utils");
 var _eventsHelper = require("../../utils/eventsHelper");
 var _utilsBundle = require("../../utilsBundle");
 var _manualPromise = require("../../utils/manualPromise");
-var _userAgent = require("../../utils/userAgent");
-var _network2 = require("../../utils/network");
 var _frames = require("../frames");
-var _mimeType = require("../../utils/mimeType");
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 /**
@@ -76,7 +73,7 @@ class HarTracer {
     }
   }
   _shouldIncludeEntryWithUrl(urlString) {
-    return !this._options.urlFilter || (0, _network2.urlMatches)(this._baseURL, urlString, this._options.urlFilter);
+    return !this._options.urlFilter || (0, _utils.urlMatches)(this._baseURL, urlString, this._options.urlFilter);
   }
   _entryForRequest(request) {
     return request[this._entrySymbol];
@@ -318,7 +315,7 @@ class HarTracer {
     if (this._options.content === 'embed') {
       // Sometimes, we can receive a font/media file with textual mime type. Browser
       // still interprets them correctly, but the 'content-type' header is obviously wrong.
-      if ((0, _mimeType.isTextualMimeType)(content.mimeType) && resourceType !== 'font') {
+      if ((0, _utils.isTextualMimeType)(content.mimeType) && resourceType !== 'font') {
         content.text = buffer.toString();
       } else {
         content.text = buffer.toString('base64');
@@ -337,11 +334,6 @@ class HarTracer {
     const page = (_response$frame = response.frame()) === null || _response$frame === void 0 ? void 0 : _response$frame._page;
     const pageEntry = this._createPageEntryIfNeeded(page);
     const request = response.request();
-
-    // Prefer "response received" time over "request sent" time
-    // for the purpose of matching requests that were used in a particular snapshot.
-    // Note that both snapshot time and request time are taken here in the Node process.
-    if (this._options.includeTraceInfo) harEntry._monotonicTime = (0, _utils.monotonicTime)();
     harEntry.response = {
       status: response.status(),
       statusText: response.statusText(),
@@ -411,7 +403,7 @@ class HarTracer {
       version: '1.2',
       creator: {
         name: 'Playwright',
-        version: (0, _userAgent.getPlaywrightVersion)()
+        version: (0, _utils.getPlaywrightVersion)()
       },
       browser: {
         name: (context === null || context === void 0 ? void 0 : context._browser.options.name) || '',

@@ -186,9 +186,10 @@ class Mouse {
   }
   async click(x, y, options = {}, metadata) {
     if (metadata) metadata.point = {
-      x: this._x,
-      y: this._y
+      x,
+      y
     };
+    if (this._raw.click) return await this._raw.click(x, y, options);
     const {
       delay = null,
       clickCount = 1

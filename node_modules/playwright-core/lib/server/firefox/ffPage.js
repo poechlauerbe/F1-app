@@ -81,7 +81,7 @@ class FFPage {
     });
     // Ideally, we somehow ensure that utility world is created before Page.ready arrives, but currently it is racy.
     // Therefore, we can end up with an initialized page without utility world, although very unlikely.
-    this.addInitScript(new _page.InitScript(''), UTILITY_WORLD_NAME).catch(e => this._markAsError(e));
+    this.addInitScript(new _page.InitScript('', true), UTILITY_WORLD_NAME).catch(e => this._markAsError(e));
   }
   potentiallyUninitializedPage() {
     return this._page;
@@ -121,11 +121,11 @@ class FFPage {
     const frame = this._page._frameManager.frame(auxData.frameId);
     if (!frame) return;
     const delegate = new _ffExecutionContext.FFExecutionContext(this._session, executionContextId);
-    let worldName = null;
-    if (auxData.name === UTILITY_WORLD_NAME) worldName = 'utility';else if (!auxData.name) worldName = 'main';
+    let worldName;
+    if (auxData.name === UTILITY_WORLD_NAME) worldName = 'utility';else if (!auxData.name) worldName = 'main';else return;
     const context = new dom.FrameExecutionContext(delegate, frame, worldName);
     context[contextDelegateSymbol] = delegate;
-    if (worldName) frame._contextCreated(worldName, context);
+    frame._contextCreated(worldName, context);
     this._contextIdToContext.set(executionContextId, context);
   }
   _onExecutionContextDestroyed(payload) {
@@ -288,15 +288,6 @@ class FFPage {
   _onVideoRecordingStarted(event) {
     this._browserContext._browser._videoStarted(this._browserContext, event.screencastId, event.file, this.pageOrError());
   }
-  async exposeBinding(binding) {
-    await this._session.send('Page.addBinding', {
-      name: binding.name,
-      script: binding.source
-    });
-  }
-  async removeExposedBindings() {
-    // TODO: implement me.
-  }
   didClose() {
     this._markAsError(new _errors.TargetClosedError());
     this._session.dispose();
@@ -381,10 +372,13 @@ class FFPage {
       }))
     });
   }
-  async removeInitScripts() {
-    this._initScripts = [];
+  async removeNonInternalInitScripts() {
+    this._initScripts = this._initScripts.filter(s => s.initScript.internal);
     await this._session.send('Page.setInitScripts', {
-      scripts: []
+      scripts: this._initScripts.map(s => ({
+        script: s.initScript.source,
+        worldName: s.worldName
+      }))
     });
   }
   async closePage(runBeforeUnload) {

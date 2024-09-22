@@ -84,6 +84,11 @@ _validatorPrimitives.scheme.SerializedValue = (0, _validatorPrimitives.tObject)(
   d: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tString),
   u: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tString),
   bi: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tString),
+  e: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tObject)({
+    m: _validatorPrimitives.tString,
+    n: _validatorPrimitives.tString,
+    s: _validatorPrimitives.tString
+  })),
   r: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tObject)({
     p: _validatorPrimitives.tString,
     f: _validatorPrimitives.tString
@@ -207,7 +212,8 @@ _validatorPrimitives.scheme.APIRequestContextFetchParams = (0, _validatorPrimiti
   timeout: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber),
   failOnStatusCode: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   ignoreHTTPSErrors: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
-  maxRedirects: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber)
+  maxRedirects: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber),
+  maxRetries: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber)
 });
 _validatorPrimitives.scheme.APIRequestContextFetchResult = (0, _validatorPrimitives.tObject)({
   response: (0, _validatorPrimitives.tType)('APIResponse')
@@ -341,6 +347,7 @@ _validatorPrimitives.scheme.RootInitializeResult = (0, _validatorPrimitives.tObj
 });
 _validatorPrimitives.scheme.PlaywrightInitializer = (0, _validatorPrimitives.tObject)({
   chromium: (0, _validatorPrimitives.tChannel)(['BrowserType']),
+  bidi: (0, _validatorPrimitives.tChannel)(['BrowserType']),
   firefox: (0, _validatorPrimitives.tChannel)(['BrowserType']),
   webkit: (0, _validatorPrimitives.tChannel)(['BrowserType']),
   android: (0, _validatorPrimitives.tChannel)(['Android']),
@@ -356,6 +363,13 @@ _validatorPrimitives.scheme.PlaywrightNewRequestParams = (0, _validatorPrimitive
   userAgent: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tString),
   ignoreHTTPSErrors: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   extraHTTPHeaders: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tArray)((0, _validatorPrimitives.tType)('NameValue'))),
+  clientCertificates: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tArray)((0, _validatorPrimitives.tObject)({
+    origin: _validatorPrimitives.tString,
+    cert: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBinary),
+    key: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBinary),
+    passphrase: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tString),
+    pfx: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBinary)
+  }))),
   httpCredentials: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tObject)({
     username: _validatorPrimitives.tString,
     password: _validatorPrimitives.tString,
@@ -557,6 +571,13 @@ _validatorPrimitives.scheme.BrowserTypeLaunchPersistentContextParams = (0, _vali
     height: _validatorPrimitives.tNumber
   })),
   ignoreHTTPSErrors: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
+  clientCertificates: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tArray)((0, _validatorPrimitives.tObject)({
+    origin: _validatorPrimitives.tString,
+    cert: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBinary),
+    key: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBinary),
+    passphrase: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tString),
+    pfx: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBinary)
+  }))),
   javaScriptEnabled: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   bypassCSP: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   userAgent: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tString),
@@ -636,6 +657,13 @@ _validatorPrimitives.scheme.BrowserNewContextParams = (0, _validatorPrimitives.t
     height: _validatorPrimitives.tNumber
   })),
   ignoreHTTPSErrors: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
+  clientCertificates: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tArray)((0, _validatorPrimitives.tObject)({
+    origin: _validatorPrimitives.tString,
+    cert: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBinary),
+    key: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBinary),
+    passphrase: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tString),
+    pfx: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBinary)
+  }))),
   javaScriptEnabled: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   bypassCSP: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   userAgent: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tString),
@@ -698,6 +726,13 @@ _validatorPrimitives.scheme.BrowserNewContextForReuseParams = (0, _validatorPrim
     height: _validatorPrimitives.tNumber
   })),
   ignoreHTTPSErrors: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
+  clientCertificates: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tArray)((0, _validatorPrimitives.tObject)({
+    origin: _validatorPrimitives.tString,
+    cert: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBinary),
+    key: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBinary),
+    passphrase: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tString),
+    pfx: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBinary)
+  }))),
   javaScriptEnabled: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   bypassCSP: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   userAgent: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tString),
@@ -953,7 +988,6 @@ _validatorPrimitives.scheme.BrowserContextRecorderSupplementEnableParams = (0, _
   device: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tString),
   saveStorage: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tString),
   outputFile: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tString),
-  handleSIGINT: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   omitCallTracking: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean)
 });
 _validatorPrimitives.scheme.BrowserContextRecorderSupplementEnableResult = (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tObject)({}));
@@ -1399,7 +1433,6 @@ _validatorPrimitives.scheme.FrameCheckParams = (0, _validatorPrimitives.tObject)
   selector: _validatorPrimitives.tString,
   strict: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   force: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
-  noWaitAfter: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   position: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tType)('Point')),
   timeout: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber),
   trial: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean)
@@ -1427,7 +1460,6 @@ _validatorPrimitives.scheme.FrameDragAndDropParams = (0, _validatorPrimitives.tO
   source: _validatorPrimitives.tString,
   target: _validatorPrimitives.tString,
   force: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
-  noWaitAfter: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   timeout: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber),
   trial: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   sourcePosition: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tType)('Point')),
@@ -1439,7 +1471,6 @@ _validatorPrimitives.scheme.FrameDblclickParams = (0, _validatorPrimitives.tObje
   selector: _validatorPrimitives.tString,
   strict: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   force: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
-  noWaitAfter: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   modifiers: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tArray)((0, _validatorPrimitives.tEnum)(['Alt', 'Control', 'ControlOrMeta', 'Meta', 'Shift']))),
   position: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tType)('Point')),
   delay: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber),
@@ -1477,8 +1508,7 @@ _validatorPrimitives.scheme.FrameFillParams = (0, _validatorPrimitives.tObject)(
   strict: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   value: _validatorPrimitives.tString,
   force: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
-  timeout: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber),
-  noWaitAfter: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean)
+  timeout: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber)
 });
 _validatorPrimitives.scheme.FrameFillResult = (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tObject)({}));
 _validatorPrimitives.scheme.FrameFocusParams = (0, _validatorPrimitives.tObject)({
@@ -1520,8 +1550,7 @@ _validatorPrimitives.scheme.FrameHoverParams = (0, _validatorPrimitives.tObject)
   modifiers: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tArray)((0, _validatorPrimitives.tEnum)(['Alt', 'Control', 'ControlOrMeta', 'Meta', 'Shift']))),
   position: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tType)('Point')),
   timeout: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber),
-  trial: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
-  noWaitAfter: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean)
+  trial: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean)
 });
 _validatorPrimitives.scheme.FrameHoverResult = (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tObject)({}));
 _validatorPrimitives.scheme.FrameInnerHTMLParams = (0, _validatorPrimitives.tObject)({
@@ -1633,8 +1662,7 @@ _validatorPrimitives.scheme.FrameSelectOptionParams = (0, _validatorPrimitives.t
     index: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber)
   }))),
   force: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
-  timeout: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber),
-  noWaitAfter: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean)
+  timeout: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber)
 });
 _validatorPrimitives.scheme.FrameSelectOptionResult = (0, _validatorPrimitives.tObject)({
   values: (0, _validatorPrimitives.tArray)(_validatorPrimitives.tString)
@@ -1657,15 +1685,13 @@ _validatorPrimitives.scheme.FrameSetInputFilesParams = (0, _validatorPrimitives.
   directoryStream: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tChannel)(['WritableStream'])),
   localPaths: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tArray)(_validatorPrimitives.tString)),
   streams: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tArray)((0, _validatorPrimitives.tChannel)(['WritableStream']))),
-  timeout: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber),
-  noWaitAfter: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean)
+  timeout: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber)
 });
 _validatorPrimitives.scheme.FrameSetInputFilesResult = (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tObject)({}));
 _validatorPrimitives.scheme.FrameTapParams = (0, _validatorPrimitives.tObject)({
   selector: _validatorPrimitives.tString,
   strict: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   force: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
-  noWaitAfter: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   modifiers: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tArray)((0, _validatorPrimitives.tEnum)(['Alt', 'Control', 'ControlOrMeta', 'Meta', 'Shift']))),
   position: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tType)('Point')),
   timeout: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber),
@@ -1689,7 +1715,6 @@ _validatorPrimitives.scheme.FrameTypeParams = (0, _validatorPrimitives.tObject)(
   strict: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   text: _validatorPrimitives.tString,
   delay: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber),
-  noWaitAfter: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   timeout: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber)
 });
 _validatorPrimitives.scheme.FrameTypeResult = (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tObject)({}));
@@ -1697,7 +1722,6 @@ _validatorPrimitives.scheme.FrameUncheckParams = (0, _validatorPrimitives.tObjec
   selector: _validatorPrimitives.tString,
   strict: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   force: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
-  noWaitAfter: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   position: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tType)('Point')),
   timeout: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber),
   trial: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean)
@@ -1852,7 +1876,6 @@ _validatorPrimitives.scheme.ElementHandleBoundingBoxResult = (0, _validatorPrimi
 });
 _validatorPrimitives.scheme.ElementHandleCheckParams = (0, _validatorPrimitives.tObject)({
   force: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
-  noWaitAfter: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   position: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tType)('Point')),
   timeout: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber),
   trial: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean)
@@ -1876,7 +1899,6 @@ _validatorPrimitives.scheme.ElementHandleContentFrameResult = (0, _validatorPrim
 });
 _validatorPrimitives.scheme.ElementHandleDblclickParams = (0, _validatorPrimitives.tObject)({
   force: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
-  noWaitAfter: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   modifiers: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tArray)((0, _validatorPrimitives.tEnum)(['Alt', 'Control', 'ControlOrMeta', 'Meta', 'Shift']))),
   position: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tType)('Point')),
   delay: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber),
@@ -1893,8 +1915,7 @@ _validatorPrimitives.scheme.ElementHandleDispatchEventResult = (0, _validatorPri
 _validatorPrimitives.scheme.ElementHandleFillParams = (0, _validatorPrimitives.tObject)({
   value: _validatorPrimitives.tString,
   force: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
-  timeout: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber),
-  noWaitAfter: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean)
+  timeout: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber)
 });
 _validatorPrimitives.scheme.ElementHandleFillResult = (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tObject)({}));
 _validatorPrimitives.scheme.ElementHandleFocusParams = (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tObject)({}));
@@ -1910,8 +1931,7 @@ _validatorPrimitives.scheme.ElementHandleHoverParams = (0, _validatorPrimitives.
   modifiers: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tArray)((0, _validatorPrimitives.tEnum)(['Alt', 'Control', 'ControlOrMeta', 'Meta', 'Shift']))),
   position: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tType)('Point')),
   timeout: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber),
-  trial: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
-  noWaitAfter: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean)
+  trial: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean)
 });
 _validatorPrimitives.scheme.ElementHandleHoverResult = (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tObject)({}));
 _validatorPrimitives.scheme.ElementHandleInnerHTMLParams = (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tObject)({}));
@@ -2005,8 +2025,7 @@ _validatorPrimitives.scheme.ElementHandleSelectOptionParams = (0, _validatorPrim
     index: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber)
   }))),
   force: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
-  timeout: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber),
-  noWaitAfter: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean)
+  timeout: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber)
 });
 _validatorPrimitives.scheme.ElementHandleSelectOptionResult = (0, _validatorPrimitives.tObject)({
   values: (0, _validatorPrimitives.tArray)(_validatorPrimitives.tString)
@@ -2026,13 +2045,11 @@ _validatorPrimitives.scheme.ElementHandleSetInputFilesParams = (0, _validatorPri
   directoryStream: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tChannel)(['WritableStream'])),
   localPaths: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tArray)(_validatorPrimitives.tString)),
   streams: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tArray)((0, _validatorPrimitives.tChannel)(['WritableStream']))),
-  timeout: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber),
-  noWaitAfter: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean)
+  timeout: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber)
 });
 _validatorPrimitives.scheme.ElementHandleSetInputFilesResult = (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tObject)({}));
 _validatorPrimitives.scheme.ElementHandleTapParams = (0, _validatorPrimitives.tObject)({
   force: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
-  noWaitAfter: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   modifiers: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tArray)((0, _validatorPrimitives.tEnum)(['Alt', 'Control', 'ControlOrMeta', 'Meta', 'Shift']))),
   position: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tType)('Point')),
   timeout: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber),
@@ -2046,13 +2063,11 @@ _validatorPrimitives.scheme.ElementHandleTextContentResult = (0, _validatorPrimi
 _validatorPrimitives.scheme.ElementHandleTypeParams = (0, _validatorPrimitives.tObject)({
   text: _validatorPrimitives.tString,
   delay: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber),
-  noWaitAfter: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   timeout: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber)
 });
 _validatorPrimitives.scheme.ElementHandleTypeResult = (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tObject)({}));
 _validatorPrimitives.scheme.ElementHandleUncheckParams = (0, _validatorPrimitives.tObject)({
   force: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
-  noWaitAfter: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   position: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tType)('Point')),
   timeout: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tNumber),
   trial: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean)
@@ -2526,6 +2541,13 @@ _validatorPrimitives.scheme.AndroidDeviceLaunchBrowserParams = (0, _validatorPri
     height: _validatorPrimitives.tNumber
   })),
   ignoreHTTPSErrors: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
+  clientCertificates: (0, _validatorPrimitives.tOptional)((0, _validatorPrimitives.tArray)((0, _validatorPrimitives.tObject)({
+    origin: _validatorPrimitives.tString,
+    cert: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBinary),
+    key: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBinary),
+    passphrase: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tString),
+    pfx: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBinary)
+  }))),
   javaScriptEnabled: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   bypassCSP: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tBoolean),
   userAgent: (0, _validatorPrimitives.tOptional)(_validatorPrimitives.tString),

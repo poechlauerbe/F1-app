@@ -28,13 +28,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 
 async function launchApp(browserType, options) {
-  var _options$persistentCo, _options$persistentCo2;
+  var _options$persistentCo, _options$persistentCo2, _options$persistentCo3;
   const args = [...((_options$persistentCo = (_options$persistentCo2 = options.persistentContextOptions) === null || _options$persistentCo2 === void 0 ? void 0 : _options$persistentCo2.args) !== null && _options$persistentCo !== void 0 ? _options$persistentCo : [])];
   if (browserType.name() === 'chromium') {
     args.push('--app=data:text/html,', `--window-size=${options.windowSize.width},${options.windowSize.height}`, ...(options.windowPosition ? [`--window-position=${options.windowPosition.x},${options.windowPosition.y}`] : []), '--test-type=');
   }
   const context = await browserType.launchPersistentContext((0, _instrumentation.serverSideCallMetadata)(), '', {
-    channel: (0, _registry.findChromiumChannel)(options.sdkLanguage),
+    channel: !((_options$persistentCo3 = options.persistentContextOptions) !== null && _options$persistentCo3 !== void 0 && _options$persistentCo3.executablePath) ? (0, _registry.findChromiumChannel)(options.sdkLanguage) : undefined,
     noDefaultViewport: true,
     ignoreDefaultArgs: ['--enable-automation'],
     colorScheme: 'no-override',
@@ -79,6 +79,7 @@ async function syncLocalStorageWithSettings(page, appName) {
   await page.addInitScript(`(${String(settings => {
     // iframes w/ snapshots, etc.
     if (location && location.protocol === 'data:') return;
+    if (window.top !== window) return;
     Object.entries(settings).map(([k, v]) => localStorage[k] = v);
     window.saveSettings = () => {
       window._saveSerializedSettings(JSON.stringify({

@@ -85,7 +85,13 @@ class RecorderApp extends _events.EventEmitter {
     const mainFrame = this._page.mainFrame();
     await mainFrame.goto((0, _instrumentation.serverSideCallMetadata)(), 'https://playwright/index.html');
   }
-  static async open(recorder, inspectedContext, handleSIGINT) {
+  static factory(context) {
+    return async recorder => {
+      if (process.env.PW_CODEGEN_NO_INSPECTOR) return new EmptyRecorderApp();
+      return await RecorderApp._open(recorder, context);
+    };
+  }
+  static async _open(recorder, inspectedContext) {
     const sdkLanguage = inspectedContext.attribution.playwright.options.sdkLanguage;
     const headed = !!inspectedContext._browser.options.headful;
     const recorderPlaywright = require('../playwright').createPlaywright({
@@ -109,8 +115,9 @@ class RecorderApp extends _events.EventEmitter {
         noDefaultViewport: true,
         headless: !!process.env.PWTEST_CLI_HEADLESS || (0, _utils.isUnderTest)() && !headed,
         useWebSocket: !!process.env.PWTEST_RECORDER_PORT,
-        handleSIGINT,
-        args: process.env.PWTEST_RECORDER_PORT ? [`--remote-debugging-port=${process.env.PWTEST_RECORDER_PORT}`] : []
+        handleSIGINT: false,
+        args: process.env.PWTEST_RECORDER_PORT ? [`--remote-debugging-port=${process.env.PWTEST_RECORDER_PORT}`] : [],
+        executablePath: inspectedContext._browser.options.isChromium ? inspectedContext._browser.options.customExecutablePath : undefined
       }
     });
     const controller = new _progress.ProgressController((0, _instrumentation.serverSideCallMetadata)(), context._browser);
@@ -154,11 +161,13 @@ class RecorderApp extends _events.EventEmitter {
   }
   async setSelector(selector, userGesture) {
     if (userGesture) {
-      if (this._recorder.mode() === 'inspecting') {
+      var _this$_recorder;
+      if (((_this$_recorder = this._recorder) === null || _this$_recorder === void 0 ? void 0 : _this$_recorder.mode()) === 'inspecting') {
         this._recorder.setMode('standby');
         this._page.bringToFront();
       } else {
-        this._recorder.setMode('recording');
+        var _this$_recorder2;
+        (_this$_recorder2 = this._recorder) === null || _this$_recorder2 === void 0 || _this$_recorder2.setMode('recording');
       }
     }
     await this._page.mainFrame().evaluateExpression((data => {

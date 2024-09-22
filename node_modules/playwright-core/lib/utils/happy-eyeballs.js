@@ -3,7 +3,9 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.createConnectionAsync = createConnectionAsync;
 exports.createSocket = createSocket;
+exports.createTLSSocket = createTLSSocket;
 exports.httpsHappyEyeballsAgent = exports.httpHappyEyeballsAgent = void 0;
 var dns = _interopRequireWildcard(require("dns"));
 var http = _interopRequireWildcard(require("http"));
@@ -11,6 +13,7 @@ var https = _interopRequireWildcard(require("https"));
 var net = _interopRequireWildcard(require("net"));
 var tls = _interopRequireWildcard(require("tls"));
 var _manualPromise = require("./manualPromise");
+var _debug = require("./debug");
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 /**
@@ -48,8 +51,14 @@ class HttpsHappyEyeballsAgent extends https.Agent {
     createConnectionAsync(options, oncreate, /* useTLS */true).catch(err => oncreate === null || oncreate === void 0 ? void 0 : oncreate(err));
   }
 }
-const httpsHappyEyeballsAgent = exports.httpsHappyEyeballsAgent = new HttpsHappyEyeballsAgent();
-const httpHappyEyeballsAgent = exports.httpHappyEyeballsAgent = new HttpHappyEyeballsAgent();
+
+// These options are aligned with the default Node.js globalAgent options.
+const httpsHappyEyeballsAgent = exports.httpsHappyEyeballsAgent = new HttpsHappyEyeballsAgent({
+  keepAlive: true
+});
+const httpHappyEyeballsAgent = exports.httpHappyEyeballsAgent = new HttpHappyEyeballsAgent({
+  keepAlive: true
+});
 async function createSocket(host, port) {
   return new Promise((resolve, reject) => {
     if (net.isIP(host)) {
@@ -67,6 +76,24 @@ async function createSocket(host, port) {
         if (err) reject(err);
         if (socket) resolve(socket);
       }, /* useTLS */false).catch(err => reject(err));
+    }
+  });
+}
+async function createTLSSocket(options) {
+  return new Promise((resolve, reject) => {
+    (0, _debug.assert)(options.host, 'host is required');
+    if (net.isIP(options.host)) {
+      const socket = tls.connect(options);
+      socket.on('secureConnect', () => resolve(socket));
+      socket.on('error', error => reject(error));
+    } else {
+      createConnectionAsync(options, (err, socket) => {
+        if (err) reject(err);
+        if (socket) {
+          socket.on('secureConnect', () => resolve(socket));
+          socket.on('error', error => reject(error));
+        }
+      }, true).catch(err => reject(err));
     }
   });
 }

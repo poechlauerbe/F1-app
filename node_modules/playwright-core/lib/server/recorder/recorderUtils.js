@@ -3,6 +3,9 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.buildFullSelector = buildFullSelector;
+exports.frameForAction = frameForAction;
+exports.mainFrameForAction = mainFrameForAction;
 exports.metadataToCallLog = metadataToCallLog;
 /**
  * Copyright (c) Microsoft Corporation.
@@ -45,4 +48,24 @@ function metadataToCallLog(metadata, status) {
     duration
   };
   return callLog;
+}
+function buildFullSelector(framePath, selector) {
+  return [...framePath, selector].join(' >> internal:control=enter-frame >> ');
+}
+function mainFrameForAction(pageAliases, actionInContext) {
+  var _find;
+  const pageAlias = actionInContext.frame.pageAlias;
+  const page = (_find = [...pageAliases.entries()].find(([, alias]) => pageAlias === alias)) === null || _find === void 0 ? void 0 : _find[0];
+  if (!page) throw new Error('Internal error: page not found');
+  return page.mainFrame();
+}
+async function frameForAction(pageAliases, actionInContext, action) {
+  var _find2;
+  const pageAlias = actionInContext.frame.pageAlias;
+  const page = (_find2 = [...pageAliases.entries()].find(([, alias]) => pageAlias === alias)) === null || _find2 === void 0 ? void 0 : _find2[0];
+  if (!page) throw new Error('Internal error: page not found');
+  const fullSelector = buildFullSelector(actionInContext.frame.framePath, action.selector);
+  const result = await page.mainFrame().selectors.resolveFrameForSelector(fullSelector);
+  if (!result) throw new Error('Internal error: frame not found');
+  return result.frame;
 }

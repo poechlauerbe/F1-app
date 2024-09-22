@@ -193,7 +193,7 @@ class FFRouteImpl {
     this._session = session;
     this._request = request;
   }
-  async continue(request, overrides) {
+  async continue(overrides) {
     await this._session.sendMayFail('Network.resumeInterceptedRequest', {
       requestId: this._request._id,
       url: overrides.url,

@@ -298,7 +298,7 @@ class CRBrowserContext extends _browserContext.BrowserContext {
   async _initialize() {
     (0, _utils.assert)(!Array.from(this._browser._crPages.values()).some(page => page._browserContext === this));
     const promises = [super._initialize()];
-    if (this._browser.options.name !== 'electron' && this._browser.options.name !== 'clank' && this._options.acceptDownloads !== 'internal-browser-default') {
+    if (this._browser.options.name !== 'clank' && this._options.acceptDownloads !== 'internal-browser-default') {
       promises.push(this._browser._session.send('Browser.setDownloadBehavior', {
         behavior: this._options.acceptDownloads === 'accept' ? 'allowAndName' : 'deny',
         browserContextId: this._browserContextId,
@@ -418,14 +418,8 @@ class CRBrowserContext extends _browserContext.BrowserContext {
   async doAddInitScript(initScript) {
     for (const page of this.pages()) await page._delegate.addInitScript(initScript);
   }
-  async doRemoveInitScripts() {
-    for (const page of this.pages()) await page._delegate.removeInitScripts();
-  }
-  async doExposeBinding(binding) {
-    for (const page of this.pages()) await page._delegate.exposeBinding(binding);
-  }
-  async doRemoveExposedBindings() {
-    for (const page of this.pages()) await page._delegate.removeExposedBindings();
+  async doRemoveNonInternalInitScripts() {
+    for (const page of this.pages()) await page._delegate.removeNonInternalInitScripts();
   }
   async doUpdateRequestInterception() {
     for (const page of this.pages()) await page._delegate.updateRequestInterception();

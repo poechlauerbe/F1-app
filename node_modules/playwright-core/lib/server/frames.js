@@ -19,7 +19,6 @@ var _debugLogger = require("../utils/debugLogger");
 var _instrumentation = require("./instrumentation");
 var _protocolError = require("./protocolError");
 var _selectorParser = require("../utils/isomorphic/selectorParser");
-var _locatorGenerators = require("../utils/isomorphic/locatorGenerators");
 var _frameSelectors = require("./frameSelectors");
 var _errors = require("./errors");
 var _fileUploadUtils = require("./fileUploadUtils");
@@ -109,13 +108,13 @@ class FrameManager {
       return frame;
     }
   }
-  async waitForSignalsCreatedBy(progress, noWaitAfter, action, source) {
-    if (noWaitAfter) return action();
+  async waitForSignalsCreatedBy(progress, waitAfter, action) {
+    if (!waitAfter) return action();
     const barrier = new SignalBarrier(progress);
     this._signalBarriers.add(barrier);
     if (progress) progress.cleanupWhenAborted(() => this._signalBarriers.delete(barrier));
     const result = await action();
-    if (source === 'input') await this._page._delegate.inputActionEpilogue();
+    await this._page._delegate.inputActionEpilogue();
     await barrier.waitFor();
     this._signalBarriers.delete(barrier);
     // Resolve in the next task, after all waitForNavigations.
@@ -238,7 +237,7 @@ class FrameManager {
       request
     });
     if (request._isFavicon) {
-      if (route) route.continue(request, {
+      route === null || route === void 0 || route.continue({
         isFallback: true
       }).catch(() => {});
       return;
@@ -459,13 +458,13 @@ class Frame extends _instrumentation.SdkObject {
       return context.rawEvaluateJSON(expression);
     });
   }
-  nonStallingEvaluateInExistingContext(expression, isFunction, world) {
+  nonStallingEvaluateInExistingContext(expression, world) {
     return this.raceAgainstEvaluationStallingEvents(() => {
       var _this$_contextData$ge;
       const context = (_this$_contextData$ge = this._contextData.get(world)) === null || _this$_contextData$ge === void 0 ? void 0 : _this$_contextData$ge.context;
       if (!context) throw new Error('Frame does not yet have the execution context');
       return context.evaluateExpression(expression, {
-        isFunction
+        isFunction: false
       });
     });
   }
@@ -530,16 +529,19 @@ class Frame extends _instrumentation.SdkObject {
       referer = options.referer;
     }
     url = _helper.helper.completeUserURL(url);
-    const sameDocument = _helper.helper.waitForEvent(progress, this, Frame.Events.InternalNavigation, e => !e.newDocument);
-    const navigateResult = await this._page._delegate.navigateFrame(this, url, referer);
+    const navigationEvents = [];
+    const collectNavigations = arg => navigationEvents.push(arg);
+    this.on(Frame.Events.InternalNavigation, collectNavigations);
+    const navigateResult = await this._page._delegate.navigateFrame(this, url, referer).finally(() => this.off(Frame.Events.InternalNavigation, collectNavigations));
     let event;
     if (navigateResult.newDocumentId) {
-      sameDocument.dispose();
-      event = await _helper.helper.waitForEvent(progress, this, Frame.Events.InternalNavigation, event => {
+      const predicate = event => {
         // We are interested either in this specific document, or any other document that
         // did commit and replaced the expected document.
         return event.newDocument && (event.newDocument.documentId === navigateResult.newDocumentId || !event.error);
-      }).promise;
+      };
+      const events = navigationEvents.filter(predicate);
+      if (events.length) event = events[0];else event = await _helper.helper.waitForEvent(progress, this, Frame.Events.InternalNavigation, predicate).promise;
       if (event.newDocument.documentId !== navigateResult.newDocumentId) {
         // This is just a sanity check. In practice, new navigation should
         // cancel the previous one and report "request cancelled"-like error.
@@ -547,7 +549,10 @@ class Frame extends _instrumentation.SdkObject {
       }
       if (event.error) throw event.error;
     } else {
-      event = await sameDocument.promise;
+      // Wait for same document navigation.
+      const predicate = e => !e.newDocument;
+      const events = navigationEvents.filter(predicate);
+      if (events.length) event = events[0];else event = await _helper.helper.waitForEvent(progress, this, Frame.Events.InternalNavigation, predicate).promise;
     }
     if (!this._firedLifecycleEvents.has(waitUntil)) await _helper.helper.waitForEvent(progress, this, Frame.Events.AddLifecycle, e => e === waitUntil).promise;
     const request = event.newDocument ? event.newDocument.request : undefined;
@@ -638,7 +643,7 @@ class Frame extends _instrumentation.SdkObject {
       }) => {
         const elements = injected.querySelectorAll(info.parsed, root || document);
         const element = elements[0];
-        const visible = element ? injected.isVisible(element) : false;
+        const visible = element ? injected.utils.isElementVisible(element) : false;
         let log = '';
         if (elements.length > 1) {
           if (info.strict) throw injected.strictModeViolationError(info.parsed, elements);
@@ -759,10 +764,11 @@ class Frame extends _instrumentation.SdkObject {
     const controller = new _progress.ProgressController(metadata, this);
     return controller.run(async progress => {
       await this.raceNavigationAction(progress, options, async () => {
+        var _this$_page$_delegate, _this$_page$_delegate2;
         const waitUntil = options.waitUntil === undefined ? 'load' : options.waitUntil;
         progress.log(`setting frame content, waiting until "${waitUntil}"`);
         const tag = `--playwright--set--content--${this._id}--${++this._setContentCounter}--`;
-        const context = await this._utilityContext();
+        const context = (_this$_page$_delegate = (_this$_page$_delegate2 = this._page._delegate).useMainWorldForSetContent) !== null && _this$_page$_delegate !== void 0 && _this$_page$_delegate.call(_this$_page$_delegate2) ? await this._mainContext() : await this._utilityContext();
         const lifecyclePromise = new Promise((resolve, reject) => {
           this._page._frameManager._consoleMessageTags.set(tag, () => {
             // Clear lifecycle right after document.open() - see 'tag' below.
@@ -1005,7 +1011,10 @@ class Frame extends _instrumentation.SdkObject {
   async click(metadata, selector, options) {
     const controller = new _progress.ProgressController(metadata, this);
     return controller.run(async progress => {
-      return dom.assertDone(await this._retryWithProgressIfNotConnected(progress, selector, options.strict, !options.force /* performLocatorHandlersCheckpoint */, handle => handle._click(progress, options)));
+      return dom.assertDone(await this._retryWithProgressIfNotConnected(progress, selector, options.strict, !options.force /* performLocatorHandlersCheckpoint */, handle => handle._click(progress, {
+        ...options,
+        waitAfter: !options.noWaitAfter
+      })));
     }, this._page._timeoutSettings.timeout(options));
   }
   async dblclick(metadata, selector, options = {}) {
@@ -1023,6 +1032,7 @@ class Frame extends _instrumentation.SdkObject {
           await this._page.mouse.down();
         }, {
           ...options,
+          waitAfter: 'disabled',
           position: options.sourcePosition,
           timeout: progress.timeUntilDeadline()
         });
@@ -1034,6 +1044,7 @@ class Frame extends _instrumentation.SdkObject {
           await this._page.mouse.up();
         }, {
           ...options,
+          waitAfter: 'disabled',
           position: options.targetPosition,
           timeout: progress.timeUntilDeadline()
         });
@@ -1175,7 +1186,7 @@ class Frame extends _instrumentation.SdkObject {
     const inputFileItems = await (0, _fileUploadUtils.prepareFilesForUpload)(this, params);
     const controller = new _progress.ProgressController(metadata, this);
     return controller.run(async progress => {
-      return dom.assertDone(await this._retryWithProgressIfNotConnected(progress, selector, params.strict, true /* performLocatorHandlersCheckpoint */, handle => handle._setInputFiles(progress, inputFileItems, params)));
+      return dom.assertDone(await this._retryWithProgressIfNotConnected(progress, selector, params.strict, true /* performLocatorHandlersCheckpoint */, handle => handle._setInputFiles(progress, inputFileItems)));
     }, this._page._timeoutSettings.timeout(params));
   }
   async type(metadata, selector, text, options = {}) {
@@ -1220,93 +1231,64 @@ class Frame extends _instrumentation.SdkObject {
     return result;
   }
   async _expectImpl(metadata, selector, options) {
-    let timeout = this._page._timeoutSettings.timeout(options);
-    const start = timeout > 0 ? (0, _utils.monotonicTime)() : 0;
     const lastIntermediateResult = {
       isSet: false
     };
-    const resultOneShot = await this._expectInternal(metadata, selector, options, true, timeout, lastIntermediateResult);
-    if (resultOneShot.matches !== options.isNot) return resultOneShot;
-    if (timeout > 0) {
-      const elapsed = (0, _utils.monotonicTime)() - start;
-      timeout -= elapsed;
-    }
-    if (timeout < 0) return {
-      matches: options.isNot,
-      log: metadata.log,
-      timedOut: true,
-      received: lastIntermediateResult.received
-    };
-    return await this._expectInternal(metadata, selector, options, false, timeout, lastIntermediateResult);
-  }
-  async _expectInternal(metadata, selector, options, oneShot, timeout, lastIntermediateResult) {
-    const controller = new _progress.ProgressController(metadata, this);
-    return controller.run(async progress => {
-      if (oneShot) {
+    try {
+      let timeout = this._page._timeoutSettings.timeout(options);
+      const start = timeout > 0 ? (0, _utils.monotonicTime)() : 0;
+
+      // Step 1: perform locator handlers checkpoint with a specified timeout.
+      await new _progress.ProgressController(metadata, this).run(async progress => {
         progress.log(`${metadata.apiName}${timeout ? ` with timeout ${timeout}ms` : ''}`);
         progress.log(`waiting for ${this._asLocator(selector)}`);
-      }
-      return await this.retryWithProgressAndTimeouts(progress, [100, 250, 500, 1000], async continuePolling => {
-        var _info$world;
         await this._page.performLocatorHandlersCheckpoint(progress);
-        const selectorInFrame = await this.selectors.resolveFrameForSelector(selector, {
-          strict: true
+      }, timeout);
+
+      // Step 2: perform one-shot expect check without a timeout.
+      // Supports the case of `expect(locator).toBeVisible({ timeout: 1 })`
+      // that should succeed when the locator is already visible.
+      try {
+        const resultOneShot = await new _progress.ProgressController(metadata, this).run(async progress => {
+          return await this._expectInternal(progress, selector, options, lastIntermediateResult);
         });
-        progress.throwIfAborted();
-        const {
-          frame,
-          info
-        } = selectorInFrame || {
-          frame: this,
-          info: undefined
-        };
-        const world = options.expression === 'to.have.property' ? 'main' : (_info$world = info === null || info === void 0 ? void 0 : info.world) !== null && _info$world !== void 0 ? _info$world : 'utility';
-        const context = await frame._context(world);
-        const injected = await context.injectedScript();
-        progress.throwIfAborted();
-        const {
-          log,
-          matches,
-          received,
-          missingReceived
-        } = await injected.evaluate(async (injected, {
-          info,
-          options,
-          callId
-        }) => {
-          const elements = info ? injected.querySelectorAll(info.parsed, document) : [];
-          const isArray = options.expression === 'to.have.count' || options.expression.endsWith('.array');
-          let log = '';
-          if (isArray) log = `  locator resolved to ${elements.length} element${elements.length === 1 ? '' : 's'}`;else if (elements.length > 1) throw injected.strictModeViolationError(info.parsed, elements);else if (elements.length) log = `  locator resolved to ${injected.previewNode(elements[0])}`;
-          if (callId) injected.markTargetElements(new Set(elements), callId);
+        if (resultOneShot.matches !== options.isNot) return resultOneShot;
+      } catch (e) {
+        if (js.isJavaScriptErrorInEvaluate(e) || (0, _selectorParser.isInvalidSelectorError)(e)) throw e;
+        // Ignore any other errors from one-shot, we'll handle them during retries.
+      }
+      if (timeout > 0) {
+        const elapsed = (0, _utils.monotonicTime)() - start;
+        timeout -= elapsed;
+      }
+      if (timeout < 0) return {
+        matches: options.isNot,
+        log: metadata.log,
+        timedOut: true,
+        received: lastIntermediateResult.received
+      };
+
+      // Step 3: auto-retry expect with increasing timeouts. Bounded by the total remaining time.
+      return await new _progress.ProgressController(metadata, this).run(async progress => {
+        return await this.retryWithProgressAndTimeouts(progress, [100, 250, 500, 1000], async continuePolling => {
+          await this._page.performLocatorHandlersCheckpoint(progress);
+          const {
+            matches,
+            received
+          } = await this._expectInternal(progress, selector, options, lastIntermediateResult);
+          if (matches === options.isNot) {
+            // Keep waiting in these cases:
+            // expect(locator).conditionThatDoesNotMatch
+            // expect(locator).not.conditionThatDoesMatch
+            return continuePolling;
+          }
           return {
-            log,
-            ...(await injected.expect(elements[0], options, elements))
+            matches,
+            received
           };
-        }, {
-          info,
-          options,
-          callId: metadata.id
         });
-        if (log) progress.log(log);
-        // Note: missingReceived avoids `unexpected value "undefined"` when element was not found.
-        if (matches === options.isNot) {
-          lastIntermediateResult.received = missingReceived ? '<element(s) not found>' : received;
-          lastIntermediateResult.isSet = true;
-          if (!missingReceived && !Array.isArray(received)) progress.log(`  unexpected value "${renderUnexpectedValue(options.expression, received)}"`);
-        }
-        if (!oneShot && matches === options.isNot) {
-          // Keep waiting in these cases:
-          // expect(locator).conditionThatDoesNotMatch
-          // expect(locator).not.conditionThatDoesMatch
-          return continuePolling;
-        }
-        return {
-          matches,
-          received
-        };
-      });
-    }, oneShot ? 0 : timeout).catch(e => {
+      }, timeout);
+    } catch (e) {
       // Q: Why not throw upon isSessionClosedError(e) as in other places?
       // A: We want user to receive a friendly message containing the last intermediate result.
       if (js.isJavaScriptErrorInEvaluate(e) || (0, _selectorParser.isInvalidSelectorError)(e)) throw e;
@@ -1317,7 +1299,60 @@ class Frame extends _instrumentation.SdkObject {
       if (lastIntermediateResult.isSet) result.received = lastIntermediateResult.received;
       if (e instanceof _errors.TimeoutError) result.timedOut = true;
       return result;
+    }
+  }
+  async _expectInternal(progress, selector, options, lastIntermediateResult) {
+    var _info$world;
+    const selectorInFrame = await this.selectors.resolveFrameForSelector(selector, {
+      strict: true
     });
+    progress.throwIfAborted();
+    const {
+      frame,
+      info
+    } = selectorInFrame || {
+      frame: this,
+      info: undefined
+    };
+    const world = options.expression === 'to.have.property' ? 'main' : (_info$world = info === null || info === void 0 ? void 0 : info.world) !== null && _info$world !== void 0 ? _info$world : 'utility';
+    const context = await frame._context(world);
+    const injected = await context.injectedScript();
+    progress.throwIfAborted();
+    const {
+      log,
+      matches,
+      received,
+      missingReceived
+    } = await injected.evaluate(async (injected, {
+      info,
+      options,
+      callId
+    }) => {
+      const elements = info ? injected.querySelectorAll(info.parsed, document) : [];
+      const isArray = options.expression === 'to.have.count' || options.expression.endsWith('.array');
+      let log = '';
+      if (isArray) log = `  locator resolved to ${elements.length} element${elements.length === 1 ? '' : 's'}`;else if (elements.length > 1) throw injected.strictModeViolationError(info.parsed, elements);else if (elements.length) log = `  locator resolved to ${injected.previewNode(elements[0])}`;
+      if (callId) injected.markTargetElements(new Set(elements), callId);
+      return {
+        log,
+        ...(await injected.expect(elements[0], options, elements))
+      };
+    }, {
+      info,
+      options,
+      callId: progress.metadata.id
+    });
+    if (log) progress.log(log);
+    // Note: missingReceived avoids `unexpected value "undefined"` when element was not found.
+    if (matches === options.isNot) {
+      lastIntermediateResult.received = missingReceived ? '<element(s) not found>' : received;
+      lastIntermediateResult.isSet = true;
+      if (!missingReceived && !Array.isArray(received)) progress.log(`  unexpected value "${renderUnexpectedValue(options.expression, received)}"`);
+    }
+    return {
+      matches,
+      received
+    };
   }
   async _waitForFunctionExpression(metadata, expression, isFunction, arg, options, world = 'main') {
     const controller = new _progress.ProgressController(metadata, this);
@@ -1557,7 +1592,7 @@ class Frame extends _instrumentation.SdkObject {
     }).catch(() => {});
   }
   _asLocator(selector) {
-    return (0, _locatorGenerators.asLocator)(this._page.attribution.playwright.options.sdkLanguage, selector);
+    return (0, _utils.asLocator)(this._page.attribution.playwright.options.sdkLanguage, selector);
   }
 }
 exports.Frame = Frame;

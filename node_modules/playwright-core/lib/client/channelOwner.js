@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.ChannelOwner = void 0;
-var _events = require("events");
+var _eventEmitter = require("./eventEmitter");
 var _validator = require("../protocol/validator");
 var _debugLogger = require("../utils/debugLogger");
 var _stackTrace = require("../utils/stackTrace");
@@ -26,7 +26,7 @@ var _zones = require("../utils/zones");
  * limitations under the License.
  */
 
-class ChannelOwner extends _events.EventEmitter {
+class ChannelOwner extends _eventEmitter.EventEmitter {
   constructor(parent, type, guid, initializer) {
     super();
     this._connection = void 0;
@@ -51,7 +51,7 @@ class ChannelOwner extends _events.EventEmitter {
       this._parent._objects.set(guid, this);
       this._logger = this._parent._logger;
     }
-    this._channel = this._createChannel(new _events.EventEmitter());
+    this._channel = this._createChannel(new _eventEmitter.EventEmitter());
     this._initializer = initializer;
   }
   _setEventToSubscriptionMapping(mapping) {

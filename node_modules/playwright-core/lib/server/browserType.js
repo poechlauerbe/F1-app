@@ -19,7 +19,6 @@ var _fileUtils = require("../utils/fileUtils");
 var _helper = require("./helper");
 var _debugLogger = require("../utils/debugLogger");
 var _instrumentation = require("./instrumentation");
-var _manualPromise = require("../utils/manualPromise");
 var _protocolError = require("./protocolError");
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
@@ -45,6 +44,7 @@ class BrowserType extends _instrumentation.SdkObject {
   constructor(parent, browserName) {
     super(parent, 'browser-type');
     this._name = void 0;
+    this._useBidi = false;
     this.attribution.browserType = this;
     this._name = browserName;
   }
@@ -56,6 +56,7 @@ class BrowserType extends _instrumentation.SdkObject {
   }
   async launch(metadata, options, protocolLogger) {
     options = this._validateLaunchOptions(options);
+    if (this._useBidi) options.useWebSocket = true;
     const controller = new _progress.ProgressController(metadata, this);
     controller.setLogName('browser');
     const browser = await controller.run(progress => {
@@ -69,13 +70,22 @@ class BrowserType extends _instrumentation.SdkObject {
   }
   async launchPersistentContext(metadata, userDataDir, options) {
     options = this._validateLaunchOptions(options);
+    if (this._useBidi) options.useWebSocket = true;
     const controller = new _progress.ProgressController(metadata, this);
-    const persistent = options;
+    const persistent = {
+      ...options
+    };
     controller.setLogName('browser');
-    const browser = await controller.run(progress => {
-      return this._innerLaunchWithRetries(progress, options, persistent, _helper.helper.debugProtocolLogger(), userDataDir).catch(e => {
+    const browser = await controller.run(async progress => {
+      // Note: Any initial TLS requests will fail since we rely on the Page/Frames initialize which sets ignoreHTTPSErrors.
+      const clientCertificatesProxy = await (0, _browserContext.createClientCertificatesProxyIfNeeded)(persistent);
+      if (clientCertificatesProxy) options.proxy = persistent.proxy;
+      progress.cleanupWhenAborted(() => clientCertificatesProxy === null || clientCertificatesProxy === void 0 ? void 0 : clientCertificatesProxy.close());
+      const browser = await this._innerLaunchWithRetries(progress, options, persistent, _helper.helper.debugProtocolLogger(), userDataDir).catch(e => {
         throw this._rewriteStartupLog(e);
       });
+      browser._defaultContext._clientCertificatesProxy = clientCertificatesProxy;
+      return browser;
     }, _timeoutSettings.TimeoutSettings.launchTimeout(options));
     return browser._defaultContext;
   }
@@ -122,14 +132,14 @@ class BrowserType extends _instrumentation.SdkObject {
     };
     if (persistent) (0, _browserContext.validateBrowserContextOptions)(persistent, browserOptions);
     copyTestHooks(options, browserOptions);
-    const browser = await this._connectToTransport(transport, browserOptions);
+    const browser = await this.connectToTransport(transport, browserOptions);
     browser._userDataDirForTest = userDataDir;
     // We assume no control when using custom arguments, and do not prepare the default context in that case.
     if (persistent && !options.ignoreAllDefaultArgs) await browser._defaultContext._loadDefaultContext(progress);
     return browser;
   }
   async _launchProcess(progress, options, isPersistent, browserLogsCollector, userDataDir) {
-    var _options$args;
+    var _await$readyState$wai;
     const {
       ignoreDefaultArgs,
       ignoreAllDefaultArgs,
@@ -155,7 +165,7 @@ class BrowserType extends _instrumentation.SdkObject {
       tempDirectories.push(userDataDir);
     }
     const browserArguments = [];
-    if (ignoreAllDefaultArgs) browserArguments.push(...args);else if (ignoreDefaultArgs) browserArguments.push(...this._defaultArgs(options, isPersistent, userDataDir).filter(arg => ignoreDefaultArgs.indexOf(arg) === -1));else browserArguments.push(...this._defaultArgs(options, isPersistent, userDataDir));
+    if (ignoreAllDefaultArgs) browserArguments.push(...args);else if (ignoreDefaultArgs) browserArguments.push(...this.defaultArgs(options, isPersistent, userDataDir).filter(arg => ignoreDefaultArgs.indexOf(arg) === -1));else browserArguments.push(...this.defaultArgs(options, isPersistent, userDataDir));
     let executable;
     if (executablePath) {
       if (!(await (0, _fileUtils.existsAsync)(executablePath))) throw new Error(`Failed to launch ${this._name} because executable doesn't exist at ${executablePath}`);
@@ -166,8 +176,7 @@ class BrowserType extends _instrumentation.SdkObject {
       executable = registryExecutable.executablePathOrDie(this.attribution.playwright.options.sdkLanguage);
       await _registry.registry.validateHostRequirementsForExecutablesIfNeeded([registryExecutable], this.attribution.playwright.options.sdkLanguage);
     }
-    const waitForWSEndpoint = options.useWebSocket || (_options$args = options.args) !== null && _options$args !== void 0 && _options$args.some(a => a.startsWith('--remote-debugging-port')) ? new _manualPromise.ManualPromise() : undefined;
-    const waitForJuggler = this._name === 'firefox' ? new _manualPromise.ManualPromise() : undefined;
+    const readyState = this.readyState(options);
     // Note: it is important to define these variables before launchProcess, so that we don't get
     // "Cannot access 'browserServer' before initialization" if something went wrong.
     let transport = undefined;
@@ -179,16 +188,12 @@ class BrowserType extends _instrumentation.SdkObject {
     } = await (0, _processLauncher.launchProcess)({
       command: executable,
       args: browserArguments,
-      env: this._amendEnvironment(env, userDataDir, executable, browserArguments),
+      env: this.amendEnvironment(env, userDataDir, executable, browserArguments),
       handleSIGINT,
       handleSIGTERM,
       handleSIGHUP,
       log: message => {
-        if (waitForWSEndpoint) {
-          const match = message.match(/DevTools listening on (.*)/);
-          if (match) waitForWSEndpoint.resolve(match[1]);
-        }
-        if (waitForJuggler && message.includes('Juggler listening to the pipe')) waitForJuggler.resolve();
+        readyState === null || readyState === void 0 || readyState.onBrowserOutput(message);
         progress.log(message);
         browserLogsCollector.log(message);
       },
@@ -199,11 +204,11 @@ class BrowserType extends _instrumentation.SdkObject {
         // We try to gracefully close to prevent crash reporting and core dumps.
         // Note that it's fine to reuse the pipe transport, since
         // our connection ignores kBrowserCloseMessageId.
-        this._attemptToGracefullyCloseBrowser(transport);
+        this.attemptToGracefullyCloseBrowser(transport);
       },
       onExit: (exitCode, signal) => {
         // Unblock launch when browser prematurely exits.
-        waitForJuggler === null || waitForJuggler === void 0 || waitForJuggler.resolve();
+        readyState === null || readyState === void 0 || readyState.onBrowserExit();
         if (browserProcess && browserProcess.onclose) browserProcess.onclose(exitCode, signal);
       }
     });
@@ -224,8 +229,7 @@ class BrowserType extends _instrumentation.SdkObject {
       kill
     };
     progress.cleanupWhenAborted(() => closeOrKill(progress.timeUntilDeadline()));
-    const wsEndpoint = await waitForWSEndpoint;
-    await waitForJuggler;
+    const wsEndpoint = (_await$readyState$wai = await (readyState === null || readyState === void 0 ? void 0 : readyState.waitUntilReady())) === null || _await$readyState$wai === void 0 ? void 0 : _await$readyState$wai.wsEndpoint;
     if (options.useWebSocket) {
       transport = await _transport.WebSocketTransport.connect(progress, wsEndpoint);
     } else {
@@ -289,7 +293,10 @@ class BrowserType extends _instrumentation.SdkObject {
   }
   _rewriteStartupLog(error) {
     if (!(0, _protocolError.isProtocolError)(error)) return error;
-    return this._doRewriteStartupLog(error);
+    return this.doRewriteStartupLog(error);
+  }
+  readyState(options) {
+    return undefined;
   }
 }
 exports.BrowserType = BrowserType;

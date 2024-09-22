@@ -9,6 +9,7 @@ var _utils = require("../../utils");
 var _browser = require("../browser");
 var _browserContext = require("../browserContext");
 var network = _interopRequireWildcard(require("../network"));
+var _page = require("../page");
 var _ffConnection = require("./ffConnection");
 var _ffPage = require("./ffPage");
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
@@ -165,7 +166,11 @@ class FFBrowserContext extends _browserContext.BrowserContext {
   async _initialize() {
     (0, _utils.assert)(!this._ffPages().length);
     const browserContextId = this._browserContextId;
-    const promises = [super._initialize()];
+    const promises = [super._initialize(), this._browser.session.send('Browser.addBinding', {
+      browserContextId: this._browserContextId,
+      name: _page.PageBinding.kPlaywrightBinding,
+      script: ''
+    })];
     if (this._options.acceptDownloads !== 'internal-browser-default') {
       promises.push(this._browser.session.send('Browser.setDownloadOptions', {
         browserContextId,
@@ -375,30 +380,20 @@ class FFBrowserContext extends _browserContext.BrowserContext {
     });
   }
   async doAddInitScript(initScript) {
+    await this._updateInitScripts();
+  }
+  async doRemoveNonInternalInitScripts() {
+    await this._updateInitScripts();
+  }
+  async _updateInitScripts() {
+    const bindingScripts = [...this._pageBindings.values()].map(binding => binding.initScript.source);
+    const initScripts = this.initScripts.map(script => script.source);
     await this._browser.session.send('Browser.setInitScripts', {
       browserContextId: this._browserContextId,
-      scripts: this.initScripts.map(script => ({
-        script: script.source
+      scripts: [...bindingScripts, ...initScripts].map(script => ({
+        script
       }))
     });
-  }
-  async doRemoveInitScripts() {
-    await this._browser.session.send('Browser.setInitScripts', {
-      browserContextId: this._browserContextId,
-      scripts: []
-    });
-  }
-  async doExposeBinding(binding) {
-    await this._browser.session.send('Browser.addBinding', {
-      browserContextId: this._browserContextId,
-      name: binding.name,
-      script: binding.source
-    });
-  }
-  async doRemoveExposedBindings() {
-    // TODO: implement me.
-    // This is not a critical problem, what ends up happening is
-    // an old binding will be restored upon page reload and will point nowhere.
   }
   async doUpdateRequestInterception() {
     await Promise.all([this._browser.session.send('Browser.setRequestInterception', {

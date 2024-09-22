@@ -8,7 +8,7 @@ var _processLauncher = require("../utils/processLauncher");
 var _instrumentation = require("./instrumentation");
 var _recorder = require("./recorder");
 var _recorderApp = require("./recorder/recorderApp");
-var _locatorGenerators = require("../utils/isomorphic/locatorGenerators");
+var _utils = require("../utils");
 /**
  * Copyright (c) Microsoft Corporation.
  *
@@ -46,7 +46,6 @@ class DebugController extends _instrumentation.SdkObject {
   initialize(codegenId, sdkLanguage) {
     this._codegenId = codegenId;
     this._sdkLanguage = sdkLanguage;
-    _recorder.Recorder.setAppFactory(async () => new InspectingRecorderApp(this));
   }
   setAutoCloseAllowed(allowed) {
     this._autoCloseAllowed = allowed;
@@ -54,7 +53,6 @@ class DebugController extends _instrumentation.SdkObject {
   dispose() {
     this.setReportStateChanged(false);
     this.setAutoCloseAllowed(false);
-    _recorder.Recorder.setAppFactory(undefined);
   }
   setReportStateChanged(enabled) {
     if (enabled && !this._trackHierarchyListener) {
@@ -167,7 +165,7 @@ class DebugController extends _instrumentation.SdkObject {
   async _allRecorders() {
     const contexts = new Set();
     for (const page of this._playwright.allPages()) contexts.add(page.context());
-    const result = await Promise.all([...contexts].map(c => _recorder.Recorder.show(c, {
+    const result = await Promise.all([...contexts].map(c => _recorder.Recorder.show(c, () => Promise.resolve(new InspectingRecorderApp(this)), {
       omitCallTracking: true
     })));
     return result.filter(Boolean);
@@ -200,7 +198,7 @@ class InspectingRecorderApp extends _recorderApp.EmptyRecorderApp {
     this._debugController = debugController;
   }
   async setSelector(selector) {
-    const locator = (0, _locatorGenerators.asLocator)(this._debugController._sdkLanguage, selector);
+    const locator = (0, _utils.asLocator)(this._debugController._sdkLanguage, selector);
     this._debugController.emit(DebugController.Events.InspectRequested, {
       selector,
       locator

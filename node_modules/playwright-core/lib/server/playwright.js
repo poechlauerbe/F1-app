@@ -13,8 +13,9 @@ var _firefox = require("./firefox/firefox");
 var _selectors = require("./selectors");
 var _webkit = require("./webkit/webkit");
 var _instrumentation = require("./instrumentation");
-var _debugLogger = require("../utils/debugLogger");
+var _utils = require("../utils");
 var _debugController = require("./debugController");
+var _bidiFirefox = require("./bidi/bidiFirefox");
 /**
  * Copyright (c) Microsoft Corporation.
  *
@@ -41,6 +42,7 @@ class Playwright extends _instrumentation.SdkObject {
     this.chromium = void 0;
     this.android = void 0;
     this.electron = void 0;
+    this.bidi = void 0;
     this.firefox = void 0;
     this.webkit = void 0;
     this.options = void 0;
@@ -55,10 +57,11 @@ class Playwright extends _instrumentation.SdkObject {
       onPageOpen: page => this._allPages.add(page),
       onPageClose: page => this._allPages.delete(page),
       onCallLog: (sdkObject, metadata, logName, message) => {
-        _debugLogger.debugLogger.log(logName, message);
+        _utils.debugLogger.log(logName, message);
       }
     }, null);
     this.chromium = new _chromium.Chromium(this);
+    this.bidi = new _bidiFirefox.BidiFirefox(this);
     this.firefox = new _firefox.Firefox(this);
     this.webkit = new _webkit.WebKit(this);
     this.electron = new _electron.Electron(this);

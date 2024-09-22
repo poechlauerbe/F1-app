@@ -7,10 +7,8 @@ exports.Page = exports.BindingCall = void 0;
 var _fs = _interopRequireDefault(require("fs"));
 var _path = _interopRequireDefault(require("path"));
 var _errors = require("./errors");
-var _network = require("../utils/network");
 var _timeoutSettings = require("../common/timeoutSettings");
 var _utils = require("../utils");
-var _fileUtils = require("../utils/fileUtils");
 var _accessibility = require("./accessibility");
 var _artifact = require("./artifact");
 var _channelOwner = require("./channelOwner");
@@ -23,8 +21,7 @@ var _fileChooser = require("./fileChooser");
 var _frame = require("./frame");
 var _input = require("./input");
 var _jsHandle = require("./jsHandle");
-var _stringUtils = require("../utils/isomorphic/stringUtils");
-var _network2 = require("./network");
+var _network = require("./network");
 var _video = require("./video");
 var _waiter = require("./waiter");
 var _worker = require("./worker");
@@ -123,7 +120,7 @@ class Page extends _channelOwner.ChannelOwner {
     }) => this._onLocatorHandlerTriggered(uid));
     this._channel.on('route', ({
       route
-    }) => this._onRoute(_network2.Route.from(route)));
+    }) => this._onRoute(_network.Route.from(route)));
     this._channel.on('video', ({
       artifact
     }) => {
@@ -132,7 +129,7 @@ class Page extends _channelOwner.ChannelOwner {
     });
     this._channel.on('webSocket', ({
       webSocket
-    }) => this.emit(_events.Events.Page.WebSocket, _network2.WebSocket.from(webSocket)));
+    }) => this.emit(_events.Events.Page.WebSocket, _network.WebSocket.from(webSocket)));
     this._channel.on('worker', ({
       worker
     }) => this._onWorker(_worker.Worker.from(worker)));
@@ -208,7 +205,7 @@ class Page extends _channelOwner.ChannelOwner {
     (0, _utils.assert)(name || url, 'Either name or url matcher should be specified');
     return this.frames().find(f => {
       if (name) return f.name() === name;
-      return (0, _network.urlMatches)(this._browserContext._options.baseURL, f.url(), url);
+      return (0, _utils.urlMatches)(this._browserContext._options.baseURL, f.url(), url);
     }) || null;
   }
   frames() {
@@ -286,7 +283,7 @@ class Page extends _channelOwner.ChannelOwner {
     this._bindings.set(name, callback);
   }
   async setExtraHTTPHeaders(headers) {
-    (0, _network2.validateHeaders)(headers);
+    (0, _network.validateHeaders)(headers);
     await this._channel.setExtraHTTPHeaders({
       headers: (0, _utils.headersObjectToArray)(headers)
     });
@@ -305,7 +302,7 @@ class Page extends _channelOwner.ChannelOwner {
   }
   async reload(options = {}) {
     const waitUntil = (0, _frame.verifyLoadState)('waitUntil', options.waitUntil === undefined ? 'load' : options.waitUntil);
-    return _network2.Response.fromNullable((await this._channel.reload({
+    return _network.Response.fromNullable((await this._channel.reload({
       ...options,
       waitUntil
     })).response);
@@ -363,7 +360,7 @@ class Page extends _channelOwner.ChannelOwner {
   }
   async waitForRequest(urlOrPredicate, options = {}) {
     const predicate = async request => {
-      if ((0, _utils.isString)(urlOrPredicate) || (0, _utils.isRegExp)(urlOrPredicate)) return (0, _network.urlMatches)(this._browserContext._options.baseURL, request.url(), urlOrPredicate);
+      if ((0, _utils.isString)(urlOrPredicate) || (0, _utils.isRegExp)(urlOrPredicate)) return (0, _utils.urlMatches)(this._browserContext._options.baseURL, request.url(), urlOrPredicate);
       return await urlOrPredicate(request);
     };
     const trimmedUrl = trimUrl(urlOrPredicate);
@@ -375,7 +372,7 @@ class Page extends _channelOwner.ChannelOwner {
   }
   async waitForResponse(urlOrPredicate, options = {}) {
     const predicate = async response => {
-      if ((0, _utils.isString)(urlOrPredicate) || (0, _utils.isRegExp)(urlOrPredicate)) return (0, _network.urlMatches)(this._browserContext._options.baseURL, response.url(), urlOrPredicate);
+      if ((0, _utils.isString)(urlOrPredicate) || (0, _utils.isRegExp)(urlOrPredicate)) return (0, _utils.urlMatches)(this._browserContext._options.baseURL, response.url(), urlOrPredicate);
       return await urlOrPredicate(response);
     };
     const trimmedUrl = trimUrl(urlOrPredicate);
@@ -407,14 +404,14 @@ class Page extends _channelOwner.ChannelOwner {
   }
   async goBack(options = {}) {
     const waitUntil = (0, _frame.verifyLoadState)('waitUntil', options.waitUntil === undefined ? 'load' : options.waitUntil);
-    return _network2.Response.fromNullable((await this._channel.goBack({
+    return _network.Response.fromNullable((await this._channel.goBack({
       ...options,
       waitUntil
     })).response);
   }
   async goForward(options = {}) {
     const waitUntil = (0, _frame.verifyLoadState)('waitUntil', options.waitUntil === undefined ? 'load' : options.waitUntil);
-    return _network2.Response.fromNullable((await this._channel.goForward({
+    return _network.Response.fromNullable((await this._channel.goForward({
       ...options,
       waitUntil
     })).response);
@@ -447,7 +444,7 @@ class Page extends _channelOwner.ChannelOwner {
     });
   }
   async route(url, handler, options = {}) {
-    this._routes.unshift(new _network2.RouteHandler(this._browserContext._options.baseURL, url, handler, options.times));
+    this._routes.unshift(new _network.RouteHandler(this._browserContext._options.baseURL, url, handler, options.times));
     await this._updateInterceptionPatterns();
   }
   async routeFromHAR(har, options = {}) {
@@ -485,7 +482,7 @@ class Page extends _channelOwner.ChannelOwner {
     await Promise.all(promises);
   }
   async _updateInterceptionPatterns() {
-    const patterns = _network2.RouteHandler.prepareInterceptionPatterns(this._routes);
+    const patterns = _network.RouteHandler.prepareInterceptionPatterns(this._routes);
     await this._channel.setNetworkInterceptionPatterns({
       patterns
     });
@@ -504,7 +501,7 @@ class Page extends _channelOwner.ChannelOwner {
     }
     const result = await this._channel.screenshot(copy);
     if (options.path) {
-      await (0, _fileUtils.mkdirIfNeeded)(options.path);
+      await (0, _utils.mkdirIfNeeded)(options.path);
       await _fs.default.promises.writeFile(options.path, result.binary);
     }
     return result.binary;
@@ -723,6 +720,6 @@ class BindingCall extends _channelOwner.ChannelOwner {
 }
 exports.BindingCall = BindingCall;
 function trimUrl(param) {
-  if ((0, _utils.isRegExp)(param)) return `/${(0, _stringUtils.trimStringWithEllipsis)(param.source, 50)}/${param.flags}`;
-  if ((0, _utils.isString)(param)) return `"${(0, _stringUtils.trimStringWithEllipsis)(param, 50)}"`;
+  if ((0, _utils.isRegExp)(param)) return `/${(0, _utils.trimStringWithEllipsis)(param.source, 50)}/${param.flags}`;
+  if ((0, _utils.isString)(param)) return `"${(0, _utils.trimStringWithEllipsis)(param, 50)}"`;
 }

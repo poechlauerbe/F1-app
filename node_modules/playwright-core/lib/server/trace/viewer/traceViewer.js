@@ -96,6 +96,7 @@ async function installRootRedirect(server, traceUrls, options) {
   if (options.timeout) params.append('timeout', String(options.timeout));
   if (options.headed) params.append('headed', '');
   if (options.outputDir) params.append('outputDir', options.outputDir);
+  if (options.updateSnapshots) params.append('updateSnapshots', options.updateSnapshots);
   for (const reporter of options.reporter || []) params.append('reporter', reporter);
   const urlPath = `./trace/${options.webApp || 'index.html'}?${params.toString()}`;
   server.routePath('/', (_, response) => {

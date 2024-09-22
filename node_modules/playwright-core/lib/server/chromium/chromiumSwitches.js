@@ -25,7 +25,7 @@ exports.chromiumSwitches = void 0;
 
 const chromiumSwitches = exports.chromiumSwitches = ['--disable-field-trial-config',
 // https://source.chromium.org/chromium/chromium/src/+/main:testing/variations/README.md
-'--disable-background-networking', '--enable-features=NetworkService,NetworkServiceInProcess', '--disable-background-timer-throttling', '--disable-backgrounding-occluded-windows', '--disable-back-forward-cache',
+'--disable-background-networking', '--disable-background-timer-throttling', '--disable-backgrounding-occluded-windows', '--disable-back-forward-cache',
 // Avoids surprises like main request not being intercepted during page.goBack().
 '--disable-breakpad', '--disable-client-side-phishing-detection', '--disable-component-extensions-with-background-pages', '--disable-component-update',
 // Avoids unneeded network activity after startup.
@@ -34,7 +34,8 @@ const chromiumSwitches = exports.chromiumSwitches = ['--disable-field-trial-conf
 // Translate - https://github.com/microsoft/playwright/issues/16126
 // HttpsUpgrades - https://github.com/microsoft/playwright/pull/27605
 // PaintHolding - https://github.com/microsoft/playwright/issues/28023
-'--disable-features=ImprovedCookieControls,LazyFrameLoading,GlobalMediaControls,DestroyProfileOnBrowserClose,MediaRouter,DialMediaRouteProvider,AcceptCHFrame,AutoExpandDetailsElement,CertificateTransparencyComponentUpdater,AvoidUnnecessaryBeforeUnloadCheckSync,Translate,HttpsUpgrades,PaintHolding', '--allow-pre-commit-input', '--disable-hang-monitor', '--disable-ipc-flooding-protection', '--disable-popup-blocking', '--disable-prompt-on-repost', '--disable-renderer-backgrounding', '--force-color-profile=srgb', '--metrics-recording-only', '--no-first-run', '--enable-automation', '--password-store=basic', '--use-mock-keychain',
+// PlzDedicatedWorker - https://github.com/microsoft/playwright/issues/31747
+'--disable-features=ImprovedCookieControls,LazyFrameLoading,GlobalMediaControls,DestroyProfileOnBrowserClose,MediaRouter,DialMediaRouteProvider,AcceptCHFrame,AutoExpandDetailsElement,CertificateTransparencyComponentUpdater,AvoidUnnecessaryBeforeUnloadCheckSync,Translate,HttpsUpgrades,PaintHolding,PlzDedicatedWorker', '--allow-pre-commit-input', '--disable-hang-monitor', '--disable-ipc-flooding-protection', '--disable-popup-blocking', '--disable-prompt-on-repost', '--disable-renderer-backgrounding', '--force-color-profile=srgb', '--metrics-recording-only', '--no-first-run', '--enable-automation', '--password-store=basic', '--use-mock-keychain',
 // See https://chromium-review.googlesource.com/c/chromium/src/+/2436773
 '--no-service-autorun', '--export-tagged-pdf',
 // https://chromium-review.googlesource.com/c/chromium/src/+/4853540

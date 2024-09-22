@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.locatorOrSelectorAsSelector = locatorOrSelectorAsSelector;
-var _stringUtils = require("../../utils/isomorphic/stringUtils");
+var _stringUtils = require("./stringUtils");
 var _locatorGenerators = require("./locatorGenerators");
 var _selectorParser = require("./selectorParser");
 /**

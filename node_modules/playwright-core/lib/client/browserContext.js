@@ -5,6 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.BrowserContext = void 0;
 exports.prepareBrowserContextParams = prepareBrowserContextParams;
+exports.toClientCertificatesProtocol = toClientCertificatesProtocol;
 var _page = require("./page");
 var _frame = require("./frame");
 var network = _interopRequireWildcard(require("./network"));
@@ -18,7 +19,6 @@ var _events = require("./events");
 var _timeoutSettings = require("../common/timeoutSettings");
 var _waiter = require("./waiter");
 var _utils = require("../utils");
-var _fileUtils = require("../utils/fileUtils");
 var _cdpSession = require("./cdpSession");
 var _tracing = require("./tracing");
 var _artifact = require("./artifact");
@@ -404,7 +404,7 @@ class BrowserContext extends _channelOwner.ChannelOwner {
   async storageState(options = {}) {
     const state = await this._channel.storageState();
     if (options.path) {
-      await (0, _fileUtils.mkdirIfNeeded)(options.path);
+      await (0, _utils.mkdirIfNeeded)(options.path);
       await _fs.default.promises.writeFile(options.path, JSON.stringify(state, undefined, 2), 'utf8');
     }
     return state;
@@ -508,7 +508,8 @@ async function prepareBrowserContextParams(options) {
     colorScheme: options.colorScheme === null ? 'no-override' : options.colorScheme,
     reducedMotion: options.reducedMotion === null ? 'no-override' : options.reducedMotion,
     forcedColors: options.forcedColors === null ? 'no-override' : options.forcedColors,
-    acceptDownloads: toAcceptDownloadsProtocol(options.acceptDownloads)
+    acceptDownloads: toAcceptDownloadsProtocol(options.acceptDownloads),
+    clientCertificates: await toClientCertificatesProtocol(options.clientCertificates)
   };
   if (!contextParams.recordVideo && options.videosPath) {
     contextParams.recordVideo = {
@@ -523,4 +524,18 @@ function toAcceptDownloadsProtocol(acceptDownloads) {
   if (acceptDownloads === undefined) return undefined;
   if (acceptDownloads) return 'accept';
   return 'deny';
+}
+async function toClientCertificatesProtocol(certs) {
+  if (!certs) return undefined;
+  const bufferizeContent = async (value, path) => {
+    if (value) return value;
+    if (path) return await _fs.default.promises.readFile(path);
+  };
+  return await Promise.all(certs.map(async cert => ({
+    origin: cert.origin,
+    cert: await bufferizeContent(cert.cert, cert.certPath),
+    key: await bufferizeContent(cert.key, cert.keyPath),
+    pfx: await bufferizeContent(cert.pfx, cert.pfxPath),
+    passphrase: cert.passphrase
+  })));
 }

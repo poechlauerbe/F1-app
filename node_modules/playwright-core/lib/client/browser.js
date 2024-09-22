@@ -83,14 +83,6 @@ class Browser extends _channelOwner.ChannelOwner {
     const response = forReuse ? await this._channel.newContextForReuse(contextOptions) : await this._channel.newContext(contextOptions);
     const context = _browserContext.BrowserContext.from(response.context);
     await this._browserType._didCreateContext(context, contextOptions, this._options, options.logger || this._logger);
-    if (!forReuse && !!process.env.PW_FREEZE_TIME) {
-      await this._wrapApiCall(async () => {
-        await context.clock.install({
-          time: 0
-        });
-        await context.clock.pauseAt(1000);
-      }, true);
-    }
     return context;
   }
   contexts() {

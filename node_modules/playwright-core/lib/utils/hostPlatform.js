@@ -80,12 +80,17 @@ function calculatePlatform() {
     }
     // Linux Mint is ubuntu-based but does not have the same versions
     if ((distroInfo === null || distroInfo === void 0 ? void 0 : distroInfo.id) === 'linuxmint') {
-      if (parseInt(distroInfo.version, 10) <= 20) return {
+      const mintMajor = parseInt(distroInfo.version, 10);
+      if (mintMajor <= 20) return {
         hostPlatform: 'ubuntu20.04' + archSuffix,
         isOfficiallySupportedPlatform: false
       };
-      return {
+      if (mintMajor === 21) return {
         hostPlatform: 'ubuntu22.04' + archSuffix,
+        isOfficiallySupportedPlatform: false
+      };
+      return {
+        hostPlatform: 'ubuntu24.04' + archSuffix,
         isOfficiallySupportedPlatform: false
       };
     }

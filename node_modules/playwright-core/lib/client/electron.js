@@ -90,7 +90,12 @@ class ElectronApplication extends _channelOwner.ChannelOwner {
     await this.close();
   }
   async close() {
-    await this._context.close().catch(() => {});
+    try {
+      await this._context.close();
+    } catch (e) {
+      if ((0, _errors.isTargetClosedError)(e)) return;
+      throw e;
+    }
   }
   async waitForEvent(event, optionsOrPredicate = {}) {
     return await this._wrapApiCall(async () => {

@@ -39,6 +39,7 @@ class PlaywrightDispatcher extends _dispatcher.Dispatcher {
     const prelaunchedAndroidDeviceDispatcher = prelaunchedAndroidDevice ? new _androidDispatcher.AndroidDeviceDispatcher(android, prelaunchedAndroidDevice) : undefined;
     super(scope, playwright, 'Playwright', {
       chromium: new _browserTypeDispatcher.BrowserTypeDispatcher(scope, playwright.chromium),
+      bidi: new _browserTypeDispatcher.BrowserTypeDispatcher(scope, playwright.bidi),
       firefox: new _browserTypeDispatcher.BrowserTypeDispatcher(scope, playwright.firefox),
       webkit: new _browserTypeDispatcher.BrowserTypeDispatcher(scope, playwright.webkit),
       android,

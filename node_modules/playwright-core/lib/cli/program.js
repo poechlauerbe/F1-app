@@ -452,6 +452,9 @@ async function codegen(options, url) {
     launchOptions,
     contextOptions
   } = await launchContext(options, !!process.env.PWTEST_CLI_HEADLESS, process.env.PWTEST_CLI_EXECUTABLE_PATH);
+  _utilsBundle.dotenv.config({
+    path: 'playwright.env'
+  });
   await context._enableRecorder({
     language,
     launchOptions,
@@ -460,8 +463,7 @@ async function codegen(options, url) {
     saveStorage: options.saveStorage,
     mode: 'recording',
     testIdAttributeName,
-    outputFile: outputFile ? _path.default.resolve(outputFile) : undefined,
-    handleSIGINT: false
+    outputFile: outputFile ? _path.default.resolve(outputFile) : undefined
   });
   await openPage(context, url);
 }

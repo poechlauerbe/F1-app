@@ -31,28 +31,28 @@ class WebKit extends _browserType.BrowserType {
   constructor(parent) {
     super(parent, 'webkit');
   }
-  _connectToTransport(transport, options) {
+  connectToTransport(transport, options) {
     return _wkBrowser.WKBrowser.connect(this.attribution.playwright, transport, options);
   }
-  _amendEnvironment(env, userDataDir, executable, browserArguments) {
+  amendEnvironment(env, userDataDir, executable, browserArguments) {
     return {
       ...env,
       CURL_COOKIE_JAR_PATH: _path.default.join(userDataDir, 'cookiejar.db')
     };
   }
-  _doRewriteStartupLog(error) {
+  doRewriteStartupLog(error) {
     if (!error.logs) return error;
     if (error.logs.includes('cannot open display')) error.logs = '\n' + (0, _utils.wrapInASCIIBox)(_browserType.kNoXServerRunningError, 1);
     return error;
   }
-  _attemptToGracefullyCloseBrowser(transport) {
+  attemptToGracefullyCloseBrowser(transport) {
     transport.send({
       method: 'Playwright.close',
       params: {},
       id: _wkConnection.kBrowserCloseMessageId
     });
   }
-  _defaultArgs(options, isPersistent, userDataDir) {
+  defaultArgs(options, isPersistent, userDataDir) {
     const {
       args = [],
       proxy,

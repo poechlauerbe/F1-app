@@ -4,8 +4,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.GlobalAPIRequestContext = exports.BrowserContextAPIRequestContext = exports.APIRequestContext = void 0;
-var http = _interopRequireWildcard(require("http"));
-var https = _interopRequireWildcard(require("https"));
+var _http = _interopRequireDefault(require("http"));
+var _https = _interopRequireDefault(require("https"));
 var _stream = require("stream");
 var _url = _interopRequireDefault(require("url"));
 var _zlib = _interopRequireDefault(require("zlib"));
@@ -21,9 +21,8 @@ var _instrumentation = require("./instrumentation");
 var _progress = require("./progress");
 var _tracing = require("./trace/recorder/tracing");
 var _network = require("./network");
+var _socksClientCertificatesInterceptor = require("./socksClientCertificatesInterceptor");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
-function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 /**
  * Copyright (c) Microsoft Corporation.
  *
@@ -72,7 +71,7 @@ class APIRequestContext extends _instrumentation.SdkObject {
     return uid;
   }
   async fetch(params, metadata) {
-    var _params$method;
+    var _params$method, _defaults$clientCerti;
     const defaults = this._defaultOptions();
     const headers = {
       'user-agent': defaults.userAgent,
@@ -96,14 +95,17 @@ class APIRequestContext extends _instrumentation.SdkObject {
       for (const {
         name,
         value
-      } of params.params) requestUrl.searchParams.set(name, value);
+      } of params.params) requestUrl.searchParams.append(name, value);
     }
     const credentials = this._getHttpCredentials(requestUrl);
     if ((credentials === null || credentials === void 0 ? void 0 : credentials.send) === 'always') setBasicAuthorizationHeader(headers, credentials);
     const method = ((_params$method = params.method) === null || _params$method === void 0 ? void 0 : _params$method.toUpperCase()) || 'GET';
     const proxy = defaults.proxy;
     let agent;
-    if (proxy && proxy.server !== 'per-context' && !shouldBypassProxy(requestUrl, proxy.bypass)) {
+    // When `clientCertificates` is present, we set the `proxy` property to our own socks proxy
+    // for the browser to use. However, we don't need it here, because we already respect
+    // `clientCertificates` when fetching from Node.js.
+    if (proxy && !((_defaults$clientCerti = defaults.clientCertificates) !== null && _defaults$clientCerti !== void 0 && _defaults$clientCerti.length) && proxy.server !== 'per-context' && !shouldBypassProxy(requestUrl, proxy.bypass)) {
       var _proxyOpts$protocol;
       const proxyOpts = _url.default.parse(proxy.server);
       if ((_proxyOpts$protocol = proxyOpts.protocol) !== null && _proxyOpts$protocol !== void 0 && _proxyOpts$protocol.startsWith('socks')) {
@@ -126,19 +128,28 @@ class APIRequestContext extends _instrumentation.SdkObject {
       maxRedirects: params.maxRedirects === 0 ? -1 : params.maxRedirects === undefined ? 20 : params.maxRedirects,
       timeout,
       deadline,
+      ...(0, _socksClientCertificatesInterceptor.getMatchingTLSOptionsForOrigin)(this._defaultOptions().clientCertificates, requestUrl.origin),
       __testHookLookup: params.__testHookLookup
     };
-    // rejectUnauthorized = undefined is treated as true in node 12.
+    // rejectUnauthorized = undefined is treated as true in Node.js 12.
     if (params.ignoreHTTPSErrors || defaults.ignoreHTTPSErrors) options.rejectUnauthorized = false;
     const postData = serializePostData(params, headers);
     if (postData) setHeader(headers, 'content-length', String(postData.byteLength));
     const controller = new _progress.ProgressController(metadata, this);
     const fetchResponse = await controller.run(progress => {
-      return this._sendRequest(progress, requestUrl, options, postData);
+      return this._sendRequestWithRetries(progress, requestUrl, options, postData, params.maxRetries);
     });
     const fetchUid = this._storeResponseBody(fetchResponse.body);
     this.fetchLog.set(fetchUid, controller.metadata.log);
-    if (params.failOnStatusCode && (fetchResponse.status < 200 || fetchResponse.status >= 400)) throw new Error(`${fetchResponse.status} ${fetchResponse.statusText}`);
+    if (params.failOnStatusCode && (fetchResponse.status < 200 || fetchResponse.status >= 400)) {
+      let responseText = '';
+      if (fetchResponse.body.byteLength) {
+        let text = fetchResponse.body.toString('utf8');
+        if (text.length > 1000) text = text.substring(0, 997) + '...';
+        responseText = `\nResponse text:\n${text}`;
+      }
+      throw new Error(`${fetchResponse.status} ${fetchResponse.statusText}${responseText}`);
+    }
     return {
       ...fetchResponse,
       fetchUid
@@ -171,6 +182,25 @@ class APIRequestContext extends _instrumentation.SdkObject {
       setHeader(headers, 'cookie', valueArray.join('; '));
     }
   }
+  async _sendRequestWithRetries(progress, url, options, postData, maxRetries) {
+    var _maxRetries;
+    (_maxRetries = maxRetries) !== null && _maxRetries !== void 0 ? _maxRetries : maxRetries = 0;
+    let backoff = 250;
+    for (let i = 0; i <= maxRetries; i++) {
+      try {
+        return await this._sendRequest(progress, url, options, postData);
+      } catch (e) {
+        if (maxRetries === 0) throw e;
+        if (i === maxRetries || options.deadline && (0, _utils.monotonicTime)() + backoff > options.deadline) throw new Error(`Failed after ${i + 1} attempt(s): ${e}`);
+        // Retry on connection reset only.
+        if (e.code !== 'ECONNRESET') throw e;
+        progress.log(`  Received ECONNRESET, will retry after ${backoff}ms.`);
+        await new Promise(f => setTimeout(f, backoff));
+        backoff *= 2;
+      }
+    }
+    throw new Error('Unreachable');
+  }
   async _sendRequest(progress, url, options, postData) {
     var _getHeader;
     await this._updateRequestCookieHeader(url, options.headers);
@@ -190,7 +220,7 @@ class APIRequestContext extends _instrumentation.SdkObject {
     };
     this.emit(APIRequestContext.Events.Request, requestEvent);
     return new Promise((fulfill, reject) => {
-      const requestConstructor = (url.protocol === 'https:' ? https : http).request;
+      const requestConstructor = (url.protocol === 'https:' ? _https.default : _http.default).request;
       // If we have a proxy agent already, do not override it.
       const agent = options.agent || (url.protocol === 'https:' ? _happyEyeballs.httpsHappyEyeballsAgent : _happyEyeballs.httpHappyEyeballsAgent);
       const requestOptions = {
@@ -254,6 +284,7 @@ class APIRequestContext extends _instrumentation.SdkObject {
             maxRedirects: options.maxRedirects - 1,
             timeout: options.timeout,
             deadline: options.deadline,
+            ...(0, _socksClientCertificatesInterceptor.getMatchingTLSOptionsForOrigin)(this._defaultOptions().clientCertificates, url.origin),
             __testHookLookup: options.__testHookLookup
           };
           // rejectUnauthorized = undefined is treated as true in node 12.
@@ -312,7 +343,10 @@ class APIRequestContext extends _instrumentation.SdkObject {
             finishFlush: _zlib.default.constants.Z_SYNC_FLUSH
           });
         } else if (encoding === 'br') {
-          transform = _zlib.default.createBrotliDecompress();
+          transform = _zlib.default.createBrotliDecompress({
+            flush: _zlib.default.constants.BROTLI_OPERATION_FLUSH,
+            finishFlush: _zlib.default.constants.BROTLI_OPERATION_FLUSH
+          });
         } else if (encoding === 'deflate') {
           transform = _zlib.default.createInflate();
         }
@@ -329,7 +363,7 @@ class APIRequestContext extends _instrumentation.SdkObject {
         body.on('data', chunk => chunks.push(chunk));
         body.on('end', notifyBodyFinished);
       });
-      request.on('error', reject);
+      request.on('error', error => reject((0, _socksClientCertificatesInterceptor.rewriteOpenSSLErrorIfNeeded)(error)));
       const disposeListener = () => {
         reject(new Error('Request context disposed.'));
         request.destroy();
@@ -406,7 +440,8 @@ class BrowserContextAPIRequestContext extends APIRequestContext {
       proxy: this._context._options.proxy || this._context._browser.options.proxy,
       timeoutSettings: this._context._timeoutSettings,
       ignoreHTTPSErrors: this._context._options.ignoreHTTPSErrors,
-      baseURL: this._context._options.baseURL
+      baseURL: this._context._options.baseURL,
+      clientCertificates: this._context._options.clientCertificates
     };
   }
   async _addCookies(cookies) {
@@ -435,17 +470,20 @@ class GlobalAPIRequestContext extends APIRequestContext {
       let url = proxy === null || proxy === void 0 ? void 0 : proxy.server.trim();
       if (!/^\w+:\/\//.test(url)) url = 'http://' + url;
       proxy.server = url;
+      if (options.clientCertificates) throw new Error('Cannot specify both proxy and clientCertificates');
     }
     if (options.storageState) {
       this._origins = options.storageState.origins;
       this._cookieStore.addCookies(options.storageState.cookies || []);
     }
+    (0, _browserContext.verifyClientCertificates)(options.clientCertificates);
     this._options = {
       baseURL: options.baseURL,
       userAgent: options.userAgent || (0, _userAgent.getUserAgent)(),
       extraHTTPHeaders: options.extraHTTPHeaders,
       ignoreHTTPSErrors: !!options.ignoreHTTPSErrors,
       httpCredentials: options.httpCredentials,
+      clientCertificates: options.clientCertificates,
       proxy,
       timeoutSettings
     };

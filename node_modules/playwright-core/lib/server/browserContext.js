@@ -5,10 +5,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.BrowserContext = void 0;
 exports.assertBrowserContextIsNotOwned = assertBrowserContextIsNotOwned;
+exports.createClientCertificatesProxyIfNeeded = createClientCertificatesProxyIfNeeded;
 exports.normalizeProxySettings = normalizeProxySettings;
 exports.validateBrowserContextOptions = validateBrowserContextOptions;
+exports.verifyClientCertificates = verifyClientCertificates;
 exports.verifyGeolocation = verifyGeolocation;
-var os = _interopRequireWildcard(require("os"));
 var _timeoutSettings = require("../common/timeoutSettings");
 var _utils = require("../utils");
 var _fileUtils = require("../utils/fileUtils");
@@ -25,6 +26,8 @@ var _recorder = require("./recorder");
 var consoleApiSource = _interopRequireWildcard(require("../generated/consoleApiSource"));
 var _fetch = require("./fetch");
 var _clock = require("./clock");
+var _socksClientCertificatesInterceptor = require("./socksClientCertificatesInterceptor");
+var _recorderApp = require("./recorder/recorderApp");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
@@ -74,6 +77,7 @@ class BrowserContext extends _instrumentation.SdkObject {
     this._debugger = void 0;
     this._closeReason = void 0;
     this.clock = void 0;
+    this._clientCertificatesProxy = void 0;
     this.attribution.context = this;
     this._browser = browser;
     this._options = options;
@@ -100,17 +104,17 @@ class BrowserContext extends _instrumentation.SdkObject {
     this._debugger = new _debugger.Debugger(this);
 
     // When PWDEBUG=1, show inspector for each context.
-    if ((0, _utils.debugMode)() === 'inspector') await _recorder.Recorder.show(this, {
+    if ((0, _utils.debugMode)() === 'inspector') await _recorder.Recorder.show(this, _recorderApp.RecorderApp.factory(this), {
       pauseOnNextStatement: true
     });
 
     // When paused, show inspector.
-    if (this._debugger.isPaused()) _recorder.Recorder.showInspector(this);
+    if (this._debugger.isPaused()) _recorder.Recorder.showInspector(this, _recorderApp.RecorderApp.factory(this));
     this._debugger.on(_debugger.Debugger.Events.PausedStateChanged, () => {
-      _recorder.Recorder.showInspector(this);
+      if (this._debugger.isPaused()) _recorder.Recorder.showInspector(this, _recorderApp.RecorderApp.factory(this));
     });
     if ((0, _utils.debugMode)() === 'console') await this.extendInjectedScript(consoleApiSource.source);
-    if (this._options.serviceWorkers === 'block') await this.addInitScript(`\nnavigator.serviceWorker.register = async () => { console.warn('Service Worker registration blocked by Playwright'); };\n`);
+    if (this._options.serviceWorkers === 'block') await this.addInitScript(`\nif (navigator.serviceWorker) navigator.serviceWorker.register = async () => { console.warn('Service Worker registration blocked by Playwright'); };\n`);
     if (this._options.permissions) await this.grantPermissions(this._options.permissions);
   }
   debugger() {
@@ -187,11 +191,13 @@ class BrowserContext extends _instrumentation.SdkObject {
     this._didCloseInternal();
   }
   _didCloseInternal() {
+    var _this$_clientCertific;
     if (this._closedStatus === 'closed') {
       // We can come here twice if we close browser context and browser
       // at the same time.
       return;
     }
+    (_this$_clientCertific = this._clientCertificatesProxy) === null || _this$_clientCertific === void 0 || _this$_clientCertific.close().catch(() => {});
     this.tracing.abort();
     if (this._isPersistentContext) this.onClosePersistent();
     this._closePromiseFulfill(new Error('Context closed'));
@@ -230,13 +236,14 @@ class BrowserContext extends _instrumentation.SdkObject {
     }
     const binding = new _page6.PageBinding(name, playwrightBinding, needsHandle);
     this._pageBindings.set(name, binding);
-    await this.doExposeBinding(binding);
+    await this.doAddInitScript(binding.initScript);
+    const frames = this.pages().map(page => page.frames()).flat();
+    await Promise.all(frames.map(frame => frame.evaluateExpression(binding.initScript.source).catch(e => {})));
   }
   async _removeExposedBindings() {
-    for (const key of this._pageBindings.keys()) {
-      if (!key.startsWith('__pw')) this._pageBindings.delete(key);
+    for (const [key, binding] of this._pageBindings) {
+      if (!binding.internal) this._pageBindings.delete(key);
     }
-    await this.doRemoveExposedBindings();
   }
   async grantPermissions(permissions, origin) {
     let resolvedOrigin = '*';
@@ -320,8 +327,8 @@ class BrowserContext extends _instrumentation.SdkObject {
     await this.doAddInitScript(initScript);
   }
   async _removeInitScripts() {
-    this.initScripts.splice(0, this.initScripts.length);
-    await this.doRemoveInitScripts();
+    this.initScripts = this.initScripts.filter(script => script.internal);
+    await this.doRemoveNonInternalInitScripts();
   }
   async setRequestInterceptor(handler) {
     this._requestInterceptor = handler;
@@ -401,7 +408,7 @@ class BrowserContext extends _instrumentation.SdkObject {
       try {
         const storage = await page.mainFrame().nonStallingEvaluateInExistingContext(`({
           localStorage: Object.keys(localStorage).map(name => ({ name, value: localStorage.getItem(name) })),
-        })`, false, 'utility');
+        })`, 'utility');
         if (storage.localStorage.length) result.origins.push({
           origin,
           localStorage: storage.localStorage
@@ -520,6 +527,9 @@ class BrowserContext extends _instrumentation.SdkObject {
     this.on(BrowserContext.Events.Page, installInPage);
     return Promise.all(this.pages().map(installInPage));
   }
+  async safeNonStallingEvaluateInAllFrames(expression, world, options = {}) {
+    await Promise.all(this.pages().map(page => page.safeNonStallingEvaluateInAllFrames(expression, world, options)));
+  }
   async _harStart(page, options) {
     const harId = (0, _utils.createGuid)();
     this._harRecorders.set(harId, new _harRecorder.HarRecorder(this, page, options));
@@ -564,10 +574,26 @@ function assertBrowserContextIsNotOwned(context) {
     if (page._ownedContext) throw new Error('Please use browser.newContext() for multi-page scripts that share the context.');
   }
 }
+async function createClientCertificatesProxyIfNeeded(options, browserOptions) {
+  var _options$clientCertif, _options$proxy, _options$proxy2, _browserOptions$proxy, _browserOptions$proxy2;
+  if (!((_options$clientCertif = options.clientCertificates) !== null && _options$clientCertif !== void 0 && _options$clientCertif.length)) return;
+  if ((_options$proxy = options.proxy) !== null && _options$proxy !== void 0 && _options$proxy.server && ((_options$proxy2 = options.proxy) === null || _options$proxy2 === void 0 ? void 0 : _options$proxy2.server) !== 'per-context' || browserOptions !== null && browserOptions !== void 0 && (_browserOptions$proxy = browserOptions.proxy) !== null && _browserOptions$proxy !== void 0 && _browserOptions$proxy.server && (browserOptions === null || browserOptions === void 0 || (_browserOptions$proxy2 = browserOptions.proxy) === null || _browserOptions$proxy2 === void 0 ? void 0 : _browserOptions$proxy2.server) !== 'http://per-context') throw new Error('Cannot specify both proxy and clientCertificates');
+  verifyClientCertificates(options.clientCertificates);
+  const clientCertificatesProxy = new _socksClientCertificatesInterceptor.ClientCertificatesProxy(options);
+  options.proxy = {
+    server: await clientCertificatesProxy.listen()
+  };
+  options.ignoreHTTPSErrors = true;
+  return clientCertificatesProxy;
+}
 function validateBrowserContextOptions(options, browserOptions) {
   if (options.noDefaultViewport && options.deviceScaleFactor !== undefined) throw new Error(`"deviceScaleFactor" option is not supported with null "viewport"`);
   if (options.noDefaultViewport && !!options.isMobile) throw new Error(`"isMobile" option is not supported with null "viewport"`);
-  if (options.acceptDownloads === undefined) options.acceptDownloads = 'accept';
+  if (options.acceptDownloads === undefined && browserOptions.name !== 'electron') options.acceptDownloads = 'accept';
+  // Electron requires explicit acceptDownloads: true since we wait for
+  // https://github.com/electron/electron/pull/41718 to be widely shipped.
+  // In 6-12 months, we can remove this check.
+  else if (options.acceptDownloads === undefined && browserOptions.name === 'electron') options.acceptDownloads = 'internal-browser-default';
   if (!options.viewport && !options.noDefaultViewport) options.viewport = {
     width: 1280,
     height: 720
@@ -592,10 +618,7 @@ function validateBrowserContextOptions(options, browserOptions) {
     options.recordVideo.size.width &= ~1;
     options.recordVideo.size.height &= ~1;
   }
-  if (options.proxy) {
-    if (!browserOptions.proxy && browserOptions.isChromium && os.platform() === 'win32') throw new Error(`Browser needs to be launched with the global proxy. If all contexts override the proxy, global proxy will be never used and can be any string, for example "launch({ proxy: { server: 'http://per-context' } })"`);
-    options.proxy = normalizeProxySettings(options.proxy);
-  }
+  if (options.proxy) options.proxy = normalizeProxySettings(options.proxy);
   verifyGeolocation(options.geolocation);
 }
 function verifyGeolocation(geolocation) {
@@ -609,6 +632,16 @@ function verifyGeolocation(geolocation) {
   if (longitude < -180 || longitude > 180) throw new Error(`geolocation.longitude: precondition -180 <= LONGITUDE <= 180 failed.`);
   if (latitude < -90 || latitude > 90) throw new Error(`geolocation.latitude: precondition -90 <= LATITUDE <= 90 failed.`);
   if (accuracy < 0) throw new Error(`geolocation.accuracy: precondition 0 <= ACCURACY failed.`);
+}
+function verifyClientCertificates(clientCertificates) {
+  if (!clientCertificates) return;
+  for (const cert of clientCertificates) {
+    if (!cert.origin) throw new Error(`clientCertificates.origin is required`);
+    if (!cert.cert && !cert.key && !cert.passphrase && !cert.pfx) throw new Error('None of cert, key, passphrase or pfx is specified');
+    if (cert.cert && !cert.key) throw new Error('cert is specified without key');
+    if (!cert.cert && cert.key) throw new Error('key is specified without cert');
+    if (cert.pfx && (cert.cert || cert.key)) throw new Error('pfx is specified together with cert, key or passphrase');
+  }
 }
 function normalizeProxySettings(proxy) {
   let {
