@@ -86,22 +86,22 @@ const updateObjects = () => {
 };
 
 const getBaseData = () => {
-  const baseData= document.getElementById('base-data');
+  const baseData = document.getElementById('base-data');
   baseData.innerHTML = '';
   if (actualDriver === 0) return;
   const totalApiString = '/api/singledriverBaseData?driverNumber=' + actualDriver;
   fetch(totalApiString)
-  .then(response => response.json())
-  .then(data => {
+    .then(response => response.json())
+    .then(data => {
       const driverElem = document.createElement('p');
       driverElem.innerHTML = data;
       baseData.appendChild(driverElem);
       // console.log(data);
-  })
-  .catch(error => {
-    console.error('Error fetching single driver infos:', error);
-  });
-}
+    })
+    .catch(error => {
+      console.error('Error fetching single driver infos:', error);
+    });
+};
 
 const getDrivers = () => {
   fetch('/api/drivers')
