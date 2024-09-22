@@ -14,6 +14,7 @@ let sessionId = 0;
 const {
   addDriver,
   deleteDrivers,
+  getDriverData,
   getDriverNumbers,
   getDrivers,
   getDriversByPositon,
@@ -63,7 +64,7 @@ const {
 const { addSchedule, getSchedule } = require('./services/obj_schedule');
 
 const { getPitStops, addPitStop, deletePitStops } = require('./services/obj_pits');
-const { addTyre, deleteTyres, getTyres } = require('./services/obj_tyres');
+const { addTyre, deleteTyres, getActualTyre, getTyres } = require('./services/obj_tyres');
 
 app.set('view engine', 'ejs');
 
@@ -81,6 +82,7 @@ const singleDriverRouter = require('./routes/singledriver');
 const teamradioRouter = require('./routes/teamradio');
 const trackinfoRouter = require('./routes/trackinfo');
 const racedatesRouter = require('./routes/racedates');
+const impressumRouter = require('./routes/impressum');
 
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
@@ -100,6 +102,7 @@ app.use('/singledriver', singleDriverRouter);
 app.use('/teamradio', teamradioRouter);
 app.use('/trackinfo', trackinfoRouter);
 app.use('/racedates', racedatesRouter);
+app.use('/impressum', impressumRouter);
 
 let loadIntervalsIsFetching = false;
 let loadLocationIsFetching = false;
@@ -351,8 +354,7 @@ async function loadLocation (
     // console.error(new Date().toISOString() + ': Error fetching data (sessions):', error);
     if (retryCount < maxRetries) {
       console.error(
-        '\n' +
-          getTimeNowIsoString() +
+        getTimeNowIsoString() +
           `: loadLocation: Retrying... (${retryCount + 1}/${maxRetries})`
       );
       await new Promise(resolve => setTimeout(resolve, delayMs));
@@ -767,7 +769,8 @@ async function loadCarData (
         element.rpm,
         element.session_key,
         element.speed,
-        element.throttle
+        element.throttle,
+        getActualTyre(driverNumber)
       );
     });
     if (startProcess) {
@@ -801,7 +804,10 @@ async function loadCarData (
         true
       );
     } else {
-      console.error('Max retries reached. Unable to fetch driver data.');
+      console.error(
+        getTimeNowIsoString() +
+          `:\ncarData (car ${driverNumber}): Max retries reached. Unable to fetch driver data.`
+      );
     }
   }
 }
@@ -895,6 +901,28 @@ app.get('/api/singledriver', async (req, res) => {
       getTimeNowIsoString() + ': Error fetching data (drivers):',
       error
     );
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.get('/api/singleDriverBaseData', async (req, res) => {
+  const driverNumber = req.query.driverNumber;
+  const driverNumbers = getDriverNumbers();
+  const checkInput = driverNumbers.find(one => one === Number(driverNumber));
+  if (!checkInput) return res.json(null);
+  if (
+    getDriverData(driverNumber) &&
+    getDriverData(driverNumber).length > 0
+  ) {
+    // console.log(getDriverData(driverNumber));
+    return res.json(getDriverData(driverNumber));
+  }
+  try {
+    await loadDrivers();
+    res.json(getDriverData(driverNumber));
+  } catch (error) {
+    console.error(
+      getTimeNowIsoString() + ': Error fetching data (drivers):', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });

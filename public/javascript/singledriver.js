@@ -13,10 +13,10 @@ const updateObjects = () => {
     iter++;
   }
   // console.log(date.toISOString());
-  if (carData.length > iter) {
-    console.log('2: ' + new Date(carData[iter].date).toISOString());
-    console.log(iter);
-  }
+  // if (carData.length > iter) {
+  //   console.log('2: ' + new Date(carData[iter].date).toISOString());
+  //   console.log(iter);
+  // }
   // Add 300 milliseconds to the Date object
   if (carData.length > 0) {
     if (carData[iter].brake > 0 && carData[iter].brake <= 100) {
@@ -52,6 +52,27 @@ const updateObjects = () => {
         drs.id = 'drs';
       }
     }
+    if (carData[iter].tyre) {
+      const tyreTypes = ['tyre-soft', 'tyre-medium', 'tyre-hard', 'tyre'];
+      for (let i = 0; i < tyreTypes.length; i++) {
+        const tyre = document.getElementById(tyreTypes[i]);
+        if (tyre) {
+          if (carData[iter].tyre.compound === 'SOFT') {
+            tyre.id = 'tyre-soft';
+            tyre.textContent = 'Soft';
+          } else if (carData[iter].tyre.compound === 'MEDIUM') {
+            tyre.id = 'tyre-medium';
+            tyre.textContent = 'Medium';
+          } else if (carData[iter].tyre.compound === 'HARD') {
+            tyre.id = 'tyre-hard';
+            tyre.textContent = 'Hard';
+          } else {
+            tyre.id = 'tyre';
+            tyre.textContent = 'Compound';
+          }
+        }
+      }
+    }
     const tacho = document.getElementById('tacho');
     tacho.innerHTML = carData[iter].speed;
     const rpm = document.getElementById('rpm');
@@ -63,6 +84,24 @@ const updateObjects = () => {
     iter++;
   }
 };
+
+// const getBaseData = () => {
+//   const baseData = document.getElementById('base-data');
+//   baseData.innerHTML = '';
+//   if (actualDriver === 0) return;
+//   const totalApiString = '/api/singledriverBaseData?driverNumber=' + actualDriver;
+//   fetch(totalApiString)
+//     .then(response => response.json())
+//     .then(data => {
+//       const driverElem = document.createElement('p');
+//       driverElem.innerHTML = data;
+//       baseData.appendChild(driverElem);
+//       // console.log(data);
+//     })
+//     .catch(error => {
+//       console.error('Error fetching single driver infos:', error);
+//     });
+// };
 
 const getDrivers = () => {
   fetch('/api/drivers')
@@ -90,6 +129,7 @@ const getDrivers = () => {
 
 const loadSite = () => {
   if (!actualDriver || actualDriver === '0') return;
+  // getBaseData(actualDriver);
   const totalApiString = apiString + actualDriver;
   fetch(totalApiString)
     .then(response => response.json())
@@ -99,9 +139,9 @@ const loadSite = () => {
       const carData2 = [];
       data.forEach(driverinfo => {
         carData2.push(driverinfo);
-        const driverElem = document.createElement('p');
-        driverElem.innerHTML = `Date: ${driverinfo.date}: Number: ${driverinfo.number}, gear: ${driverinfo.gear}, speed: ${driverinfo.speed}, throttle: ${driverinfo.throttle}, brake: ${driverinfo.brake}, drs: ${driverinfo.drs}, rpm: ${driverinfo.rpm}`;
-        driverDiv.appendChild(driverElem);
+        // const driverElem = document.createElement('p');
+        // driverElem.innerHTML = `Date: ${driverinfo.date}: Number: ${driverinfo.number}, gear: ${driverinfo.gear}, speed: ${driverinfo.speed}, throttle: ${driverinfo.throttle}, brake: ${driverinfo.brake}, drs: ${driverinfo.drs}, rpm: ${driverinfo.rpm}`;
+        // driverDiv.appendChild(driverElem);
       });
       carData = [];
       carData = carData2;
@@ -190,6 +230,6 @@ function adjustTime (direction) {
   }
 
   timeGap = minutes * 60 * 1000 + sec * 1000 + millis;
-  console.log(timeGap);
+  // console.log(timeGap);
   timeInput.value = `${String(minutes).padStart(2, '0')}:${String(sec).padStart(2, '0')}.${String(millis).padStart(3, '0')}`;
 }

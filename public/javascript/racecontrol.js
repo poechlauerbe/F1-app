@@ -17,7 +17,8 @@ function loadSite () {
           if (
             raceControl.message.includes('GREEN FLAG') ||
             raceControl.message.includes('OPEN') ||
-            raceControl.message.includes('CLEAR')
+            raceControl.message.includes('CLEAR') ||
+            raceControl.message.includes('NO FURTHER')
           ) {
             raceControlElement.className = 'green-flag';
           } else if (raceControl.message.includes('YELLOW')) {
@@ -39,7 +40,10 @@ function loadSite () {
             raceControlElement.className = 'drs-enabled';
           } else if (raceControl.message.includes('DRS DISABLED')) {
             raceControlElement.className = 'drs-disabled';
-          } else if (raceControl.message.includes('FIA STEWARDS')) {
+          } else if (
+            raceControl.message.includes('FIA STEWARDS') ||
+            raceControl.message.includes('DELETED')
+          ) {
             raceControlElement.className = 'fia-stewards';
           } else if (raceControl.message.includes('NOTED')) {
             raceControlElement.className = 'noted';

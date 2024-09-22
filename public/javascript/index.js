@@ -1,4 +1,4 @@
-import { options2 } from './services/mod_options.js';
+import { addEventToHtmlList } from './services/racedate_ls.js';
 
 let firstItem = '';
 
@@ -51,14 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (i === 0) firstItem = event;
 
           if (event.location !== firstItem.location) return;
-
-          const pitElem = document.createElement('li');
-          const date = new Date(event.start);
-          const timeString = date.toLocaleTimeString([], options2);
-
-          pitElem.innerHTML = `${timeString}: ${event.name} - ${event.location} - ${event.category}`;
-          pitElem.className = 'line-height-2';
-          gpListDiv.appendChild(pitElem);
+          addEventToHtmlList(gpListDiv, event);
           i++;
         }
       });

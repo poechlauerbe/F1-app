@@ -37,8 +37,8 @@ test('test', async ({ page }) => {
   await expect(page).toHaveTitle('Team Radio');
   await page.getByRole('link', { name: 'Home' }).click();
   await expect(page).toHaveTitle('Home');
-  await page.getByRole('main').getByRole('link', { name: 'GP List' }).click();
-  await expect(page).toHaveTitle('GP List');
+  await page.getByRole('main').getByRole('link', { name: 'Race dates' }).click();
+  await expect(page).toHaveTitle('Race dates');
   await page.getByRole('link', { name: 'Home' }).click();
   await expect(page).toHaveTitle('Home');
 });

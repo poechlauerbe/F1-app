@@ -4,7 +4,7 @@ function loadSite () {
     .then(data => {
       const positionsDiv = document.getElementById('positions');
       positionsDiv.innerHTML = '';
-      console.log(data);
+      // console.log(data);
       data.forEach(driver => {
         let textString =
           driver.position + `. ${driver.name} - ${driver.team}`;
