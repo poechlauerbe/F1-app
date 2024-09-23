@@ -30,7 +30,7 @@
     "supertest": "^7.0.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.47.1",
+    "@playwright/test": "^1.47.2",
     "chai": "^5.1.1",
     "eslint": "^8.57.1",
     "eslint-config-standard": "^17.1.0",
