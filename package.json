@@ -40,7 +40,7 @@
     "eslint-plugin-promise": "^6.6.0",
     "jsonc-eslint-parser": "^2.4.0",
     "mocha": "^10.7.3",
-    "nodemon": "^3.1.4",
+    "nodemon": "^3.1.7",
     "playwright": "^1.47.1",
     "playwright-core": "^1.47.2"
   }
