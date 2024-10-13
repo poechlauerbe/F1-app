@@ -3,4 +3,4 @@ function getTimeNowIsoString () {
   return date.toISOString();
 }
 
-module.exports = { getTimeNowIsoString };
+export default getTimeNowIsoString;

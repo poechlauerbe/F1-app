@@ -1,11 +1,12 @@
 import express, { Request, Response } from 'express';
+import ICAL from 'ical.js'
 
-const ical = require('ical');
+import fetch from 'node-fetch';
 
-const fetch = async (...args: Parameters<typeof import('node-fetch').default>) => {
-  const { default: fetch } = await import('node-fetch');
-  return fetch(...args);
-};
+// const fetch = async (...args: Parameters<typeof import('node-fetch').default>) => {
+//   const { default: fetch } = await import('node-fetch');
+//   return fetch(...args);
+// };
 
 const app = express();
 
@@ -56,7 +57,7 @@ import {
 //   addRacecontrol
 // } = require('./services/obj_racecontrol');
 
-const { getTimeNowIsoString } = require('./services/service_time');
+import getTimeNowIsoString from './services/service_time';
 // const { getGpList, addGpList } = require('./services/obj_GP_list');
 
 // const {
@@ -66,7 +67,7 @@ const { getTimeNowIsoString } = require('./services/service_time');
 //   getLastCarDataTime
 // } = require('./services/obj_cardata');
 
-// const { addSchedule, getSchedule } = require('./services/obj_schedule');
+import { addSchedule, getSchedule } from './services/obj_schedule';
 
 // const { getPitStops, addPitStop, deletePitStops } = require('./services/obj_pits');
 // const { addTyre, deleteTyres, getActualTyre, getTyres } = require('./services/obj_tyres');
@@ -856,34 +857,45 @@ async function loadDrivers (
 //   });
 // }
 
-// async function loadSchedule () {
-//   try {
-//     const response = await fetch(
-//       'https://files-f1.motorsportcalendars.com/f1-calendar_p1_p2_p3_qualifying_sprint_gp.ics'
-//     );
-//     const icsText = await response.text();
-//     const events = ical.parseICS(icsText);
+async function loadSchedule () {
+  try {
+    const response = await fetch(
+      'https://files-f1.motorsportcalendars.com/f1-calendar_p1_p2_p3_qualifying_sprint_gp.ics'
+    );
+    const icsText = await response.text();
+    const jcalData = ICAL.parse(icsText);
+    const comp = new ICAL.Component(jcalData);
+    const events = comp.getAllSubcomponents('vevent');
 
-//     for (const event of Object.values(events)) {
-//       addSchedule(
-//         event.summary,
-//         event.categories[0],
-//         new Date(event.start),
-//         new Date(event.end),
-//         event.location,
-//         event.geo.lat,
-//         event.geo.lon
-//       );
-//     }
-//     if (startProcess) {
-//       const actualTime = new Date();
-//       console.log(actualTime - lastLoading + 'ms \tSchedule loaded');
-//       lastLoading = actualTime;
-//     }
-//   } catch (error) {
-//     console.error('Error fetching data (schedule):', error);
-//   }
-// }
+    events.forEach(event => {
+      const start = event.getFirstPropertyValue('start');
+      const end = event.getFirstPropertyValue('end');
+      const name = event.getFirstPropertyValue('summary');
+      const category = event.getFirstPropertyValue('categories');
+      const location = event.getFirstPropertyValue('location');
+      const lat = event.getFirstPropertyValue('lat');
+      const lon = event.getFirstPropertyValue('lon');
+      if (typeof(name) == 'string' && typeof(category) == 'string' && typeof(start) == 'string' && typeof(end) == 'string' && typeof(location) == 'string' && typeof(lat) == 'number' && typeof(lon) == 'number') {
+        addSchedule(
+          name,
+          category,
+          start,
+          end,
+          location,
+          lat,
+          lon
+        )
+      }
+    })
+    if (startProcess) {
+      const actualTime = new Date();
+      console.log(Number(actualTime) - Number(lastLoading) + 'ms \tSchedule loaded');
+      lastLoading = actualTime;
+    }
+  } catch (error) {
+    console.error('Error fetching data (schedule):', error);
+  }
+}
 
 // app.get('/api/driversbyposition', async (req, res) => {
 //   if (getDrivers().length > 0) {
@@ -994,21 +1006,21 @@ async function loadDrivers (
 //   }
 // });
 
-// app.get('/api/schedule', async (req, res) => {
-//   if (getSchedule().length > 0) {
-//     return res.json(getSchedule());
-//   }
-//   try {
-//     await loadSchedule();
-//     res.json(getSchedule());
-//   } catch (error) {
-//     console.error(
-//       getTimeNowIsoString() + ': Error fetching data (drivers):',
-//       error
-//     );
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
+app.get('/api/schedule', async (req, res) => {
+  if (getSchedule().length > 0) {
+    return res.json(getSchedule());
+  }
+  try {
+    await loadSchedule();
+    res.json(getSchedule());
+  } catch (error) {
+    console.error(
+      getTimeNowIsoString() + ': Error fetching data (drivers):',
+      error
+    );
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 // app.get('/api/race_control', async (req, res) => {
 //   try {
@@ -1070,7 +1082,7 @@ async function serverStart () {
   // await loadPitStops();
   // await loadIntervals();
   // await loadMeetings();
-  // await loadSchedule();
+  await loadSchedule();
 
   const endLoading: Date = new Date();
   const finishLoading: number = endLoading.getTime() - startLoading.getTime();
