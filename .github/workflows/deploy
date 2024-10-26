@@ -1,0 +1,27 @@
+name: Deploy to EC2
+
+on:
+  worflow-dispatch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: aws_ec2_1
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy to EC2
+        env:
+          HOST: ${{ vars.IP_ADDRESS }}
+          USER: "ec2-user"  # Change to your EC2 instance's user
+        run: |
+          ssh -o "StrictHostKeyChecking=no" $USER@$HOST << 'EOF'
+            cd /var/www/F1-app
+            sudo git pull origin main
+            sudo npm install
+            sudo pm2 restart all  # Restarts your app
+          EOF
+        with:
+          ssh-key: ${{ secrets.SSH_KEY }}
