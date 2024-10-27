@@ -1,6 +1,5 @@
 import { expect } from 'chai';
-import {} from '../server'
-
+// const { expect } = require('chai');
 
 describe('Sample Test', () => {
   it('should return true', () => {
