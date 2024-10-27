@@ -467,7 +467,7 @@ function frameSnapshotStreamer(snapshotStreamer, removeNoScript) {
           height: window.innerHeight
         },
         url: location.href,
-        timestamp,
+        wallTime: Date.now(),
         collectionTime: 0
       };
       for (const sheet of this._staleStyleSheets) {
@@ -485,7 +485,7 @@ function frameSnapshotStreamer(snapshotStreamer, removeNoScript) {
           contentType: 'text/css'
         });
       }
-      result.collectionTime = performance.now() - result.timestamp;
+      result.collectionTime = performance.now() - timestamp;
       return result;
     }
   }

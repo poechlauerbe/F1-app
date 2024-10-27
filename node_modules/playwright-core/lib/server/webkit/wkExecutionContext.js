@@ -116,9 +116,6 @@ class WKExecutionContext {
       objectId
     });
   }
-  objectCount(objectId) {
-    throw new Error('Method not implemented in WebKit.');
-  }
 }
 exports.WKExecutionContext = WKExecutionContext;
 function potentiallyUnserializableValue(remoteObject) {

@@ -37,15 +37,6 @@ function asLocators(lang, selector, isFrameLocator = false, maxOutputSize = 20, 
 }
 function innerAsLocators(factory, parsed, isFrameLocator = false, maxOutputSize = 20) {
   const parts = [...parsed.parts];
-  // frameLocator('iframe').first is actually "iframe >> nth=0 >> internal:control=enter-frame"
-  // To make it easier to parse, we turn it into "iframe >> internal:control=enter-frame >> nth=0"
-  for (let index = 0; index < parts.length - 1; index++) {
-    if (parts[index].name === 'nth' && parts[index + 1].name === 'internal:control' && parts[index + 1].body === 'enter-frame') {
-      // Swap nth and enter-frame.
-      const [nth] = parts.splice(index, 1);
-      parts.splice(index + 1, 0, nth);
-    }
-  }
   const tokens = [];
   let nextBase = isFrameLocator ? 'frame-locator' : 'page';
   for (let index = 0; index < parts.length; index++) {
@@ -183,13 +174,13 @@ function innerAsLocators(factory, parsed, isFrameLocator = false, maxOutputSize 
         continue;
       }
     }
+    if (part.name === 'internal:control' && part.body === 'enter-frame') {
+      tokens.push([factory.generateLocator(base, 'frame', '')]);
+      nextBase = 'frame-locator';
+      continue;
+    }
     let locatorType = 'default';
     const nextPart = parts[index + 1];
-    if (nextPart && nextPart.name === 'internal:control' && nextPart.body === 'enter-frame') {
-      locatorType = 'frame';
-      nextBase = 'frame-locator';
-      index++;
-    }
     const selectorPart = (0, _selectorParser.stringifySelector)({
       parts: [part]
     });
@@ -277,7 +268,7 @@ class JavaScriptLocatorFactory {
         if (options.hasNotText !== undefined) return `locator(${this.quote(body)}, { hasNotText: ${this.toHasText(options.hasNotText)} })`;
         return `locator(${this.quote(body)})`;
       case 'frame':
-        return `frameLocator(${this.quote(body)})`;
+        return `contentFrame()`;
       case 'nth':
         return `nth(${body})`;
       case 'first':
@@ -360,7 +351,7 @@ class PythonLocatorFactory {
         if (options.hasNotText !== undefined) return `locator(${this.quote(body)}, has_not_text=${this.toHasText(options.hasNotText)})`;
         return `locator(${this.quote(body)})`;
       case 'frame':
-        return `frame_locator(${this.quote(body)})`;
+        return `content_frame`;
       case 'nth':
         return `nth(${body})`;
       case 'first':
@@ -460,7 +451,7 @@ class JavaLocatorFactory {
         if (options.hasNotText !== undefined) return `locator(${this.quote(body)}, new ${clazz}.LocatorOptions().setHasNotText(${this.toHasText(options.hasNotText)}))`;
         return `locator(${this.quote(body)})`;
       case 'frame':
-        return `frameLocator(${this.quote(body)})`;
+        return `contentFrame()`;
       case 'nth':
         return `nth(${body})`;
       case 'first':
@@ -544,7 +535,7 @@ class CSharpLocatorFactory {
         if (options.hasNotText !== undefined) return `Locator(${this.quote(body)}, new() { ${this.toHasNotText(options.hasNotText)} })`;
         return `Locator(${this.quote(body)})`;
       case 'frame':
-        return `FrameLocator(${this.quote(body)})`;
+        return `ContentFrame`;
       case 'nth':
         return `Nth(${body})`;
       case 'first':

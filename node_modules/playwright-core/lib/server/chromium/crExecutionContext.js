@@ -110,13 +110,6 @@ class CRExecutionContext {
   async releaseHandle(objectId) {
     await (0, _crProtocolHelper.releaseObject)(this._client, objectId);
   }
-  async objectCount(objectId) {
-    const result = await this._client.send('Runtime.queryObjects', {
-      prototypeObjectId: objectId
-    });
-    const match = result.objects.description.match(/Array\((\d+)\)/);
-    return +match[1];
-  }
 }
 exports.CRExecutionContext = CRExecutionContext;
 function rewriteError(error) {

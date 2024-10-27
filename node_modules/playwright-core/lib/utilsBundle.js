@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.minimatch = exports.mime = exports.lockfile = exports.jpegjs = exports.getProxyForUrl = exports.debug = exports.colors = exports.SocksProxyAgent = exports.PNG = exports.HttpsProxyAgent = void 0;
+exports.minimatch = exports.mime = exports.lockfile = exports.jpegjs = exports.getProxyForUrl = exports.dotenv = exports.debug = exports.colors = exports.SocksProxyAgent = exports.PNG = exports.HttpsProxyAgent = void 0;
 exports.ms = ms;
 exports.open = void 0;
 exports.parseStackTraceLine = parseStackTraceLine;
@@ -29,6 +29,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 const colors = exports.colors = require('./utilsBundleImpl').colors;
 const debug = exports.debug = require('./utilsBundleImpl').debug;
+const dotenv = exports.dotenv = require('./utilsBundleImpl').dotenv;
 const getProxyForUrl = exports.getProxyForUrl = require('./utilsBundleImpl').getProxyForUrl;
 const HttpsProxyAgent = exports.HttpsProxyAgent = require('./utilsBundleImpl').HttpsProxyAgent;
 const jpegjs = exports.jpegjs = require('./utilsBundleImpl').jpegjs;

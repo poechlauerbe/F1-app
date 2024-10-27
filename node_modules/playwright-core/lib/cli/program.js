@@ -238,13 +238,10 @@ _utilsBundle.program.command('show-trace [trace...]').option('-b, --browser <bro
 Examples:
 
   $ show-trace https://example.com/trace.zip`);
-async function launchContext(options, headless, executablePath) {
+async function launchContext(options, extraOptions) {
   validateOptions(options);
   const browserType = lookupBrowserType(options);
-  const launchOptions = {
-    headless,
-    executablePath
-  };
+  const launchOptions = extraOptions;
   if (options.channel) launchOptions.channel = options.channel;
   launchOptions.handleSIGINT = false;
   const contextOptions =
@@ -256,7 +253,7 @@ async function launchContext(options, headless, executablePath) {
   // In headful mode, use host device scale factor for things to look nice.
   // In headless, keep things the way it works in Playwright by default.
   // Assume high-dpi on MacOS. TODO: this is not perfect.
-  if (!headless) contextOptions.deviceScaleFactor = _os.default.platform() === 'darwin' ? 2 : 1;
+  if (!extraOptions.headless) contextOptions.deviceScaleFactor = _os.default.platform() === 'darwin' ? 2 : 1;
 
   // Work around the WebKit GTK scrolling issue.
   if (browserType.name() === 'webkit' && process.platform === 'linux') {
@@ -281,7 +278,7 @@ async function launchContext(options, headless, executablePath) {
       process.stdout.write(text);
       process.stdout.write('\n-------------8<-------------\n');
       const autoExitCondition = process.env.PWTEST_CLI_AUTO_EXIT_WHEN;
-      if (autoExitCondition && text.includes(autoExitCondition)) Promise.all(context.pages().map(async p => p.close()));
+      if (autoExitCondition && text.includes(autoExitCondition)) closeBrowser();
     };
     // Make sure we exit abnormally when browser crashes.
     const logs = [];
@@ -383,7 +380,7 @@ async function launchContext(options, headless, executablePath) {
       const hasPage = browser.contexts().some(context => context.pages().length > 0);
       if (hasPage) return;
       // Avoid the error when the last page is closed because the browser has been closed.
-      closeBrowser().catch(e => null);
+      closeBrowser().catch(() => {});
     });
   });
   process.on('SIGINT', async () => {
@@ -431,7 +428,10 @@ async function open(options, url, language) {
     context,
     launchOptions,
     contextOptions
-  } = await launchContext(options, !!process.env.PWTEST_CLI_HEADLESS, process.env.PWTEST_CLI_EXECUTABLE_PATH);
+  } = await launchContext(options, {
+    headless: !!process.env.PWTEST_CLI_HEADLESS,
+    executablePath: process.env.PWTEST_CLI_EXECUTABLE_PATH
+  });
   await context._enableRecorder({
     language,
     launchOptions,
@@ -447,11 +447,19 @@ async function codegen(options, url) {
     output: outputFile,
     testIdAttribute: testIdAttributeName
   } = options;
+  const tracesDir = _path.default.join(_os.default.tmpdir(), `playwright-recorder-trace-${Date.now()}`);
   const {
     context,
     launchOptions,
     contextOptions
-  } = await launchContext(options, !!process.env.PWTEST_CLI_HEADLESS, process.env.PWTEST_CLI_EXECUTABLE_PATH);
+  } = await launchContext(options, {
+    headless: !!process.env.PWTEST_CLI_HEADLESS,
+    executablePath: process.env.PWTEST_CLI_EXECUTABLE_PATH,
+    tracesDir
+  });
+  _utilsBundle.dotenv.config({
+    path: 'playwright.env'
+  });
   await context._enableRecorder({
     language,
     launchOptions,
@@ -459,9 +467,9 @@ async function codegen(options, url) {
     device: options.device,
     saveStorage: options.saveStorage,
     mode: 'recording',
+    codegenMode: process.env.PW_RECORDER_IS_TRACE_VIEWER ? 'trace-events' : 'actions',
     testIdAttributeName,
-    outputFile: outputFile ? _path.default.resolve(outputFile) : undefined,
-    handleSIGINT: false
+    outputFile: outputFile ? _path.default.resolve(outputFile) : undefined
   });
   await openPage(context, url);
 }
@@ -478,7 +486,9 @@ async function waitForPage(page, captureOptions) {
 async function screenshot(options, captureOptions, url, path) {
   const {
     context
-  } = await launchContext(options, true);
+  } = await launchContext(options, {
+    headless: true
+  });
   console.log('Navigating to ' + url);
   const page = await openPage(context, url);
   await waitForPage(page, captureOptions);
@@ -497,7 +507,9 @@ async function pdf(options, captureOptions, url, path) {
   } = await launchContext({
     ...options,
     browser: 'chromium'
-  }, true);
+  }, {
+    headless: true
+  });
   console.log('Navigating to ' + url);
   const page = await openPage(context, url);
   await waitForPage(page, captureOptions);

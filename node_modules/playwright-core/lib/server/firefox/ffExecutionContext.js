@@ -101,9 +101,6 @@ class FFExecutionContext {
       objectId
     });
   }
-  objectCount(objectId) {
-    throw new Error('Method not implemented in Firefox.');
-  }
 }
 exports.FFExecutionContext = FFExecutionContext;
 function checkException(exceptionDetails) {

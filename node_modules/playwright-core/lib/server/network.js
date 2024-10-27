@@ -108,6 +108,7 @@ class Request extends _instrumentation.SdkObject {
     this._waitForResponsePromise = new _manualPromise.ManualPromise();
     this._responseEndTiming = -1;
     this._overrides = void 0;
+    this._bodySize = void 0;
     (0, _utils.assert)(!url.startsWith('data:'), 'Data urls should not fire requests');
     this._context = context;
     this._frame = frame;
@@ -202,9 +203,14 @@ class Request extends _instrumentation.SdkObject {
       errorText: this._failureText
     };
   }
+
+  // TODO(bidi): remove once post body is available.
+  _setBodySize(size) {
+    this._bodySize = size;
+  }
   bodySize() {
     var _this$postDataBuffer;
-    return ((_this$postDataBuffer = this.postDataBuffer()) === null || _this$postDataBuffer === void 0 ? void 0 : _this$postDataBuffer.length) || 0;
+    return this._bodySize || ((_this$postDataBuffer = this.postDataBuffer()) === null || _this$postDataBuffer === void 0 ? void 0 : _this$postDataBuffer.length) || 0;
   }
   async requestHeadersSize() {
     let headersSize = 4; // 4 = 2 spaces + 2 line breaks (GET /path \r\n)
@@ -301,7 +307,7 @@ class Route extends _instrumentation.SdkObject {
     }
     this._request._setOverrides(overrides);
     if (!overrides.isFallback) this._request._context.emit(_browserContext.BrowserContext.Events.RequestContinued, this._request);
-    await this._delegate.continue(this._request, overrides);
+    await this._delegate.continue(overrides);
     this._endHandling();
   }
   _startHandling() {
