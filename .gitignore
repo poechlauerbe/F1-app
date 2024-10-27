@@ -4,3 +4,4 @@ server.log
 stderr*.log
 log
 test-results
+node_modules

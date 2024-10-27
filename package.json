@@ -6,7 +6,7 @@
   "scripts": {
     "start": "mkdir -p log && node ./server 2>&1 | tee -a ./log/stderr_$(date +'%Y-%m-%d-%H').log",
     "dev": "mkdir -p log && nodemon server.js 2>&1 | tee -a ./log/stderr_$(date +'%Y-%m-%d-%H').log",
-    "test": "mocha",
+    "test": "mocha test/unit/*.test.cjs",
     "test:playwright": "playwright test"
   },
   "keywords": [
