@@ -3,5 +3,5 @@ server.log
 .env
 stderr*.log
 log
-test
 test-results
+node_modules

@@ -11,7 +11,28 @@ Next tests possible during the upcoming race weekend starting on Fr 5.7.2024
 
 ## Prerequisites
 1. Node
-2. additionally npm to:
+2. npm
+
+## How to use
+1. Clone repository:
+```bash
+git clone https://github.com/poechlauerbe/F1-app.git
+cd F1-app
+```
+2. Install required modules for node
+- with all dependencies
+```bash
+npm install
+```
+- only production stuff (no tests, nodemon, etc.)
+```bash
+npm install --production
+```
+3. Start server in shell:
+- simple start
+```bash
+node ./server.js
+```
 - start the server with logfiles:
 ```bash
 npm start
@@ -20,22 +41,11 @@ npm start
 ```bash
 npm run dev
 ```
-
-## How to use
-1. Clone repository:
-```bash
-git clone git@github.com:poechlauerbe/F1-app.git
-cd F1-app
-```
-2. Start server in shell:
-```bash
-node ./server.js
-```
-3. Open in browser:
+4. Open in browser:
 ```Browser
 http://localhost:3000/
 ```
-4. If your mobile phone is in the same network as your computer you can access the site from your mobile phone after opening port 3000 on your computer (don't forget to close it afterwards)
+5. If your mobile phone is in the same network as your computer you can access the site from your mobile phone after opening port 3000 on your computer (don't forget to close it afterwards)
 ```Browser
 http://localhost:3000/
 ```
