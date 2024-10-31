@@ -30,8 +30,8 @@ jobs:
 
     - name: Start or Stop EC2 Instance
       run: |
-        if [ "${{ github.event.inputs.action }}" == "start" ]; then
-          aws ec2 start-instances --instance-ids i-00706e63dfd336599
-        elif [ "${{ github.event.inputs.action }}" == "stop" ]; then
-          aws ec2 stop-instances --instance-ids i-00706e63dfd336599
+        if [ "${{ github.event.inputs.action }}" = "start" ]; then
+          aws ec2 start-instances --instance-ids ${{ secrets.EC2_INSTANCE_ID }}
+        elif [ "${{ github.event.inputs.action }}" = "stop" ]; then
+          aws ec2 stop-instances --instance-ids ${{ secrets.EC2_INSTANCE_ID }}
         fi
