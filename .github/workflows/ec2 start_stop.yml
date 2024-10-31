@@ -1,4 +1,4 @@
-name: Start EC2 Instance
+name: Start or stop EC2 Instance
 
 on:
   workflow_dispatch:
