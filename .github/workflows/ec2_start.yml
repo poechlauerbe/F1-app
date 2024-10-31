@@ -3,6 +3,10 @@ name: Start EC2 Instance
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   manage-ec2:
     runs-on: ubuntu-latest
