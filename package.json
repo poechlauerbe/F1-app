@@ -37,7 +37,7 @@
     "eslint-plugin-prettier": "^5.2.3",
     "eslint-plugin-promise": "^7.2.1",
     "jsonc-eslint-parser": "^2.4.0",
-    "mocha": "^11.1.0",
+    "mocha": "^11.3.0",
     "nodemon": "^3.1.10",
     "playwright": "^1.52.0",
     "playwright-core": "^1.50.1",
