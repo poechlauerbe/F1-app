@@ -44,6 +44,6 @@
     "prettier": "^3.5.2",
     "sinon": "^19.0.2",
     "sinon-chai": "^4.0.0",
-    "supertest": "^7.0.0"
+    "supertest": "^7.1.1"
   }
 }
